@@ -1,0 +1,77 @@
+name: group6
+
+# NOTE: This machine is a Hyper-V VM whose sandbox blocks outbound traffic from
+# containers on the default bridge network (image pulls work because the daemon
+# uses the host network). All services therefore use host networking: they bind
+# directly to the host's ports (5432 / 8000 / 5173) and reach each other via
+# 127.0.0.1.
+
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: group6-db
+    restart: unless-stopped
+    network_mode: host
+    # Port 5433: the VM sandbox intercepts the well-known port 5432, so the
+    # stock Postgres port is unusable here. 5433 is the conventional fallback.
+    # Listen on loopback only: with host networking the DB would otherwise be
+    # exposed to the whole LAN. Port 5433: the VM sandbox intercepts 5432.
+    command: ["postgres", "-p", "5433", "-c", "listen_addresses=127.0.0.1"]
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-group6_db}
+      POSTGRES_USER: ${POSTGRES_USER:-group6}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-group6secret}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -p 5433 -U group6 -d group6_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  backend:
+    build:
+      context: ./backend
+      # The VM sandbox blocks bridge-network egress during builds too, so build
+      # steps run on the host network (same as `docker build --network=host`).
+      network: host
+      # Match the container user's UID to the host user, so bind-mounted files
+      # keep compatible ownership. Set HOST_UID if your user id is not 1000.
+      args:
+        UID: "${HOST_UID:-1000}"
+    container_name: group6-backend
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      # Match the values in backend/.env; with host networking the database
+      # is reached through 127.0.0.1.
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: "5433"
+      DB_DATABASE: ${POSTGRES_DB:-group6_db}
+      DB_USERNAME: ${POSTGRES_USER:-group6}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-group6secret}
+    volumes:
+      - ./backend:/var/www/html
+      - backend_vendor:/var/www/html/vendor
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      network: host
+    container_name: group6-frontend
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  db_data:
+  backend_vendor:
