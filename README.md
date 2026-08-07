@@ -118,12 +118,20 @@ docker compose exec backend php artisan db:seed
 - Email: `admin@skillserve.test`
 - Password: `SkillServe#2026` (override via `ADMIN_EMAIL` / `ADMIN_PASSWORD` in `backend/.env`)
 
-The seeder also tops the platform-user count up to **150+ demo users**
-(`UsersSeeder`) so the User Management screens have data to list, search,
-filter and moderate immediately. Most are active/verified `customer`
-accounts, with a spread of suspended, banned and unverified accounts to
-exercise the moderation features. Demo users share the password `password`;
-the seeder is idempotent, so re-running it only tops the count back up.
+Seeding produces exactly this account layout:
+
+| Type | Count | Account |
+|------|-------|---------|
+| Super admin | 1 | `admin@skillserve.test` (`super-admin` role, bootstrap) |
+| System admin | 1 | `system@skillserve.test` (`admin` role; override via `SYSTEM_ADMIN_EMAIL` / `SYSTEM_ADMIN_PASSWORD`) |
+| Customers | 150 | Demo `customer` accounts (password `password`) |
+
+The **150 customer accounts** (`UsersSeeder`) populate the User Management
+screens. Only customers are seeded as users — role-bearing accounts are
+administrators and live in the Administrator Management module. Most
+customers are active/verified, with a spread of suspended, banned and
+unverified accounts to exercise the moderation features. Both seeders are
+idempotent, so re-running only tops up what's missing.
 
 Roles (`super-admin`, `admin`) and permissions (`manage administrators`,
 `manage providers`, `manage services`, `manage bookings`, `view reports`)
