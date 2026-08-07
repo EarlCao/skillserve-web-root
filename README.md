@@ -68,8 +68,8 @@ This starts three services:
 
 The Laravel backend ships with these packages:
 `laravel/sanctum` (API tokens), `spatie/laravel-permission` (roles & permissions),
-`darkaonline/l5-swagger` (API docs at `/api/documentation` — generates once
-`@OA` annotations exist in your code), `spatie/laravel-activitylog`,
+`darkaonline/l5-swagger` (API docs at `/api/documentation` — annotated with
+PHP 8 attributes), `spatie/laravel-activitylog`,
 `spatie/laravel-medialibrary` + `intervention/image` (file/media uploads),
 `maatwebsite/excel` (Excel import/export), `barryvdh/laravel-dompdf` (PDF),
 `spatie/laravel-backup`, `spatie/laravel-settings`, `ramsey/uuid`,
@@ -86,6 +86,137 @@ Source code is bind-mounted, so edits to `backend/` and `frontend/` are picked u
 immediately — no rebuild needed. If the app doesn't come up, check
 `docker compose ps` and `docker compose logs backend` — a failing migration or
 composer error will make the container restart instead of serving.
+
+## Authentication & Authorization (Phase 1)
+
+A modular **Authentication** module is implemented in `backend/app/Modules/Authentication`
+and `frontend/src/modules/authentication`.
+
+### API endpoints (`/api/auth/*`)
+
+| Method | Endpoint             | Auth        | Description                        |
+|--------|----------------------|-------------|------------------------------------|
+| POST   | `/api/auth/login`    | public      | Issue a Sanctum token (rate-limited 5/min/IP) |
+| POST   | `/api/auth/logout`   | bearer      | Revoke the current token           |
+| GET    | `/api/auth/me`       | bearer      | Current user (roles + permissions) |
+| POST   | `/api/auth/change-password` | bearer | Verify + update password      |
+
+All responses use the standard envelope `{ success, message, data, errors, meta }`.
+Tokens expire after `SANCTUM_EXPIRATION` minutes (default 1440 = 1 day) and
+are revoked on logout. Login/logout/password changes are recorded in the
+Spatie activity log.
+
+### First login
+
+Run the seeder once to create the roles, permissions, and the bootstrap
+super-admin account:
+
+```bash
+docker compose exec backend php artisan db:seed
+```
+
+- Email: `admin@skillserve.test`
+- Password: `SkillServe#2026` (override via `ADMIN_EMAIL` / `ADMIN_PASSWORD` in `backend/.env`)
+
+Roles (`super-admin`, `admin`) and permissions (`manage administrators`,
+`manage providers`, `manage services`, `manage bookings`, `view reports`)
+are defined in `RolePermissionSeeder`.
+
+### Middleware
+
+Reusable middleware included out of the box:
+
+| Middleware | Source | Purpose |
+|------------|--------|---------|
+| `auth:sanctum` | Laravel Sanctum | Bearer-token auth — expired/revoked tokens return a `401` envelope |
+| `role` / `permission` / `role_or_permission` | Spatie (aliased in `bootstrap/app.php`) | RBAC guards, e.g. `->middleware('permission:manage bookings')` or `->middleware('role:admin|super-admin')` |
+| `force.json` | `app/Shared/Middleware/ForceJsonResponse.php` | Forces JSON output on every `api/*` request (applied to the `api` group) |
+| `throttle:api` | framework | Rate limit: 60 requests/min per user/IP |
+| `throttle:login` | `AppServiceProvider` | Login rate limit: 5 attempts/min per IP |
+| `EnsureSwaggerUiEnabled` | `app/Shared/Middleware/EnsureSwaggerUiEnabled.php` | Hides the Swagger UI/spec in production unless `SWAGGER_UI_ENABLED=true` |
+
+Usage example (routes/api.php):
+
+```php
+Route::middleware(['auth:sanctum', 'permission:manage bookings'])->group(function () {
+    // protected module routes
+});
+```
+
+### Frontend
+
+- Login at `http://localhost:5173/login`; the admin shell requires auth.
+- Route guards are reusable: `RequireAuth`, `GuestOnly`, `RequireRole`, `RequirePermission`
+  (from `src/modules/authentication/routes/guards.jsx`).
+- The auth token lives in `localStorage` (`skillserve:token`); expired/revoked
+  sessions (HTTP 401) are cleared automatically and redirect to login.
+- `backend/.env` needs `FRONTEND_URL=http://localhost:5173` for CORS (already set).
+
+## API documentation (Swagger / OpenAPI)
+
+Interactive API docs are generated from OpenAPI annotations (written as PHP 8
+attributes) and served by l5-swagger:
+
+| URL | What it is |
+|-----|------------|
+| `http://localhost:8000/api/documentation` | Swagger UI — interactive docs |
+| `http://localhost:8000/docs` | Raw OpenAPI JSON spec (`storage/api-docs/api-docs.json`) |
+
+### How to use Swagger
+
+1. **Start the stack** (if not already running):
+
+   ```bash
+   docker compose up -d
+   ```
+
+2. **Seed the database once** so the admin account and roles exist (skip if
+   you already did this):
+
+   ```bash
+   docker compose exec backend php artisan db:seed
+   ```
+
+3. **Open the Swagger UI** in your browser:
+
+   ```
+   http://localhost:8000/api/documentation
+   ```
+
+4. **Get an access token** — inside Swagger UI, expand **POST
+   `/api/auth/login`**, click **Try it out**, keep the default payload
+   (`admin@skillserve.test` / `SkillServe#2026`) and click **Execute**.
+   Copy the `token` value from the `data.token` field of the response.
+
+5. **Authorize** — click the **Authorize** button (top-right), paste the
+   token, and click **Authorize** → **Close**. This sets the `bearerAuth`
+   scheme, so every protected request from the UI now carries your token.
+
+6. **Try the protected endpoints** — e.g. expand **GET `/api/auth/me`**
+   and click **Execute** to see the current user (with roles and
+   permissions), or **POST `/api/auth/change-password`** to update the
+   password. Tokens expire after `SANCTUM_EXPIRATION` minutes (default
+   1440 = 1 day); expired/revoked tokens return a `401` envelope.
+
+### Keeping the docs up to date
+
+Regenerate the spec after adding or changing endpoints:
+
+```bash
+docker compose exec backend php artisan l5-swagger:generate
+```
+
+`L5_SWAGGER_GENERATE_ALWAYS=true` in `backend/.env` also regenerates the
+spec automatically on every docs request (dev convenience; flip to `false`
+in production and regenerate on deploy instead).
+
+> **Note:** l5-swagger v11 uses an attribute-only analyser, so annotations
+> must be written as PHP 8 attributes (`#[OA\Post(...)]`), not `@OA`
+> docblocks. Global metadata lives in `app/Shared/Swagger/OpenApi.php`;
+> endpoint annotations live on each controller.
+>
+> In production the docs are hidden by the `EnsureSwaggerUiEnabled`
+> middleware unless `SWAGGER_UI_ENABLED=true` in `backend/.env`.
 
 ## Useful commands
 
