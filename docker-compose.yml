@@ -72,6 +72,28 @@ services:
     depends_on:
       - backend
 
+  # Laravel Reverb — WebSocket server used by the broadcasting driver.
+  reverb:
+    build:
+      context: ./backend
+      network: host
+      args:
+        UID: "${HOST_UID:-1000}"
+    container_name: group6-reverb
+    restart: unless-stopped
+    network_mode: host
+    command: ["php", "artisan", "reverb:start", "--host=0.0.0.0", "--port=8080"]
+    volumes:
+      - ./backend:/var/www/html
+      - backend_vendor:/var/www/html/vendor
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: "5433"
+      DB_DATABASE: ${POSTGRES_DB:-group6_db}
+      DB_USERNAME: ${POSTGRES_USER:-group6}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-group6secret}
+
 volumes:
   db_data:
   backend_vendor:

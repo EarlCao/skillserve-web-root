@@ -43,6 +43,7 @@ This starts three services:
 | Database  | `group6-db`      | `localhost:5433`         | PostgreSQL 17, database `group6_db` |
 | Backend   | `group6-backend` | `http://localhost:8000`  | Laravel 13 (PHP 8.3), migrations run automatically |
 | Frontend  | `group6-frontend`| `http://localhost:5173` | Vite dev server with HMR           |
+| Reverb    | `group6-reverb`  | `localhost:8080`         | Laravel Reverb WebSocket server (broadcasting) |
 
 > **Networking note:** this machine is a Hyper-V VM whose sandbox blocks
 > outbound traffic from containers on Docker's bridge network, so all services
@@ -62,6 +63,22 @@ This starts three services:
 > **File ownership:** the backend container runs as uid 1000 to match the host
 > user. If your user id is different, pass it when starting: `HOST_UID=$(id -u)
 > docker compose up -d --build`.
+
+## Backend packages
+
+The Laravel backend ships with these packages:
+`laravel/sanctum` (API tokens), `spatie/laravel-permission` (roles & permissions),
+`darkaonline/l5-swagger` (API docs at `/api/documentation` — generates once
+`@OA` annotations exist in your code), `spatie/laravel-activitylog`,
+`spatie/laravel-medialibrary` + `intervention/image` (file/media uploads),
+`maatwebsite/excel` (Excel import/export), `barryvdh/laravel-dompdf` (PDF),
+`spatie/laravel-backup`, `spatie/laravel-settings`, `ramsey/uuid`,
+`nwidart/laravel-modules` (modular structure under `Modules/`), and
+`laravel/reverb` (broadcasting, served on port 8080).
+
+To use broadcasting from the frontend later, the Vite client needs its own
+`VITE_REVERB_APP_KEY`, `VITE_REVERB_HOST`, and `VITE_REVERB_PORT` environment
+variables.
 
 The backend container automatically runs `composer install`, generates an app key
 if missing, and applies pending migrations (`php artisan migrate`) on startup.
