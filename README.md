@@ -118,6 +118,13 @@ docker compose exec backend php artisan db:seed
 - Email: `admin@skillserve.test`
 - Password: `SkillServe#2026` (override via `ADMIN_EMAIL` / `ADMIN_PASSWORD` in `backend/.env`)
 
+The seeder also tops the platform-user count up to **150+ demo users**
+(`UsersSeeder`) so the User Management screens have data to list, search,
+filter and moderate immediately. Most are active/verified `customer`
+accounts, with a spread of suspended, banned and unverified accounts to
+exercise the moderation features. Demo users share the password `password`;
+the seeder is idempotent, so re-running it only tops the count back up.
+
 Roles (`super-admin`, `admin`) and permissions (`manage administrators`,
 `manage providers`, `manage services`, `manage bookings`, `view reports`)
 are defined in `RolePermissionSeeder`.
