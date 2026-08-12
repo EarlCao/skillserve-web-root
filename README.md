@@ -167,6 +167,47 @@ Route::middleware(['auth:sanctum', 'permission:manage bookings'])->group(functio
   sessions (HTTP 401) are cleared automatically and redirect to login.
 - `backend/.env` needs `FRONTEND_URL=http://localhost:5173` for CORS (already set).
 
+## Service Category Management (Phase 2)
+
+A modular **Service Categories** module is implemented in
+`backend/app/Modules/ServiceCategories` and `frontend/src/modules/serviceCategories`.
+
+Categories organize the platform's available services; each category can hold
+any number of subcategories (one level deep). Categories and subcategories are
+soft-deleted and carry an `enabled`/`disabled` status — disabling a category
+keeps it in the database but makes it unavailable for selection/display on the
+platform (never a physical delete).
+
+### API endpoints (`/api/service-categories*`)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/service-categories` | Paginated list — search (name/description), status filter, sort |
+| POST | `/api/service-categories` | Create a category |
+| GET | `/api/service-categories/{id}` | Category details with its subcategories |
+| PUT/PATCH | `/api/service-categories/{id}` | Update name/description |
+| PATCH | `/api/service-categories/{id}/status` | Enable or disable |
+| DELETE | `/api/service-categories/{id}` | Soft-delete — blocked while the category still has subcategories |
+| POST | `/api/service-categories/{id}/subcategories` | Create a subcategory (unique per category) |
+| PUT/PATCH | `/api/service-categories/{id}/subcategories/{subId}` | Update a subcategory |
+| DELETE | `/api/service-categories/{id}/subcategories/{subId}` | Delete a subcategory |
+
+All endpoints require the `manage service categories` permission (granted to
+`super-admin`; assign to other roles through Administrator Management). Category
+and subcategory actions are recorded in the Spatie activity log
+(`service_categories` / `service_subcategories` log names).
+
+### Frontend
+
+- Admin page at `http://localhost:5173/admin/service-categories` (sidebar →
+  Administration → Service Categories), gated by the same permission.
+- The list supports search, status filter, sorting and pagination; per-row
+  actions cover view/manage subcategories, edit, enable/disable and delete.
+- Subcategories are managed inside the category details modal (add / edit /
+  delete), always scoped to their parent category.
+- Demo data: `ServiceCategorySeeder` (via `php artisan db:seed`) creates 8
+  categories with 25 subcategories.
+
 ## API documentation (Swagger / OpenAPI)
 
 Interactive API docs are generated from OpenAPI annotations (written as PHP 8
