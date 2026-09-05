@@ -2,7 +2,7 @@
 
 ## Task
 
-Implement **[MODULE NAME]**.
+Implement **Notifications and Announcements Module**.
 
 Before doing anything, read the project's `AGENT.md` file completely and follow all rules, instructions, architecture, conventions, and constraints defined there.
 
@@ -10,11 +10,9 @@ Also inspect the existing project and understand the current implementation befo
 
 ## Requirements
 
-Use the provided **[MODULE/REQUIREMENTS FILE NAME]** as the source of truth for this module.
+Use the provided **SkillServe_Admin_Web_Functionalities** as the source of truth for this module.
 
 Implement all the functionalities and descriptions specified in the file.
-
-**Optional:** Add any additional instructions or changes here.
 
 ## Implementation
 
