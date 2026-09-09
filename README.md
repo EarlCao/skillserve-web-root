@@ -76,9 +76,12 @@ PHP 8 attributes), `spatie/laravel-activitylog`,
 `nwidart/laravel-modules` (modular structure under `Modules/`), and
 `laravel/reverb` (broadcasting, served on port 8080).
 
-To use broadcasting from the frontend later, the Vite client needs its own
-`VITE_REVERB_APP_KEY`, `VITE_REVERB_HOST`, and `VITE_REVERB_PORT` environment
-variables.
+Realtime notifications use Laravel Reverb over authenticated private channels.
+The frontend reads `frontend/.env` for `VITE_REVERB_APP_KEY`,
+`VITE_REVERB_HOST`, `VITE_REVERB_PORT`, and `VITE_REVERB_SCHEME`; override them
+for another environment. The frontend connects after authentication and listens
+on `App.Models.User.{id}`. Database notifications remain the source of truth,
+so clients can reconnect and refresh the notification inbox safely.
 
 The backend container automatically runs `composer install`, generates an app key
 if missing, and applies pending migrations (`php artisan migrate`) on startup.
@@ -207,6 +210,28 @@ and subcategory actions are recorded in the Spatie activity log
   delete), always scoped to their parent category.
 - Demo data: `ServiceCategorySeeder` (via `php artisan db:seed`) creates 8
   categories with 25 subcategories.
+
+## System Settings
+
+The System Settings module is available at `/admin/settings` for administrators
+with the `manage settings` permission. It manages general, marketplace, booking,
+notification, platform policy, and technical settings through:
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/settings` | Return all settings grouped by area |
+| PUT | `/api/settings` | Validate and persist one or more setting groups |
+
+Settings are stored in the existing PostgreSQL `settings` table, and updates are
+recorded in the `system_settings` activity log. No schema migration is required.
+
+## Data Management
+
+The Data Management module is available at `/admin/data-management` for users
+with the data-management permissions. It provides CSV exports, service archive
+and restore, and review, restoration, or permanent removal of soft-deleted
+records. Archive metadata is stored in the `data_archives` table; the migration
+is additive and does not alter existing records.
 
 ## API documentation (Swagger / OpenAPI)
 
