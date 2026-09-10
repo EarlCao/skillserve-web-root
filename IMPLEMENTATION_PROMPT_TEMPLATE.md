@@ -2,7 +2,7 @@
 
 ## Task
 
-Implement **Notifications and Announcements Module**.
+Implement **Data Management Module**.
 
 Before doing anything, read the project's `AGENT.md` file completely and follow all rules, instructions, architecture, conventions, and constraints defined there.
 

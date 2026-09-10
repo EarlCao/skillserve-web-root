@@ -281,11 +281,20 @@ attributes) and served by l5-swagger:
 
 ### Keeping the docs up to date
 
-Regenerate the spec after adding or changing endpoints:
+Regenerate the OpenAPI spec after adding or changing endpoints, then generate
+the module-by-module Markdown package in `api-docs/`:
 
 ```bash
 docker compose exec backend php artisan l5-swagger:generate
+php api-docs/generate.php
 ```
+
+The first command updates `backend/storage/api-docs/api-docs.json`. The second
+command copies the generated spec to `api-docs/openapi.json` and regenerates
+the endpoint files under `api-docs/modules/` plus `api-docs/MODULES.md`.
+
+Run both commands from the project root. The complete mobile integration
+package starts at [`api-docs/README.md`](api-docs/README.md).
 
 `L5_SWAGGER_GENERATE_ALWAYS=true` in `backend/.env` also regenerates the
 spec automatically on every docs request (dev convenience; flip to `false`
