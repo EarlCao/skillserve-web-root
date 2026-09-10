@@ -308,6 +308,24 @@ in production and regenerate on deploy instead).
 > In production the docs are hidden by the `EnsureSwaggerUiEnabled`
 > middleware unless `SWAGGER_UI_ENABLED=true` in `backend/.env`.
 
+## Mobile app connectivity
+
+The backend already supports mobile clients via the `/api/client/v1/*` endpoints.
+Flutter (or any mobile app) connects using stateless Sanctum bearer tokens:
+
+- **Register:** `POST /api/client/v1/auth/register`
+- **Login:** `POST /api/client/v1/auth/login` — returns a 60-minute access token and a 14-day rotating refresh token
+- **Authenticated requests:** `Authorization: Bearer <token>` header
+- **Token refresh:** `POST /api/client/v1/auth/refresh` with the refresh token
+- **Logout:** `POST /api/client/v1/auth/logout` — revokes all sessions
+
+CORS is irrelevant for native mobile apps — no configuration changes are needed.
+Rate limits are 60 req/min (general) and 5 req/min (login).
+
+The full mobile integration guide — including token lifecycle, secure storage,
+error handling, and public vs protected endpoint lists — is in
+[`api-docs/README.md`](api-docs/README.md).
+
 ## Useful commands
 
 ```bash
