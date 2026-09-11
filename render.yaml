@@ -1,0 +1,69 @@
+services:
+  # ── Backend (Laravel API) ────────────────────────────────────────────
+  - type: web
+    name: skillserve-backend
+    runtime: php
+    plan: free
+    buildCommand: |
+      cp .env.production .env
+      composer install --no-dev --optimize-autoloader
+      php artisan key:generate --no-interaction --force
+      php artisan config:cache
+      php artisan route:cache
+      php artisan view:cache
+      php artisan migrate --force
+      php artisan db:seed --force
+    startCommand: php artisan serve --host=0.0.0.0 --port=$PORT
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_URL
+        sync: false
+      - key: APP_KEY
+        generateValue: true
+      - key: DB_URL
+        fromDatabase:
+          name: skillserve-db
+          property: connectionString
+      - key: SESSION_DRIVER
+        value: database
+      - key: CACHE_STORE
+        value: database
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: SANCTUM_EXPIRATION
+        value: "1440"
+      - key: LOGIN_RATE_LIMIT
+        value: "5"
+      - key: FRONTEND_URL
+        sync: false
+    healthCheckPath: /up
+    autoDeploy: true
+
+  # ── Frontend (Vite build → static) ──────────────────────────────────
+  - type: web
+    name: skillserve-frontend
+    runtime: static
+    plan: free
+    buildCommand: |
+      cd frontend
+      npm install
+      npm run build
+    staticPublishPath: frontend/dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        sync: false
+      - key: VITE_REVERB_APP_KEY
+        sync: false
+      - key: VITE_REVERB_HOST
+        sync: false
+      - key: VITE_REVERB_PORT
+        value: "443"
+      - key: VITE_REVERB_SCHEME
+        value: https
+    routes:
+      - type: rewrite
+        from: /*
+        to: /index.html

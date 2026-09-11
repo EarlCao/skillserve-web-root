@@ -240,7 +240,7 @@ attributes) and served by l5-swagger:
 
 | URL | What it is |
 |-----|------------|
-| `http://localhost:8000/api/documentation` | Swagger UI — interactive docs |
+| user` | Swagger UI — interactive docs |
 | `http://localhost:8000/docs` | Raw OpenAPI JSON spec (`storage/api-docs/api-docs.json`) |
 
 ### How to use Swagger
