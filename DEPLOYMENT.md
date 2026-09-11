@@ -55,6 +55,14 @@ This guide covers deploying the SkillServe backend to **Render** with **NeonDB**
 
 ## Step 2 — Deploy Backend to Render
 
+> **Which repository is Render connected to?** Render only reads `render.yaml`
+> from the root of the repository that a service is connected to. In this
+> project the backend lives in its own repo (`skillserve-web-backend`), which
+> does not contain `render.yaml` — so a service created from that repo is
+> configured entirely through the Render dashboard (see **Option C**). Options A
+> and B only apply if `backend/` and `frontend/` are part of the same repo as
+> `render.yaml`.
+
 ### Option A: Using render.yaml (Blueprint)
 
 1. Push your code to GitHub (the `main` branch).
@@ -64,10 +72,30 @@ This guide covers deploying the SkillServe backend to **Render** with **NeonDB**
    - A web service for the backend
    - A static site for the frontend
 5. Set the environment variables in Render's dashboard:
-   - `DB_URL` — your NeonDB connection string
+   - `DB_HOST`, `DB_PORT`, `DB_CONNECTION`, `DB_SSLMODE` — already declared in
+     `render.yaml`; Render applies them on sync (see the note below)
+   - `DB_DATABASE` — the database name from your Neon project (Neon's default is
+     `neondb`, but it must match the connection string exactly)
+   - `DB_USERNAME` — the Neon role, e.g. `neondb_owner`
+   - `DB_PASSWORD` — the Neon password
    - `APP_URL` — your Render backend URL (e.g. `https://skillserve-backend.onrender.com`)
    - `FRONTEND_URL` — your Render frontend URL
    - `REVERB_APP_KEY`, `REVERB_APP_SECRET` — generate new ones for production
+
+   ⚠️ **NeonDB is an external database**, so `fromDatabase` in `render.yaml` cannot
+   supply it (that property only resolves Render-managed Postgres).
+
+   ⚠️ **`DB_HOST` must be the bare hostname** — only this, nothing else:
+   ```
+   ep-xxx-pooler.us-east-2.aws.neon.tech
+   ```
+   Do not paste the connection string, and do not append the database name or
+   `?sslmode=require`. A value like
+   `ep-xxx-pooler.us-east-2.aws.neon.tech/SkillServe_DB?sslmode=require` is handed
+   to libpq as the host, and the deploy dies with a DNS failure.
+
+   Also delete any `DB_URL` variable from the dashboard — when it is set, Laravel
+   derives host/port/database/user/password from it and ignores the values above.
 
 ### Option B: Manual Setup
 
@@ -94,7 +122,13 @@ This guide covers deploying the SkillServe backend to **Render** with **NeonDB**
    APP_ENV=production
    APP_DEBUG=false
    APP_URL=https://skillserve-backend.onrender.com
-   DB_URL=postgresql://neondb_owner:password@ep-xxx.us-east-2.aws.neon.tech/skillserve?sslmode=require
+   DB_CONNECTION=pgsql
+   DB_HOST=ep-xxx-pooler.us-east-2.aws.neon.tech
+   DB_PORT=5432
+   DB_DATABASE=neondb
+   DB_USERNAME=neondb_owner
+   DB_PASSWORD=your-neon-password
+   DB_SSLMODE=require
    SESSION_DRIVER=database
    CACHE_STORE=database
    QUEUE_CONNECTION=database
@@ -114,6 +148,41 @@ This guide covers deploying the SkillServe backend to **Render** with **NeonDB**
      VITE_REVERB_PORT=443
      VITE_REVERB_SCHEME=https
      ```
+
+### Option C: Backend repo as a standalone Docker web service
+
+This is the setup this project actually uses: the backend is deployed from its
+own repository, so there is no Blueprint and the dashboard is the single source
+of truth for its configuration.
+
+1. [Render Dashboard](https://dashboard.render.com) → **New** → **Web Service**.
+2. Connect the `skillserve-web-backend` repo.
+3. Runtime: **Docker**, Dockerfile Path: `Dockerfile.render`.
+4. Health Check Path: `/up`.
+5. Set these on the **Environment** tab:
+
+   ```
+   APP_ENV=production
+   APP_DEBUG=false
+   APP_KEY=            # leave blank — use Render's "Generate" button
+   APP_URL=https://skillserve-backend.onrender.com
+   FRONTEND_URL=https://skillserve-frontend.onrender.com
+   DB_CONNECTION=pgsql
+   DB_HOST=ep-xxx-pooler.us-east-2.aws.neon.tech
+   DB_PORT=5432
+   DB_DATABASE=neondb
+   DB_USERNAME=neondb_owner
+   DB_PASSWORD=your-neon-password
+   DB_SSLMODE=require
+   SESSION_DRIVER=database
+   CACHE_STORE=database
+   QUEUE_CONNECTION=database
+   ```
+
+   ⚠️ `DB_HOST` must be the **bare hostname** copied from Neon's *Connect* panel.
+   Do not set `DB_URL` unless it holds a complete connection string — when it is
+   set, Laravel parses it and ignores `DB_HOST`/`DB_DATABASE`/`DB_USERNAME`/
+   `DB_PASSWORD`.
 
 ---
 
@@ -197,10 +266,10 @@ You can now browse tables, run queries, and verify data after each deployment.
 | `APP_ENV` | `local` | `production` |
 | `APP_DEBUG` | `true` | `false` |
 | `APP_URL` | `http://localhost` | `https://skillserve-backend.onrender.com` |
-| `DB_URL` | _(not used)_ | NeonDB connection string |
-| `DB_HOST` | `127.0.0.1` | _(set by DB_URL)_ |
+| `DB_URL` | _(not used)_ | _(leave unset)_ |
+| `DB_HOST` | `127.0.0.1` | Neon pooled hostname (bare, no `/db` or query) |
 | `DB_PORT` | `5433` | `5432` |
-| `DB_DATABASE` | `group6_db` | _(set by DB_URL)_ |
+| `DB_DATABASE` | `group6_db` | Neon database name |
 | `DB_SSLMODE` | `prefer` | `require` |
 | `SESSION_DRIVER` | `database` | `database` |
 | `CACHE_STORE` | `database` | `database` |
@@ -223,16 +292,31 @@ For production, consider upgrading to a paid plan for better performance.
 ## Troubleshooting
 
 ### "Connection refused" on Render
-- Ensure `DB_URL` is set correctly in Render's environment variables.
+- Ensure `DB_HOST`, `DB_DATABASE`, `DB_USERNAME` and `DB_PASSWORD` are set
+  correctly in Render's environment variables.
 - Check NeonDB dashboard for connection status.
 
 ### SSL errors connecting to NeonDB
 - Set `DB_SSLMODE=require` in your environment.
 - NeonDB requires SSL for all connections.
 
+### `could not translate host name "ep-xxx.neon.tech/dbname?sslmode=require" to address`
+- Laravel received the **tail of a connection string** as the host instead of a
+  hostname. Laravel builds the pgsql DSN as `host=<DB_HOST>`, so anything after
+  the hostname (`/dbname`, `?sslmode=require`, `&channel_binding=require`) is
+  passed straight to libpq, which then fails to resolve it.
+- Fix: set `DB_HOST` to the bare hostname (`ep-xxx-pooler.us-east-2.aws.neon.tech`).
+  Keep `DB_DATABASE`, `DB_USERNAME` and `DB_PASSWORD` as separate variables —
+  they are not part of the host.
+- If `DB_URL` is set in the service environment, it takes precedence over
+  `DB_HOST`; remove it unless it holds the complete, valid connection string.
+
 ### Migrations fail on deploy
 - Check Render logs: **Logs** tab → filter by service.
-- Ensure `APP_KEY` is generated (Render auto-generates it).
+- Ensure `APP_KEY` is generated (Render auto-generates it via `generateValue`).
+  The log line `Unable to set application key. APP_KEY is already present in the
+  environment.` is harmless — it only means the key came from the platform
+  instead of the `.env` file.
 
 ### Frontend can't reach backend API
 - Ensure `VITE_API_BASE_URL` is set correctly in the frontend service.
