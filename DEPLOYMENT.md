@@ -169,6 +169,7 @@ of truth for its configuration.
    FRONTEND_URL=https://skillserve-frontend.onrender.com
    DB_CONNECTION=pgsql
    DB_HOST=ep-xxx-pooler.us-east-2.aws.neon.tech
+   DB_DIRECT_HOST=ep-xxx.us-east-2.aws.neon.tech   # optional, see below
    DB_PORT=5432
    DB_DATABASE=neondb
    DB_USERNAME=neondb_owner
@@ -177,12 +178,36 @@ of truth for its configuration.
    SESSION_DRIVER=database
    CACHE_STORE=database
    QUEUE_CONNECTION=database
+   SEED_MODE=admin-only
+   ADMIN_EMAIL=admin@yourdomain.com
+   ADMIN_PASSWORD=replace-me-with-a-strong-password
+   SYSTEM_ADMIN_EMAIL=system@yourdomain.com
+   SYSTEM_ADMIN_PASSWORD=replace-me-with-a-strong-password
    ```
 
-   ⚠️ `DB_HOST` must be the **bare hostname** copied from Neon's *Connect* panel.
+   ⚠️ **Seeding.** `SEED_MODE=admin-only` seeds just the roles, permissions
+   and the bootstrap admin accounts. The default (`SEED_MODE=demo`) additionally
+   seeds the full demo dataset, which must never run against production — and
+   since the container seeds on every start, leaving it on `demo` re-seeds demo
+   data on every restart. Production seeding also refuses the built-in default
+   password (`SkillServe#2026`), so `ADMIN_PASSWORD` and
+   `SYSTEM_ADMIN_PASSWORD` must be set to real values before the first deploy.
+
+   ⚠️ Both hosts must be **bare hostnames** copied from Neon's *Connect* panel.
    Do not set `DB_URL` unless it holds a complete connection string — when it is
    set, Laravel parses it and ignores `DB_HOST`/`DB_DATABASE`/`DB_USERNAME`/
    `DB_PASSWORD`.
+
+   **Why two hosts?** Neon's `-pooler` endpoint runs pgBouncer in transaction
+   mode, which cannot execute schema changes. `DB_HOST` is the pooled endpoint
+   used for normal queries; the direct endpoint is the same host *without*
+   `-pooler` and is used for migrations and DDL. Laravel detects the pair and
+   routes automatically (`config/database.php` → `pgsql.direct`).
+
+   `DB_DIRECT_HOST` is **optional**: when it is unset, `config/database.php`
+   derives it by stripping `-pooler` from `DB_HOST`. Set it only for a host that
+   does not follow Neon's naming. A `DB_DIRECT_HOST` that still points at the
+   pooler is ignored, because migrations cannot run through it.
 
 ---
 
@@ -268,6 +293,10 @@ You can now browse tables, run queries, and verify data after each deployment.
 | `APP_URL` | `http://localhost` | `https://skillserve-backend.onrender.com` |
 | `DB_URL` | _(not used)_ | _(leave unset)_ |
 | `DB_HOST` | `127.0.0.1` | Neon pooled hostname (bare, no `/db` or query) |
+| `DB_DIRECT_HOST` | _(unset)_ | optional — derived from `DB_HOST` when unset |
+| `SEED_MODE` | `demo` | `admin-only` |
+| `ADMIN_PASSWORD` | `SkillServe#2026` | required, non-default |
+| `SYSTEM_ADMIN_PASSWORD` | `SkillServe#2026` | required, non-default |
 | `DB_PORT` | `5433` | `5432` |
 | `DB_DATABASE` | `group6_db` | Neon database name |
 | `DB_SSLMODE` | `prefer` | `require` |
@@ -310,6 +339,26 @@ For production, consider upgrading to a paid plan for better performance.
   they are not part of the host.
 - If `DB_URL` is set in the service environment, it takes precedence over
   `DB_HOST`; remove it unless it holds the complete, valid connection string.
+
+### `SQLSTATE[25P02] current transaction is aborted` during migrations
+- This is Neon's **pooled** endpoint rejecting schema changes. pgBouncer in
+  transaction mode cannot support the DDL and server-side prepared statements
+  that Laravel's migrations use, so the first statement silently does nothing
+  and the next one in the same transaction reports the abort.
+- Fix: make sure the direct endpoint is in use. `config/database.php` derives
+  it from `DB_HOST` by stripping `-pooler`; for a host that doesn't follow
+  Neon's naming, set `DB_DIRECT_HOST` to the endpoint **without** `-pooler`
+  (Neon's *Connect* panel → connection pooling off).
+- Note the visible error names the *second* statement (`alter table ... add
+  constraint ...`), not the one that actually failed, so don't chase the
+  constraint itself.
+
+### `Production seeding requires non-default ADMIN_PASSWORD and SYSTEM_ADMIN_PASSWORD values`
+- `RolePermissionSeeder` refuses to create admin accounts in production with the
+  built-in default password. Set `ADMIN_PASSWORD` and `SYSTEM_ADMIN_PASSWORD` in
+  the service environment to real values.
+- These are only read when the account is *created* — `firstOrCreate` means
+  changing the variable later does not update an existing account's password.
 
 ### Migrations fail on deploy
 - Check Render logs: **Logs** tab → filter by service.

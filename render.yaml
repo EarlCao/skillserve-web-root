@@ -25,13 +25,21 @@ services:
       # (that property only resolves Render-managed Postgres). The connection
       # is therefore configured explicitly here.
       #
-      # DB_HOST must be the bare pooled endpoint. Never paste the connection
-      # string, and never append the database name or "?sslmode=..." — libpq
-      # treats the whole value as the host and DNS resolution fails.
+      # Neon gives you TWO endpoints. DB_HOST is the pooled one (normal
+      # queries); the direct one (same host without "-pooler") is used for
+      # migrations, because pgBouncer's transaction pooling cannot run DDL.
+      # DB_DIRECT_HOST is optional — config/database.php derives it when unset —
+      # but pinning it here makes the intent explicit.
+      #
+      # Both must be bare hostnames. Never paste the connection string, and
+      # never append the database name or "?sslmode=..." — libpq treats the
+      # whole value as the host and DNS resolution fails.
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_HOST
         value: ep-bitter-unit-aewcp149-pooler.c-2.us-east-2.aws.neon.tech
+      - key: DB_DIRECT_HOST
+        value: ep-bitter-unit-aewcp149.c-2.us-east-2.aws.neon.tech
       - key: DB_PORT
         value: "5432"
       - key: DB_SSLMODE
