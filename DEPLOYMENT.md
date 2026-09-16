@@ -360,6 +360,21 @@ For production, consider upgrading to a paid plan for better performance.
 - These are only read when the account is *created* — `firstOrCreate` means
   changing the variable later does not update an existing account's password.
 
+### Login times out (~2 min) after the service has been idle
+- Render's **free tier spins idle services down**; the next request pays a full
+  container cold start. The container runs migrations and seeding *before*
+  `artisan serve` starts listening, so that first request waits for the whole
+  boot.
+- Seeding is guarded: the container now runs `php artisan db:seed-if-empty`,
+  which skips seeding when the database is already seeded (`--fresh` forces a
+  re-run). Demo data is therefore inserted only on the very first boot, not on
+  every cold start.
+- `php artisan serve` is also started with `PHP_CLI_SERVER_WORKERS=4` so
+  concurrent browser requests don't queue behind a single worker.
+- Remaining mitigations: keep a health-check ping on the service (Render
+  cron-job / UptimeRobot hitting `/up`) so it never sleeps, or upgrade off the
+  free tier.
+
 ### Migrations fail on deploy
 - Check Render logs: **Logs** tab → filter by service.
 - Ensure `APP_KEY` is generated (Render auto-generates it via `generateValue`).
