@@ -375,6 +375,17 @@ For production, consider upgrading to a paid plan for better performance.
   cron-job / UptimeRobot hitting `/up`) so it never sleeps, or upgrade off the
   free tier.
 
+### Announcements or notifications are never delivered
+- Queued work (announcements, scheduled announcements, realtime notification
+  broadcasts) needs a queue worker, and expired bans need the scheduler.
+  `Dockerfile.render` starts both in the background next to `artisan serve`,
+  restarting each if it exits.
+- On the free tier they sleep with the service, so a scheduled announcement
+  whose time passes while the service is idle is sent on the next wake-up.
+- The mobile app has no WebSocket connection; it checks
+  `GET /api/client/v1/notifications/unread-count` every 30 seconds while open
+  and signed in, so new notifications appear within about 30 seconds.
+
 ### Migrations fail on deploy
 - Check Render logs: **Logs** tab → filter by service.
 - Ensure `APP_KEY` is generated (Render auto-generates it via `generateValue`).
