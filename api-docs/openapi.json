@@ -2768,7 +2768,7 @@
                                             "total_price": 150,
                                             "service_price": 150,
                                             "platform_fee": 15,
-                                            "currency": "USD",
+                                            "currency": "PHP",
                                             "scheduled_date": "2026-09-01T10:00:00+00:00",
                                             "service": {
                                                 "id": 1,
@@ -11210,7 +11210,7 @@
                                             "description": "Fast, reliable emergency pipe repair.",
                                             "price": 150,
                                             "price_type": "fixed",
-                                            "currency": "USD",
+                                            "currency": "PHP",
                                             "duration": "1-2 hours",
                                             "location": "Austin, TX",
                                             "status": "published",
@@ -11360,7 +11360,7 @@
                                     },
                                     "currency": {
                                         "type": "string",
-                                        "default": "USD",
+                                        "default": "PHP",
                                         "maxLength": 3
                                     },
                                     "duration": {
@@ -11384,7 +11384,7 @@
                                 "subcategory_id": 1,
                                 "price": 150,
                                 "price_type": "fixed",
-                                "currency": "USD",
+                                "currency": "PHP",
                                 "duration": "1-2 hours",
                                 "location": "Austin, TX"
                             }
@@ -11408,7 +11408,7 @@
                                         "description": "Expert plumbing repair service.",
                                         "price": 150,
                                         "price_type": "fixed",
-                                        "currency": "USD",
+                                        "currency": "PHP",
                                         "duration": "1-2 hours",
                                         "location": "Austin, TX",
                                         "status": "draft",
@@ -11547,7 +11547,7 @@
                                         "description": "Fast, reliable emergency pipe repair.",
                                         "price": 150,
                                         "price_type": "fixed",
-                                        "currency": "USD",
+                                        "currency": "PHP",
                                         "duration": "1-2 hours",
                                         "location": "Austin, TX",
                                         "status": "published",
@@ -11766,7 +11766,7 @@
                                         "description": "Updated description.",
                                         "price": 200,
                                         "price_type": "fixed",
-                                        "currency": "USD",
+                                        "currency": "PHP",
                                         "status": "published",
                                         "approval_status": "approved",
                                         "is_featured": true,
