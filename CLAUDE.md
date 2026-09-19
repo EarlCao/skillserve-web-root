@@ -14,7 +14,7 @@ SkillServe admin platform. Follow the full rulebook in @AGENT.md (architecture, 
 - Ports: backend 8000, Vite 5173, Reverb 8080, Postgres 5433 (`docker compose exec db psql -U group6 -d group6_db`). All services use `network_mode: host`; build with `docker compose build`, not `docker build ./backend`.
 - `scripts/fresh-demo.sh` and `scripts/fresh-admin.sh` run `migrate:fresh` and wipe the database; don't run them without asking.
 - Frontend: `npm run lint` and `npm run build` in `frontend/`. There is no frontend test framework and no Prettier config.
-- Seeded login: `admin@skillserve.test` / `SkillServe#2026` (super-admin).
+- Seeded logins (password `SkillServe#2026`): `admin@skillserve.test` (super-admin), `system@skillserve.test` (admin); mobile `customer@skillserve.test` and `provider@skillserve.test` (demo seed only, `DemoAccountSeeder`).
 
 ## Backend gotchas
 - Tests run on in-memory SQLite, not Postgres. Every test must extend `Tests\TestCase` (it forces SQLite so `RefreshDatabase` can't wipe the live DB). Postgres-only SQL may behave differently in tests.

@@ -105,7 +105,7 @@ Response schema: `see openapi.json`
 
 ## `GET /api/data-management/deleted`
 
-Returns a database-paginated union of soft-deleted records; records are not loaded into an in-memory capped collection.
+Returns a database-paginated union of soft-deleted records; records are not loaded into an in-memory capped collection. Each row includes can_permanently_delete and purge_at (when it is purged automatically; null for types that are never purged).
 
 **Authentication:** Bearer token
 
@@ -137,7 +137,7 @@ Response schema: `see openapi.json`
 
 ## `DELETE /api/data-management/deleted/{type}/{id}`
 
-Permanently delete a record
+Records of these types are also purged automatically 30 days after deletion.
 
 **Authentication:** Bearer token
 
@@ -145,7 +145,7 @@ Permanently delete a record
 
 | Name | Location | Required | Type / allowed values |
 |---|---|---:|---|
-| `type` | path | yes | string (`messages`, `reports`) |
+| `type` | path | yes | string (`messages`, `reports`, `reviews`) |
 | `id` | path | yes | integer |
 
 ### Request body and validation

@@ -1,68 +1,247 @@
 # Group 6 — Web Project
 
-Full-stack project with a **Laravel** backend (`backend/`), a **React + Vite** frontend (`frontend/`), and a **PostgreSQL** database — all running via Docker Compose.
+SkillServe admin platform: a **Laravel** backend (`backend/`), a **React + Vite** frontend (`frontend/`), and a **PostgreSQL** database — all running via Docker Compose.
 
-## Cloning the repositories
+New to the project? Start with [Local setup](#local-setup-step-by-step).
 
-The project root is **not** a git repository — the frontend and backend are two
-separate repositories that must be cloned side by side:
+## Local setup (step by step)
+
+Follow these steps to run SkillServe on your own machine after cloning.
+Everything (database, backend, frontend, WebSockets) runs in Docker, so you do
+**not** need PHP, Composer, Node or PostgreSQL installed.
+
+### 1. Install the prerequisites
+
+- **Git**
+- **Docker** with Docker Compose v2 (`docker compose version` should work)
+  - **Windows:** Docker Desktop with the WSL 2 backend. Clone and run the
+    project *inside* WSL (e.g. `~/projects`), not on `C:\` — it is much faster
+    and file watching works.
+  - **Docker Desktop (Windows/macOS):** the stack uses host networking. Turn
+    it on in *Settings → Resources → Network → Enable host networking*
+    (Docker Desktop 4.34+), then restart Docker Desktop.
+  - **Linux:** Docker Engine works as-is.
+
+Free ports needed: **5433** (Postgres), **8000** (backend), **5173**
+(frontend), **8080** (Reverb WebSockets).
+
+### 2. Clone the three repositories
+
+The project is three repos: the root (docker-compose, docs, scripts) with the
+backend and frontend cloned *inside* it. The folder names must be exactly
+`backend` and `frontend`.
 
 ```bash
-# from any folder, create the project folder and clone both repos into it
-mkdir skillserve && cd skillserve
-
+git clone https://github.com/EarlCao/skillserve-web-root.git skillserve
+cd skillserve
 git clone https://github.com/EarlCao/skillserve-web-backend.git backend
 git clone https://github.com/EarlCao/skillserve-web-frontend.git frontend
 ```
 
-Both repos have `main` and `dev` branches. `dev` is the active development
-branch:
+All three repos work on the `main` branch.
 
-```bash
-cd backend && git checkout dev
-cd ../frontend && git checkout dev
+### 3. Create the environment files
+
+The `.env` files are not committed. Create two new files and copy-paste the
+contents below into them exactly as shown:
+
+- `backend/.env`
+- `frontend/.env`
+
+#### `backend/.env`
+
+```dotenv
+APP_NAME=SkillServe
+APP_ENV=local
+# Left empty on purpose: the backend container generates it on first start.
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+
+APP_LOCALE=en
+APP_FALLBACK_LOCALE=en
+APP_FAKER_LOCALE=en_US
+
+APP_MAINTENANCE_DRIVER=file
+
+BCRYPT_ROUNDS=12
+
+LOG_CHANNEL=stack
+LOG_STACK=single
+LOG_DEPRECATIONS_CHANNEL=null
+LOG_LEVEL=debug
+
+# Must match docker-compose.yml (the Postgres container).
+DB_CONNECTION=pgsql
+DB_URL=
+DB_HOST=127.0.0.1
+DB_PORT=5433
+DB_DATABASE=group6_db
+DB_USERNAME=group6
+DB_PASSWORD=group6secret
+DB_SSLMODE=prefer
+
+SESSION_DRIVER=database
+SESSION_LIFETIME=120
+SESSION_ENCRYPT=false
+SESSION_PATH=/
+SESSION_DOMAIN=null
+
+BROADCAST_CONNECTION=reverb
+FILESYSTEM_DISK=local
+QUEUE_CONNECTION=database
+
+CACHE_STORE=database
+
+MEMCACHED_HOST=127.0.0.1
+
+REDIS_CLIENT=phpredis
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+
+# Realtime (Laravel Reverb). The key must match frontend/.env.
+REVERB_SERVER_HOST=0.0.0.0
+REVERB_SERVER_PORT=8080
+REVERB_HOST=127.0.0.1
+REVERB_PORT=8080
+REVERB_SCHEME=http
+REVERB_APP_ID=group6
+REVERB_APP_KEY=skillserve-local-key
+REVERB_APP_SECRET=skillserve-local-secret
+VITE_REVERB_APP_KEY=skillserve-local-key
+VITE_REVERB_HOST=localhost
+VITE_REVERB_PORT=8080
+VITE_REVERB_SCHEME=http
+
+# Emails are written to storage/logs/laravel.log instead of being sent.
+MAIL_MAILER=log
+MAIL_SCHEME=null
+MAIL_HOST=127.0.0.1
+MAIL_PORT=2525
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="${APP_NAME}"
+
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=
+AWS_USE_PATH_STYLE_ENDPOINT=false
+
+VITE_APP_NAME="${APP_NAME}"
+
+# Auth
+FRONTEND_URL=http://localhost:5173
+SANCTUM_EXPIRATION=1440
+LOGIN_RATE_LIMIT=5
+# Optional: only needed for Google sign-in from the mobile app.
+GOOGLE_CLIENT_ID=
+
+# Seeded accounts (local defaults — never use these passwords in production).
+ADMIN_EMAIL=admin@skillserve.test
+ADMIN_PASSWORD="SkillServe#2026"
+SYSTEM_ADMIN_EMAIL=system@skillserve.test
+SYSTEM_ADMIN_PASSWORD="SkillServe#2026"
+# demo = full sample data; admin-only = just the two admin accounts.
+SEED_MODE=demo
+
+# Swagger UI at http://localhost:8000/api/documentation (always on locally;
+# SWAGGER_UI_ENABLED only matters in production).
+L5_SWAGGER_GENERATE_ALWAYS=true
+SWAGGER_UI_ENABLED=false
 ```
 
-> **Important:** `docker-compose.yml` and this `README.md` live at the project
-> root, which is *outside* both repositories. When you clone fresh, copy
-> `docker-compose.yml` from this workspace into the new project root before
-> running the stack (or commit it to one of the two repos so it travels with
-> the code). The Dockerfiles inside `backend/` and `frontend/` **are** tracked
-> by their respective repos.
+#### `frontend/.env`
 
-## Quick start
+```dotenv
+VITE_API_BASE_URL=http://localhost:8000/api
+VITE_REVERB_APP_KEY=skillserve-local-key
+VITE_REVERB_HOST=localhost
+VITE_REVERB_PORT=8080
+VITE_REVERB_SCHEME=http
+```
+
+> These are **local-only** values. Never commit a real `.env`, and never put
+> production passwords, NeonDB credentials or API keys in this README — see
+> [`DEPLOYMENT.md`](DEPLOYMENT.md) for production configuration.
+
+### 4. Start the stack
 
 ```bash
 docker compose up -d --build
 ```
 
-This starts three services:
+The first build takes a few minutes. On start the backend installs Composer
+packages, generates `APP_KEY` if it is empty, runs migrations and starts the
+queue worker and scheduler.
 
-| Service   | Container        | URL                      | Notes                              |
-|-----------|------------------|--------------------------|------------------------------------|
-| Database  | `group6-db`      | `localhost:5433`         | PostgreSQL 17, database `group6_db` |
-| Backend   | `group6-backend` | `http://localhost:8000`  | Laravel 13 (PHP 8.3), migrations run automatically |
-| Frontend  | `group6-frontend`| `http://localhost:5173` | Vite dev server with HMR           |
-| Reverb    | `group6-reverb`  | `localhost:8080`         | Laravel Reverb WebSocket server (broadcasting) |
+| Service   | Container         | URL                     |
+|-----------|-------------------|-------------------------|
+| Database  | `group6-db`       | `localhost:5433`        |
+| Backend   | `group6-backend`  | `http://localhost:8000` |
+| Frontend  | `group6-frontend` | `http://localhost:5173` |
+| Reverb    | `group6-reverb`   | `localhost:8080`        |
 
-> **Networking note:** this machine is a Hyper-V VM whose sandbox blocks
-> outbound traffic from containers on Docker's bridge network, so all services
-> run with `network_mode: host` and bind directly to the host's ports.
->
-> **If you move this stack to a machine with normal Docker networking**, you
-> must remove all of these together, or the build fails with
-> `network.host is not allowed`:
-> 1. `network_mode: host` on every service (and re-add `ports:` mappings), and
-> 2. `network: host` in each `build:` section, and
-> 3. `--network=host` in the `RUN` steps of `backend/Dockerfile` and
->    `frontend/Dockerfile`.
->
-> Also note that `docker build ./backend` directly will *not* work in this
-> sandbox — builds must go through `docker compose build`.
->
-> **File ownership:** the backend container runs as uid 1000 to match the host
-> user. If your user id is different, pass it when starting: `HOST_UID=$(id -u)
-> docker compose up -d --build`.
+Check that everything is up with `docker compose ps`, and watch the backend
+until it prints `Server running on [http://0.0.0.0:8000]`:
+
+```bash
+docker compose logs -f backend
+```
+
+### 5. Seed the database (first time only)
+
+Migrations run automatically, but seeding does not. Load the demo data once:
+
+```bash
+./scripts/fresh-demo.sh     # full demo data (admins, customers, providers, bookings…)
+# or
+./scripts/fresh-admin.sh    # only the super-admin and admin accounts
+```
+
+> Both scripts run `migrate:fresh`, which **wipes the local database**. Only
+> run them again when you want to reset your data.
+
+### 6. Log in
+
+Open <http://localhost:5173>. All seeded accounts use the password
+`SkillServe#2026`:
+
+| Account                     | Role        | Used in              |
+|-----------------------------|-------------|----------------------|
+| `admin@skillserve.test`     | super-admin | Admin web            |
+| `system@skillserve.test`    | admin       | Admin web            |
+| `customer@skillserve.test`  | customer    | Mobile app (demo seed) |
+| `provider@skillserve.test`  | provider    | Mobile app (demo seed) |
+
+### Troubleshooting
+
+| Problem | Fix |
+|---------|-----|
+| `network.host is not allowed` or the frontend can't reach `localhost:8000` on Docker Desktop | Enable host networking (step 1), or see the networking note below. |
+| `port is already allocated` / address in use | Stop whatever uses 5433, 8000, 5173 or 8080 (e.g. a local Postgres). |
+| Login fails right after setup | You skipped step 5 — run `./scripts/fresh-demo.sh`. |
+| `Permission denied` writing `storage/` or `vendor/` | Your user id isn't 1000: `HOST_UID=$(id -u) docker compose up -d --build`. |
+| `./scripts/...: Permission denied` | `chmod +x scripts/*.sh` |
+| Pages load but nothing updates live | Check the Reverb container: `docker compose logs reverb`. |
+| Changed `.env` but nothing happened | `docker compose restart backend reverb` (frontend: `docker compose restart frontend`). |
+
+### Networking note
+
+All services use `network_mode: host` (the original dev machine's VM sandbox
+blocks Docker's bridge network), so they bind straight to the host ports and
+reach each other on `127.0.0.1`. If host networking isn't available on your
+machine, remove all of these together or the build fails:
+
+1. `network_mode: host` on every service in `docker-compose.yml` (add `ports:`
+   mappings instead, and point `DB_HOST` at `db`),
+2. `network: host` in each `build:` section, and
+3. `--network=host` in the `RUN` steps of `backend/Dockerfile` and
+   `frontend/Dockerfile`.
+
+Always build with `docker compose build`, not `docker build ./backend`.
 
 ## Backend packages
 
@@ -232,6 +411,13 @@ with the data-management permissions. It provides CSV exports, service archive
 and restore, and review, restoration, or permanent removal of soft-deleted
 records. Archive metadata is stored in the `data_archives` table; the migration
 is additive and does not alter existing records.
+
+Deleted reviews, reports and messages can be permanently deleted, and are
+purged automatically 30 days after deletion by the daily
+`data-management:purge-expired` command (run by the scheduler in the backend
+container). Other types (users, services, bookings, categories) can only be
+restored, because removing them would cascade into related records. The types
+and retention period live in `backend/config/data-management.php`.
 
 ## API documentation (Swagger / OpenAPI)
 
