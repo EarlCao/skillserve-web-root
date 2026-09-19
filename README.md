@@ -412,12 +412,12 @@ and restore, and review, restoration, or permanent removal of soft-deleted
 records. Archive metadata is stored in the `data_archives` table; the migration
 is additive and does not alter existing records.
 
-Deleted reviews, reports and messages can be permanently deleted, and are
-purged automatically 30 days after deletion by the daily
-`data-management:purge-expired` command (run by the scheduler in the backend
-container). Other types (users, services, bookings, categories) can only be
-restored, because removing them would cascade into related records. The types
-and retention period live in `backend/config/data-management.php`.
+Every deleted record can be permanently deleted, and is purged automatically
+30 days after deletion by the daily `data-management:purge-expired` command
+(run by the scheduler in the backend container). A record that related data
+still references — e.g. a user with bookings or reviews, or a category with
+services — is kept and shows why, so nothing is removed along with it. The
+retention period lives in `backend/config/data-management.php`.
 
 ## API documentation (Swagger / OpenAPI)
 
