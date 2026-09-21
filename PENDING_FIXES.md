@@ -6,173 +6,36 @@ Flutter repo, and the Render deployment. This is the master list; the Flutter re
 `PENDING_FIXES.md` repeats the items that touch the app.
 
 Each item has an ID, the requirement it satisfies (Admin **A x.y** / Mobile **M x.y**), where the
-problem is, the fix, and how to verify it. Work top to bottom: **Critical** items break a core flow
-or leave a requirement unmet; the system is not defensible until they are done.
+problem is, the fix, and how to verify it. All Critical, High, Medium and Low items are resolved (below); what remains are the owner
+actions before go-live and the defense material.
 
 Tags: **[BE]** Laravel backend · **[AW]** React admin web · **[MB]** Flutter app · **[DEP]** deployment
 · **[DOC]** defense material.
 
 ---
 
-## Critical — a core flow is broken or a requirement is not met
+## Critical
 
-### C1. Providers cannot submit verification documents [BE][MB]
-- **Requirement:** M 9.3 Submit Verification, M 9.5 Respond to Information Request, M 9.4, A 4.3.
-- **Where:** no API creates a `VerificationRequest` or `VerificationDocument` (only
-  `database/seeders/ProviderSeeder.php` does). In the app,
-  `lib/features/provider/views/verification_status_screen.dart` and step 2 of
-  `provider_onboarding_screen.dart` only add a record to local state and show "Document submitted
-  for review" — nothing is uploaded.
-- **Why it matters:** `ProviderServiceService::verifiedProfile()` refuses service creation until the
-  provider is verified, so in production **no new provider can ever list a service**. Only seeded
-  demo providers work.
-- **Fix:**
-  - [BE] `GET /api/client/v1/provider/verification` — current request status (`pending`,
-    `approved`, `rejected`, `info_requested`), the admin's rejection reason / requested info, and
-    the submitted documents (no storage paths).
-  - [BE] `POST /api/client/v1/provider/verification` (multipart) — `documents[]` with
-    `document_type` (`government_id`, `certificate`, `other`), JPG/PNG/PDF up to 10 MB each, stored
-    on the private `verification` disk; creates or reopens the request as `pending`. Refuse while a
-    request is already pending review. Resubmitting after `rejected`/`info_requested` is the M 9.5
-    response. Log it and notify admins (A 11.1).
-  - [BE] Feature tests: ownership, file validation, state rules, admin download of the new file.
-  - [MB] Replace both screens with the real flow (camera/gallery via `image_picker`, PDF via
-    `file_picker`), upload progress, and the status/reason from the API; pull-to-refresh.
-- **Verify:** register a new provider on the phone → upload ID → admin opens it in Provider
-  Profile → approve → provider can create a service.
-
-### C2. Booking times shift by 8 hours [BE][MB]
-- **Requirement:** M 5.1–5.4, A 7.2 (correct schedules).
-- **Where:** `backend/config/app.php` `'timezone' => 'UTC'`; the app sends
-  `scheduledDate.toIso8601String()` of a local `DateTime`, which has **no offset**
-  (`lib/features/booking/services/booking_service.dart`). The server reads 09:00 as 09:00 UTC and
-  returns `09:00+00:00`; the app converts that to 17:00 on a phone set to Philippine time. Provider
-  hours are also compared in UTC.
-- **Fix:** set `'timezone' => env('APP_TIMEZONE', 'Asia/Manila')` (add to `.env.example` and
-  Render), send times from the app with their offset (e.g. a helper that formats local time as
-  `2026-10-05T09:00:00+08:00`, or `toUtc()`), and add a backend test that a `+08:00` start is stored
-  and returned unchanged and passes the provider-hours check. Check the admin tables show the same
-  times.
-- **Verify:** book 9:00 AM on the phone → booking details, provider app and admin all show 9:00 AM.
-
-### C3. System Settings are saved but not enforced [BE][MB][AW]
-- **Requirement:** A 17.2 Marketplace, A 17.3 Booking (incl. cancellation policies), A 17.4
-  Notification, A 17.6 System settings; M 5.6 "cancel according to the configured rules".
-- **Where:** `config/system-settings.php` defines them; only `system.session_timeout_minutes` and
-  `notifications.announcement_notifications_enabled` are read anywhere. The platform fee is
-  hard-coded (`CreateClientBookingAction`: `$servicePrice * 0.10`).
-- **Fix (one authoritative read through `SettingsService`, with tests for each):**
-  - `marketplace.provider_registration_enabled` → `register-provider` / Google provider sign-up
-    return 403 with a clear message when off.
-  - `marketplace.service_approval_required` → when off, provider-created services publish as
-    approved.
-  - `marketplace.featured_services_enabled` → when off, the `featured` filter/sections return
-    nothing and the admin "Feature" action is disabled.
-  - `marketplace.commission_rate` → used for `platform_fee` instead of 10%.
-  - `booking.booking_enabled` → booking creation refused (422) when off; the app shows why.
-  - `booking.cancellation_window_hours` → a client cannot cancel a confirmed booking inside the
-    window (pending is always cancellable); expose the rule in the booking resource so the app's
-    cancel dialog explains it.
-  - `booking.client_/provider_cancellation_fee_percent` → record the fee on the booking when a
-    late cancellation happens (off-platform like payments), or remove these settings if the
-    capstone scope has no fees — do not leave dead switches.
-  - `notifications.email_notifications_enabled` / `push_notifications_enabled` → gate mail
-    notifications and realtime/background delivery respectively.
-  - `system.maintenance_mode` → middleware returning 503 on `/api/client/v1/*` (admins unaffected);
-    the app shows a maintenance screen.
-  - `system.default_page_size` → default `per_page` for list endpoints.
-  - `general.platform_name` / `support_email` → used in mail and exposed to the app (see H2).
-- **Verify:** toggle each in Admin → Settings and observe the effect in the app/API.
-
-### C4. Account status and restrictions are not shown to users [BE][MB]
-- **Requirement:** M 1.6 Account Status Display, M 2.4 View Account Status, M 9.6 Provider Account
-  Restrictions, M 15.4 Account Status and Restriction Information, M 16.4.
-- **Where:** a suspended/banned user gets only "Your account is not active." at login
-  (`ClientAuthenticationService::login`); when a session is refused later, `api_client.dart` just
-  ends it. The app has no account-status UI. Moderation **warnings** are recorded on the report only
-  (`TakeModerationAction`: "warnings are recorded on the report only").
-- **Fix:**
-  - [BE] On a refused login/refresh, return `errors.account = {status, reason, until}` (suspended /
-    banned / deleted), using the data the Users module already stores.
-  - [BE] Include `account_status` (and provider `verification_status`, suspension state) in
-    `GET /auth/me`.
-  - [BE] Deliver a warning as a notification (`AccountWarningNotification`) and record it in the
-    user's moderation history.
-  - [MB] An "Account restricted" screen shown instead of the generic error, with the reason, the
-    end date and a "Contact support" action; an account-status card on the profile/settings screen.
-- **Verify:** suspend a user in Admin → the app shows the restriction screen with the reason;
-  issue a warning → the user gets a notification.
+Nothing open.
 
 ---
 
-## High — needed for a complete, deployable system
+## High
 
-### H1. Admin decisions do not notify the people affected [BE][MB]
-- **Requirement:** M 8.1–8.3, M 9.4, M 9.6, M 11.5 View Dispute Updates, M 6.4/7.5 follow-up.
-- **Where:** `AppServiceProvider` only logs these events: `ProviderVerificationApproved/Rejected`,
-  `ProviderAdditionalInfoRequested`, `ProviderVerificationRemoved`, `ProviderSuspended/Activated`,
-  `UserSuspended/Activated`, `ReportResolved/Rejected`, `BookingDisputeManaged`. Only bans/unbans
-  (mail) and service moderation notify anyone. Resolving a dispute also sets the booking to
-  `completed`, which sends the misleading "Job completed — you can now leave a review".
-- **Fix:** one listener per group extending `BaseNotification` with the right category:
-  verification decisions (with the reason / requested info) → provider; suspension/activation →
-  user; report resolved/rejected → reporter (no details about the other party); dispute
-  investigate/resolve/reject/close → both parties with the resolution; suppress the generic
-  "Job completed" message when completion comes from a dispute resolution. Tests with
-  `Notification::fake()`.
-- **Verify:** each admin action produces one notification on the right phone.
+Nothing open.
 
-### H2. Platform policies are hard-coded in the app [BE][MB]
-- **Requirement:** M 14.4 View Platform Policies, A 17.5 Manage Platform Policies.
-- **Where:** `lib/features/settings/views/terms_screen.dart` and `privacy_screen.dart` are static
-  text; there is no Community Guidelines screen; no public endpoint exposes
-  `policies.*` settings.
-- **Fix:** [BE] public `GET /api/client/v1/platform` returning `platform_name`, `support_email`,
-  `terms_of_service`, `privacy_policy`, `community_guidelines` (cached, invalidated on settings
-  save). [MB] one policy screen that renders the admin text (fallback to the bundled copy when
-  empty/offline) for Terms, Privacy and a new Community Guidelines entry; link them from
-  registration ("By signing up you agree…"). [DEP] write the real policy texts in Admin → Settings.
-- **Verify:** edit the privacy policy in Admin → reopen it in the app.
-
-### H3. Backend dependencies with known vulnerabilities [BE]
-- **Where:** `composer audit`: `league/commonmark` (4 high advisories, fixed in ≥ 2.10.0) and
-  `maatwebsite/excel` (CVE-2026-84374, fixed in ≥ 3.1.70); `doctrine/annotations` is abandoned.
-- **Fix:** `composer update league/commonmark maatwebsite/excel --with-dependencies`, run the full
-  suite and an analytics export; find what still requires `doctrine/annotations`
-  (`composer why doctrine/annotations`) and drop or replace it if possible.
-- **Verify:** `composer audit` reports no advisories. (`npm audit` for the admin web is clean.)
-
-### H4. Mobile app is not release-ready [MB][DEP]
-- **Where:** `android/app/build.gradle.kts` — `applicationId = "com.example.skilllink_mobile"`,
-  release builds signed with the **debug** key; `AndroidManifest.xml` label `skilllink_mobile`;
-  default launcher icon; `flutter_01.log` is committed.
-- **Fix:** app label "SkillServe"; a real `applicationId` (e.g. `com.skillserve.mobile`) — this
-  needs a **new Google OAuth Android client** with the release SHA-1 (see
-  `SETUP_CREDENTIALS.md`) or Google sign-in breaks; a release keystore with `key.properties`
-  (gitignored) and a `signingConfigs.release`; launcher icon and splash
-  (`flutter_launcher_icons`, `flutter_native_splash`); a monochrome notification icon
-  (`@drawable/ic_stat_notification`) for closed-app notifications; bump `version`; delete
-  `flutter_01.log` and ignore `*.log`. Build with
-  `flutter build apk --release --dart-define-from-file=env/production.json` (and pass
-  `REVERB_APP_KEY` if production's key is not `skillserve`).
-- **Verify:** install the release APK on a clean phone: name/icon correct, Google sign-in works,
-  realtime connects, notifications show the icon.
-
-### H5. Production setup checklist [DEP]
-Do these once, in order, and record the results for the defense:
-1. Backend on a **paid Render instance with the persistent disk** at `/var/www/html/storage/app`
-   (`DEPLOYMENT.md` → "Uploaded files"); confirm `GET /api/health` shows `storage: up`. A paid
-   instance also stops the free-tier sleep that delays the first request and pauses the queue,
-   scheduler and closed-app notification checks.
-2. Environment: `APP_KEY`, `APP_URL`, `FRONTEND_URL` (CORS), `APP_TIMEZONE=Asia/Manila` (C2),
-   Neon `DB_*`, `REVERB_APP_ID/KEY/SECRET` (the app's `REVERB_APP_KEY` must match), mail (Brevo) for
-   OTP and password reset, `GOOGLE_CLIENT_ID`, `SEED_MODE=admin-only` with strong
-   `ADMIN_PASSWORD`/`SYSTEM_ADMIN_PASSWORD`, `SWAGGER_UI_ENABLED` off unless needed for the panel.
-3. Frontend static site env (`VITE_API_BASE_URL`, `VITE_REVERB_*`) and the `/* → /index.html`
-   rewrite.
-4. Production data an admin must enter: service categories and subcategories, recognition badges,
-   policy texts (H2), settings (C3), at least one support-staff role.
-5. Smoke test end to end on the deployed stack (see D2).
+### Owner actions before go-live (cannot be done from the code)
+1. **Render:** a paid backend instance with the persistent disk, and the environment from
+   `DEPLOYMENT.md`, including `SEED_MODE=starter` on the first deploy, then `admin-only`.
+   After that, follow `DEPLOYMENT.md` → "Go-live checklist".
+2. **Android signing:** create the upload keystore and `android/key.properties` (Flutter repo
+   `README.md` → "Building a release"). Back up the keystore and its passwords.
+3. **Google sign-in:** register an Android OAuth client for `com.skillserve.mobile` with the debug
+   and release SHA-1 fingerprints (Flutter repo `SETUP_CREDENTIALS.md`, section 2).
+4. **Admin content:** in Settings, write the Terms of Service, Privacy Policy and Community
+   Guidelines, and review the booking rules. Then add categories, badges and a support-staff role.
+5. **Evidence:** run the smoke test (D2) on the deployed stack and fill in the Result columns of
+   both `TEST_PLAN.md` files.
 
 ---
 
@@ -206,6 +69,73 @@ Nothing open.
 ---
 
 ## Resolved on 2026-09-21
+
+**Critical and High from the full audit:**
+- **C1 — Provider verification upload (M 9.3, M 9.5, A 4.3).**
+  - `GET` and `POST /api/client/v1/provider/verification`: 1–5 documents (government ID,
+    certificate, other; JPG/PNG/PDF up to 10 MB) plus an optional note.
+  - Files go to the private `verification` disk. A request in `additional_info_required` is
+    reopened, and any other allowed status starts a new one. The profile moves to pending, the
+    submission is logged, and admins see it in the existing review screen.
+  - The app has an upload panel (camera, gallery, PDF, with progress) on Verification Status and
+    in onboarding. It shows the status, the reviewer's reason or request, and the documents sent.
+  - Also fixed `LogProviderActivity`, which called a nonexistent method, so every admin decision
+    on a provider returned a 500.
+  - Tests: `ProviderVerificationTest`, `verification_test`.
+- **C2 — Booking times.**
+  - Storage stays UTC. `BUSINESS_TIMEZONE=Asia/Manila` (`BusinessTime`) is the wall clock for
+    provider hours and for times written in notifications.
+  - Booking and reschedule requests are normalised to UTC. The app sends UTC ISO-8601 times.
+  - Tests: `ClientMarketplaceTest` (instant and hours), `BookingRescheduleTest`, `booking_test`.
+- **C3 — Settings enforced (A 17.2–17.6).**
+  - Commission sets `platform_fee`.
+  - `booking_enabled` pauses new bookings.
+  - The cancellation window records a late-cancellation fee on the booking
+    (`bookings.cancellation_fee`, migration `2026_09_22_000001`, nullable and additive). The fee
+    is shown to the client and provider before they confirm, on the booking, and in the admin
+    modal.
+  - `service_approval_required` and `featured_services_enabled` are enforced, along with the
+    email and push switches.
+  - `default_page_size` applies to every list (`PageSize`), and provider sign-ups can be closed.
+  - Maintenance mode returns a 503 with `meta.maintenance` to the mobile API. The app shows a
+    maintenance screen and retries. The admin web and `GET /api/client/v1/platform` stay open.
+  - Tests: `SettingsEnforcementTest`, `platform_test`.
+- **C4 — Account status (M 1.6, M 2.4, M 9.6, M 15.4, M 16.4).**
+  - Every refusal of a suspended or banned account (login, Google, OTP, refresh, middleware) is a
+    403 with `meta.account` {status, reason, since, until}. `/auth/me` carries `account` and the
+    provider's suspension details.
+  - The app ends the session and explains why on the login screen. Settings shows an account
+    status card.
+  - Moderation warnings now reach the user as a `UserWarned` event, with a notification and a
+    log entry.
+  - Tests: `AccountStatusTest`, `account_status_test`.
+- **H1 — Decision notifications.** In-app, realtime and closed-app notifications now go out for:
+  - verification approved, rejected or needing more info, and provider suspended or reinstated;
+  - account warned, suspended or reinstated;
+  - report outcomes, to the reporter;
+  - dispute investigate, resolve, reject and close, to both parties (without a duplicate "job
+    completed").
+
+  Tapping a notification opens the matching screen. Tests: `AdminDecisionNotificationTest`,
+  `notifications_reviews_test`.
+- **H2 — Policies from the admin (M 14.4).**
+  - Public `GET /api/client/v1/platform` returns the platform name, support email, sign-up and
+    booking rules, and the three policy texts.
+  - The app renders them on Terms, Privacy and the new Community Guidelines screen, falling back
+    to the bundled text when offline. Registration links all three.
+- **H3 — Dependency audit.** `league/commonmark` 2.10.1 and `maatwebsite/excel` 3.1.70;
+  `composer audit` is clean.
+- **H4 — Mobile release.**
+  - App ID `com.skillserve.mobile`, label "SkillServe", launcher icon (`branding/app_icon.png`),
+    branded splash, monochrome notification icon.
+  - Release signing via a gitignored `key.properties`, falling back to the debug key with a
+    warning. `pubspec.lock` is now tracked, and `flutter_01.log` was removed.
+  - `flutter build apk --release` succeeds.
+- **H5 — Production setup.**
+  - `SEED_MODE=starter` gives roles and permissions plus the default service categories, with no
+    demo users (`StarterSeedTest`).
+  - `.env.example` and `DEPLOYMENT.md` cover the timezones and the full environment.
+  - A "Go-live checklist" was added to `DEPLOYMENT.md`.
 
 **Medium and Low from the full audit:**
 - **M1 — Admin forgot password (A 1.4).** "Forgot password?" on the admin login;

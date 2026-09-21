@@ -91,15 +91,19 @@ be. Keep it in step with the dashboard when you change either.
    REVERB_APP_ID=skillserve
    REVERB_APP_KEY=generate-a-random-key
    REVERB_APP_SECRET=generate-a-random-secret
-   SEED_MODE=admin-only
+   SEED_MODE=starter
+   APP_TIMEZONE=UTC
+   BUSINESS_TIMEZONE=Asia/Manila
    ADMIN_EMAIL=admin@yourdomain.com
    ADMIN_PASSWORD=replace-me-with-a-strong-password
    SYSTEM_ADMIN_EMAIL=system@yourdomain.com
    SYSTEM_ADMIN_PASSWORD=replace-me-with-a-strong-password
    ```
 
-   ⚠️ **Seeding.** `SEED_MODE=admin-only` seeds just the roles, permissions
-   and the bootstrap admin accounts. The default (`SEED_MODE=demo`) additionally
+   ⚠️ **Seeding.** `SEED_MODE=starter` seeds the roles, permissions, the
+   bootstrap admin accounts and the default service categories, so the site is
+   usable at once (re-running keeps existing categories). `admin-only` skips the
+   categories. The default (`SEED_MODE=demo`) additionally
    seeds the full demo dataset, which must never run against production — and
    since the container seeds on every start, leaving it on `demo` re-seeds demo
    data on every restart. Production seeding also refuses the built-in default
@@ -262,7 +266,9 @@ You can now browse tables, run queries, and verify data after each deployment.
 | `DB_URL` | _(not used)_ | _(leave unset)_ |
 | `DB_HOST` | `127.0.0.1` | Neon pooled hostname (bare, no `/db` or query) |
 | `DB_DIRECT_HOST` | _(unset)_ | optional — derived from `DB_HOST` when unset |
-| `SEED_MODE` | `demo` | `admin-only` |
+| `SEED_MODE` | `demo` | `starter` (or `admin-only`) |
+| `APP_TIMEZONE` | `UTC` | `UTC` — storage; keep it |
+| `BUSINESS_TIMEZONE` | `Asia/Manila` | `Asia/Manila` — provider hours and booking times |
 | `ADMIN_PASSWORD` | `SkillServe#2026` | required, non-default |
 | `SYSTEM_ADMIN_PASSWORD` | `SkillServe#2026` | required, non-default |
 | `DB_PORT` | `5433` | `5432` |
@@ -271,6 +277,41 @@ You can now browse tables, run queries, and verify data after each deployment.
 | `SESSION_DRIVER` | `database` | `database` |
 | `CACHE_STORE` | `database` | `database` |
 | `FRONTEND_URL` | `http://localhost:5173` | `https://skillserve-frontend.onrender.com` |
+
+---
+
+## Go-live checklist
+
+Do these in order on the real services and note the date and result of each — the panel may ask.
+
+1. **Backend service** (Render, paid instance with the persistent disk at
+   `/var/www/html/storage/app`, see "Uploaded files"). Environment as in Step 2, including
+   `APP_KEY`, `APP_URL`, `FRONTEND_URL`, the Neon `DB_*`, `REVERB_APP_ID/KEY/SECRET`,
+   `BUSINESS_TIMEZONE=Asia/Manila`, mail (Brevo) for OTP and password-reset mail,
+   `GOOGLE_CLIENT_ID`, `SEED_MODE=starter` and strong `ADMIN_PASSWORD` /
+   `SYSTEM_ADMIN_PASSWORD`. Leave `SWAGGER_UI_ENABLED` off unless you will demo the API docs.
+2. **Deploy and verify** — the log shows migrations and seeding; `GET /api/health` returns
+   database `up` and storage `up`; `GET /api/client/v1/platform` answers.
+3. **Frontend static site** — `VITE_API_BASE_URL`, `VITE_REVERB_*` (key = backend
+   `REVERB_APP_KEY`), the `/* → /index.html` rewrite and the security headers (see
+   "Frontend — static site"). If its address is new, add it to the backend's `FRONTEND_URLS`.
+4. **Sign in as the super-admin** and set up the platform:
+   - Settings → General: platform name, support email.
+   - Settings → Platform policies: terms of service, privacy policy, community guidelines
+     (shown in the app and linked from registration).
+   - Settings → Marketplace / Booking: commission rate, cancellation window and fees.
+   - Settings → System: session timeout (e.g. 480 minutes); maintenance mode **off**.
+   - Service categories: review the starter catalog; add or disable as needed.
+   - Provider recognition: create the badges you will award.
+   - Administrators: create staff accounts and roles (e.g. a support role).
+5. **Mobile release APK** built against production (Flutter repo README → "Building a
+   release"), with the Android Google OAuth client registered for `com.skillserve.mobile` and
+   the release SHA-1.
+6. **End-to-end smoke test** on the deployed stack, with two phones: register a customer and a
+   provider → provider uploads verification → admin approves → provider adds a service → admin
+   approves it → customer books → provider accepts → chat → reschedule → start → complete →
+   payment received → review → report → admin moderates → notifications arrive on both phones,
+   including with the app closed. Record the results in `TEST_PLAN.md`.
 
 ---
 

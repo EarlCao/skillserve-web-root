@@ -21,7 +21,7 @@ so (for example "Open: C3").
 | Backend code style | `docker compose exec backend ./vendor/bin/pint --test` | PSR-12 / Laravel style |
 | Admin web lint | `cd frontend && npm run lint` | ESLint, React hooks rules |
 | Admin web build | `cd frontend && npm run build` | Compiles every page; no chunk over 500 kB |
-| Dependency audit | `docker compose exec backend composer audit`, `cd frontend && npm audit` | Known vulnerabilities (Open: H3) |
+| Dependency audit | `docker compose exec backend composer audit`, `cd frontend && npm audit` | No known vulnerabilities (`composer audit` clean) |
 
 The admin web has no component-test framework; its behaviour is verified by the UAT rows below
 together with the backend tests of the endpoints each page calls.
@@ -86,7 +86,7 @@ Columns: **Page** in the admin web · **API** endpoints · **Tests** (backend fe
 | A 3.3 | Filter users | `/admin/users` | `GET /users?type=&status=` | UserManagementTest | Type / status / verification filters narrow the list | |
 | A 3.4 | View user profile | `/admin/users/:id` | `GET /users/{id}`, `/users/{id}/moderation-history` | UserManagementTest | Profile shows details, services, bookings, ratings, activity | |
 | A 3.5 | Edit user information | `/admin/users/:id` | `PATCH /users/{id}` | UserManagementTest | Edit phone → saved, audit log entry | |
-| A 3.6 | Suspend user | `/admin/users` | `PATCH /users/{id}/suspend` | UserManagementTest | Suspend with reason → user cannot use the app (Open: C4, H1 for the user-facing notice) | |
+| A 3.6 | Suspend user | `/admin/users` | `PATCH /users/{id}/suspend` | UserManagementTest · AccountStatusTest · AdminDecisionNotificationTest | Suspend with reason → the app signs the user out and shows the reason; the user gets an "account suspended" notification | |
 | A 3.7 | Activate user | `/admin/users` | `PATCH /users/{id}/activate` | UserManagementTest | Activate → user can sign in again | |
 | A 3.8 | Ban user | `/admin/users` | `PATCH /users/{id}/ban`, `/unban` | UserManagementTest | Ban (days / forever) → ban email sent; expired ban lifts automatically | |
 | A 3.9 | Delete user | `/admin/users` | `DELETE /users/{id}` | UserManagementTest | Delete → gone from list, listed in Data Management → Deleted | |
@@ -97,10 +97,10 @@ Columns: **Page** in the admin web · **API** endpoints · **Tests** (backend fe
 |----|-------------|------|-----|-------|----------------|--------|
 | A 4.1 | View providers | `/admin/providers` | `GET /providers` | ProviderSecurityTest | List with business name, verification status | |
 | A 4.2 | View provider profile | `/admin/providers/:id` | `GET /providers/{id}` | ProviderSecurityTest | Skills, experience, portfolio, services, ratings, bookings shown | |
-| A 4.3 | Review verification request | `/admin/providers/:id` | `GET /providers/{id}/verification-documents/{doc}/download` | ProviderSecurityTest | "View" opens the uploaded document (Open: C1 — providers cannot upload yet) | |
+| A 4.3 | Review verification request | `/admin/providers/:id` | `GET /providers/{id}/verification-documents/{doc}/download` | ProviderSecurityTest · ProviderVerificationTest | A provider uploads from the app → the request appears as pending; "View" opens each document | |
 | A 4.4 | Approve verification | `/admin/providers/:id` | `PATCH /providers/{id}/verification/approve` | ProviderSecurityTest | Approve → provider verified, can create services | |
-| A 4.5 | Reject verification | `/admin/providers/:id` | `PATCH …/verification/reject` | ProviderSecurityTest | Reject with reason → status rejected (Open: H1 notification) | |
-| A 4.6 | Request additional info | `/admin/providers/:id` | `PATCH …/verification/request-info` | ProviderSecurityTest | Request info → status "info requested" (Open: C1, H1) | |
+| A 4.5 | Reject verification | `/admin/providers/:id` | `PATCH …/verification/reject` | ProviderSecurityTest · AdminDecisionNotificationTest | Reject with reason → status rejected; the provider is notified and sees the reason | |
+| A 4.6 | Request additional info | `/admin/providers/:id` | `PATCH …/verification/request-info` | ProviderSecurityTest · ProviderVerificationTest · AdminDecisionNotificationTest | Request info → the provider is notified, uploads again, and the same request returns to pending | |
 | A 4.7 | Suspend provider | `/admin/providers/:id` | `PATCH /providers/{id}/suspend`, `/activate` | ProviderSecurityTest | Suspend → provider hidden from marketplace | |
 | A 4.8 | Remove verification | `/admin/providers/:id` | `PATCH …/verification/remove` | ProviderSecurityTest | Remove → provider unverified, services not bookable | |
 
@@ -135,7 +135,7 @@ Columns: **Page** in the admin web · **API** endpoints · **Tests** (backend fe
 | ID | Requirement | Page | API | Tests | UAT → expected | Result |
 |----|-------------|------|-----|-------|----------------|--------|
 | A 7.1 | View all bookings | `/admin/bookings` | `GET /bookings` | BookingListTest | List with client, provider, service | |
-| A 7.2 | Booking details | `/admin/bookings` (modal) | `GET /bookings/{id}` | BookingPaymentTest | Details: client, provider, service, schedule, status, payment (Open: C2 for times) | |
+| A 7.2 | Booking details | `/admin/bookings` (modal) | `GET /bookings/{id}` | BookingPaymentTest | Details: client, provider, service, schedule (Manila time), status, payment, late-cancellation fee | |
 | A 7.3 | Search bookings | `/admin/bookings` | `GET /bookings?search=` | BookingListTest | Search by booking number, client, provider, service | |
 | A 7.4 | Filter bookings | `/admin/bookings` | `GET /bookings?status=&payment_status=&date_from=` | BookingListTest | Status, payment, dispute, date filters | |
 | A 7.5 | Monitor status | `/admin/bookings` | same | ProviderBookingTest | A booking moves pending → confirmed → active → completed as the provider acts | |
@@ -163,9 +163,9 @@ Columns: **Page** in the admin web · **API** endpoints · **Tests** (backend fe
 | A 9.1–9.4 | View user / service / review / message reports | `/admin/reports` | `GET /reports?type=`, `GET /reports/reasons` | ReportsAndModerationTest, ClientReportTest | Each type filter lists reports filed from the app; reason filter lists every reason | |
 | A 9.5 | Investigate | `/admin/reports` | `PATCH /reports/{id}/investigate` | ReportsAndModerationTest | Status → investigating, audit entry | |
 | A 9.6 | Investigation notes | `/admin/reports` | `PATCH /reports/{id}/notes` | ReportsAndModerationTest | Note appended with author and time | |
-| A 9.7 | Resolve | `/admin/reports` | `PATCH /reports/{id}/resolve` | ReportsAndModerationTest | Resolved with note (Open: H1 reporter notification) | |
+| A 9.7 | Resolve | `/admin/reports` | `PATCH /reports/{id}/resolve` | ReportsAndModerationTest · AdminDecisionNotificationTest | Resolved with note; the reporter is notified | |
 | A 9.8 | Reject | `/admin/reports` | `PATCH /reports/{id}/reject` | ReportsAndModerationTest | Rejected with reason | |
-| A 9.9 | Moderation action | `/admin/reports` | `PATCH /reports/{id}/action` | ReportsAndModerationTest | Warning / suspend / ban / hide / remove applied to the target (Open: C4 warning delivery) | |
+| A 9.9 | Moderation action | `/admin/reports` | `PATCH /reports/{id}/action` | ReportsAndModerationTest · AccountStatusTest | Warning / suspend / ban / hide / remove applied to the target; a warning reaches the user as a notification | |
 
 ### 10. Dispute Management
 
@@ -176,7 +176,7 @@ Columns: **Page** in the admin web · **API** endpoints · **Tests** (backend fe
 | A 10.3 | Review evidence | modal → evidence | `GET /disputes/{booking}/evidence/{id}` | DisputeManagementTest, BookingDisputeTest | Photos uploaded from the app open | |
 | A 10.4 | Dispute history | modal | `GET /disputes/{booking}/history` | DisputeManagementTest | Every action listed | |
 | A 10.5 | Dispute notes | modal | `PATCH /disputes/{booking}/notes` | DisputeManagementTest | Internal note saved | |
-| A 10.6 | Resolve | modal | `PATCH /disputes/{booking}/resolve`, `/reject` | DisputeManagementTest | Decision saved (Open: H1 notifications to both parties) | |
+| A 10.6 | Resolve | modal | `PATCH /disputes/{booking}/resolve`, `/reject` | DisputeManagementTest · AdminDecisionNotificationTest | Decision saved; client and provider are both notified | |
 | A 10.7 | Close | modal | `PATCH /disputes/{booking}/close` | DisputeManagementTest | Resolved dispute closed | |
 
 ### 11. Notifications and Announcements
@@ -244,11 +244,11 @@ Columns: **Page** in the admin web · **API** endpoints · **Tests** (backend fe
 | ID | Requirement | Page | API | Tests | UAT → expected | Result |
 |----|-------------|------|-----|-------|----------------|--------|
 | A 17.1 | General settings | `/admin/settings` → General | `GET/PUT /settings` | SettingsTest | Name, description, support email saved; timezone shown read-only | |
-| A 17.2 | Marketplace settings | → Marketplace | same | SettingsTest | Saved (Open: C3 — not enforced yet) | |
-| A 17.3 | Booking settings | → Booking | same | SettingsTest | Saved (Open: C3 — cancellation window not enforced yet) | |
-| A 17.4 | Notification settings | → Notifications | same | NotificationsTest | Announcement switch blocks sending (Open: C3 for email/push switches) | |
-| A 17.5 | Platform policies | → Platform policies | same | SettingsTest | Saved (Open: H2 — not shown in the app yet) | |
-| A 17.6 | System settings | → System | same | AuthenticationTest | Session timeout enforced (Open: C3 for maintenance mode, page size) | |
+| A 17.2 | Marketplace settings | → Marketplace | same | SettingsTest · SettingsEnforcementTest | Commission sets the platform fee; with service approval on, provider edits go back to review; with featured services off, featuring is refused | |
+| A 17.3 | Booking settings | → Booking | same | SettingsTest · SettingsEnforcementTest | Pausing bookings blocks new bookings; a cancellation inside the window records the fee | |
+| A 17.4 | Notification settings | → Notifications | same | NotificationsTest · SettingsEnforcementTest | The announcement switch blocks sending; the email switch stops moderation mail; the push switch stops realtime and closed-app pushes | |
+| A 17.5 | Platform policies | → Platform policies | same | SettingsTest · SettingsEnforcementTest | Saved text appears in the app under Terms, Privacy and Community Guidelines | |
+| A 17.6 | System settings | → System | same | AuthenticationTest · SettingsEnforcementTest | Session timeout enforced; maintenance mode shows the app's maintenance screen while the admin web keeps working; the default page size applies to lists | |
 
 ### 18. Data Management
 
