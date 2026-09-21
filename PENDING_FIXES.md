@@ -9,69 +9,13 @@ marked **(also mobile)**.
 
 ## High — affects correctness or data in production
 
-### 1. A booking can never be marked as paid (also mobile)
-- **Where:** `backend/app/Modules/ClientMarketplace/Actions/CreateClientBookingAction.php` sets
-  `payment_status = 'unpaid'`; nothing anywhere ever writes `paid`, `refunded` or
-  `partially_refunded`.
-- **Why it matters:** every booking stays "Unpaid" forever. The mobile Payments screen, the
-  provider Earnings screen ("not yet marked paid"), and the admin booking/analytics payment
-  badges can never show a settled job.
-- **Fix:** add a way to record settlement — an admin "Mark as paid" action on a booking
-  (permission-gated, audited via `LogBookingActivity`), and/or a provider "Cash received"
-  confirmation on a completed job. Refunds need the same once a policy exists.
-
-### 2. Admins cannot open provider verification documents
-- **Where:** `frontend/src/modules/providers/pages/ProviderProfilePage.jsx` (the "View" link uses
-  `doc.file_url`). No API resource returns `file_url`, so the link has no target.
-- **Why it matters:** verifying a provider means looking at the ID they uploaded; right now the
-  admin can see the file name but cannot open it.
-- **Fix:** the backend already serves it behind auth at
-  `GET /api/providers/{provider}/verification-documents/{document}/download`. Fetch it as a blob
-  with the admin's token and open it — the same pattern as `useOpenDisputeEvidence` in
-  `frontend/src/modules/disputes/hooks/useDisputes.js`.
-
-### 3. Uploaded files do not survive a production deploy
-- **Where:** `backend/config/filesystems.php` — the `public`, `verification` and
-  `dispute_evidence` disks are all local; the Render free web service has an ephemeral filesystem.
-- **Why it matters:** every redeploy deletes profile photos, portfolio images, provider
-  verification documents and dispute evidence, while the database still points at them.
-- **Fix:** point all file disks at S3-compatible storage through env (only
-  `CLIENT_PROFILE_PHOTO_DISK` is configurable today), keeping `verification` and
-  `dispute_evidence` private buckets. Alternatively attach a Render persistent disk.
+Nothing open.
 
 ---
 
 ## Medium — consistency, maintainability, product gaps
 
-### 4. Report reasons are defined in three places
-- **Where:** `frontend/src/modules/reports/pages/ReportsPage.jsx` (`REASONS`),
-  `backend/app/Modules/ClientCommunication/Requests/StoreClientReportRequest.php` (`REASONS`),
-  `backend/database/seeders/ReportSeeder.php` (`REASONS`).
-- **Why it matters:** a reason added in one place silently won't appear as a filter in another.
-- **Fix:** expose the reason list from the API (or a shared config) and read it in the admin UI.
-
-### 5. Pre-existing code-style violations
-- **Where:** `backend/app/Modules/DataManagement/Services/DataManagementService.php`
-  (`unary_operator_spaces`), `backend/app/Shared/Services/BrevoApiTransport.php`
-  (`fully_qualified_strict_types`), `backend/app/Modules/ClientAuthentication/Requests/VerifyClientOtpRequest.php`
-  (unused import).
-- **Fix:** run `./vendor/bin/pint` on those three files in their own commit.
-
-### 6. Booking lifecycle gaps (also mobile)
-- A provider can decline a pending request but has no way to cancel after accepting.
-- There is no rescheduling; the only route is cancel and rebook.
-- **Fix:** product decision first, then `PATCH /api/client/v1/provider/bookings/{booking}/cancel`
-  and a reschedule endpoint that re-runs the availability and overlap checks.
-
-### 7. Admin frontend ships one large bundle
-- **Where:** `npm run build` warns that a chunk exceeds 500 kB.
-- **Fix:** lazy-load route pages (`React.lazy`) so each admin module is its own chunk.
-
-### 8. `render.yaml` is not the live deploy config
-- **Where:** its own header explains Render never reads it, because backend and frontend deploy
-  from separate repositories.
-- **Fix:** move the env documentation into `DEPLOYMENT.md` (or into each deployed repo) so it
-  cannot drift from what actually runs.
+Nothing open.
 
 ---
 
@@ -82,6 +26,38 @@ Nothing open.
 ---
 
 ## Resolved on 2026-09-21
+
+- **Bookings can be marked paid (also mobile).** Payment still happens off-platform; it is now
+  recorded. A provider confirms payment on a completed job
+  (`PATCH /api/client/v1/provider/bookings/{booking}/payment-received`), and an admin with the new
+  `manage booking payments` permission can mark any confirmed/active/completed/disputed booking paid
+  (`PATCH /api/bookings/{booking}/mark-paid`) or record a full or partial refund
+  (`PATCH /api/bookings/{booking}/refund`) from the booking details modal. Rules live in
+  `BookingPaymentService`; every change is audited and notifies the other party. New columns:
+  `paid_at`, `payment_recorded_by`, `refunded_amount`, `refunded_at`, `refund_reason`.
+- **Admins can open provider verification documents.** The "View" button fetches the file through
+  the authorized download endpoint and opens it in a new tab.
+- **Uploads survive deploys (Render only).** Uploads stay on Laravel's local disks under
+  `storage/app`, which in production is a Render persistent disk (see `DEPLOYMENT.md` → "Uploaded
+  files"). `start.sh` prepares a fresh disk and warns if it is not writable; `GET /api/health`
+  reports `services.storage`. Needs the backend on a paid Render instance with the disk attached.
+- **Favorites are stored on the server (mobile).** `GET /api/client/v1/favorites`,
+  `PUT`/`DELETE /api/client/v1/favorites/{provider}` (idempotent) on a new `favorite_providers`
+  table; favorites are included in the account data export.
+
+- Report reasons live in one place: `Report::REASONS` (what can be filed) and
+  `Report::LEGACY_REASONS` (older keys still on existing reports). The client report request and
+  the demo seeder use them, and the admin reason filter reads `GET /api/reports/reasons`.
+- Pint is clean across the backend (the three listed files plus `routes/api.php`).
+- Booking lifecycle: a provider can cancel an accepted booking before it starts
+  (`PATCH /api/client/v1/provider/bookings/{booking}/cancel`, reason required), and a customer can
+  move a pending or confirmed booking (`PATCH /api/client/v1/bookings/{booking}/reschedule`). The
+  new time re-runs the provider-hours and overlap checks, a confirmed booking returns to pending,
+  the provider is notified, and `bookings.rescheduled_at` records it. The Flutter app has both.
+- Admin frontend bundle: route pages are lazy-loaded (`src/routes/lazyPages.jsx`) and React and
+  the realtime client are split into their own chunks; no chunk exceeds 500 kB any more.
+- `render.yaml` is removed; `DEPLOYMENT.md` now documents the dashboard configuration of the
+  backend Docker service and the frontend static site that actually run.
 
 - Support tickets opened to provider accounts (`/api/client/v1/support/tickets` now uses
   `EnsureMobileAccount`).

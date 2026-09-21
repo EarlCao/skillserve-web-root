@@ -53,107 +53,15 @@ This guide covers deploying the SkillServe backend to **Render** with **NeonDB**
 
 ---
 
-## Step 2 — Deploy Backend to Render
+## Step 2 — Deploy to Render
 
-> **Which repository is Render connected to?** Render only reads `render.yaml`
-> from the root of the repository that a service is connected to. In this
-> project the backend lives in its own repo (`skillserve-web-backend`), which
-> does not contain `render.yaml` — so a service created from that repo is
-> configured entirely through the Render dashboard (see **Option C**). Options A
-> and B only apply if `backend/` and `frontend/` are part of the same repo as
-> `render.yaml`.
+The backend and frontend deploy from their own repositories
+(`skillserve-web-backend`, `skillserve-web-frontend`), neither of which contains
+a Blueprint. Each Render service is therefore configured entirely in the Render
+dashboard, and this section is the reference for what that configuration should
+be. Keep it in step with the dashboard when you change either.
 
-### Option A: Using render.yaml (Blueprint)
-
-1. Push your code to GitHub (the `main` branch).
-2. Go to [Render Dashboard](https://dashboard.render.com) → **New** → **Blueprint**.
-3. Connect your GitHub repo.
-4. Render will detect `render.yaml` and set up:
-   - A web service for the backend
-   - A static site for the frontend
-5. Set the environment variables in Render's dashboard:
-   - `DB_HOST`, `DB_PORT`, `DB_CONNECTION`, `DB_SSLMODE` — already declared in
-     `render.yaml`; Render applies them on sync (see the note below)
-   - `DB_DATABASE` — the database name from your Neon project (Neon's default is
-     `neondb`, but it must match the connection string exactly)
-   - `DB_USERNAME` — the Neon role, e.g. `neondb_owner`
-   - `DB_PASSWORD` — the Neon password
-   - `APP_URL` — your Render backend URL (e.g. `https://skillserve-backend.onrender.com`)
-   - `FRONTEND_URL` — your Render frontend URL
-   - `REVERB_APP_KEY`, `REVERB_APP_SECRET` — generate new ones for production
-
-   ⚠️ **NeonDB is an external database**, so `fromDatabase` in `render.yaml` cannot
-   supply it (that property only resolves Render-managed Postgres).
-
-   ⚠️ **`DB_HOST` must be the bare hostname** — only this, nothing else:
-   ```
-   ep-xxx-pooler.us-east-2.aws.neon.tech
-   ```
-   Do not paste the connection string, and do not append the database name or
-   `?sslmode=require`. A value like
-   `ep-xxx-pooler.us-east-2.aws.neon.tech/SkillServe_DB?sslmode=require` is handed
-   to libpq as the host, and the deploy dies with a DNS failure.
-
-   Also delete any `DB_URL` variable from the dashboard — when it is set, Laravel
-   derives host/port/database/user/password from it and ignores the values above.
-
-### Option B: Manual Setup
-
-1. **Backend Web Service**:
-   - Go to **New** → **Web Service**
-   - Connect your GitHub repo
-   - Runtime: `PHP`
-   - Build Command:
-     ```bash
-     cp .env.production .env
-     composer install --no-dev --optimize-autoloader
-     php artisan key:generate --no-interaction --force
-     php artisan config:cache
-     php artisan route:cache
-     php artisan view:cache
-     php artisan migrate --force
-     php artisan db:seed --force
-     ```
-   - Start Command: `php artisan serve --host=0.0.0.0 --port=$PORT`
-   - Health Check Path: `/up`
-
-2. **Set Environment Variables** in Render dashboard:
-   ```
-   APP_ENV=production
-   APP_DEBUG=false
-   APP_URL=https://skillserve-backend.onrender.com
-   DB_CONNECTION=pgsql
-   DB_HOST=ep-xxx-pooler.us-east-2.aws.neon.tech
-   DB_PORT=5432
-   DB_DATABASE=neondb
-   DB_USERNAME=neondb_owner
-   DB_PASSWORD=your-neon-password
-   DB_SSLMODE=require
-   SESSION_DRIVER=database
-   CACHE_STORE=database
-   QUEUE_CONNECTION=database
-   FRONTEND_URL=https://skillserve-frontend.onrender.com
-   SANCTUM_EXPIRATION=1440
-   ```
-
-3. **Frontend Static Site**:
-   - Go to **New** → **Static Site**
-   - Build Command: `cd frontend && npm install && npm run build`
-   - Publish Directory: `frontend/dist`
-   - Set environment variables:
-     ```
-     VITE_API_BASE_URL=https://skillserve-backend.onrender.com/api
-     VITE_REVERB_APP_KEY=your-reverb-key
-     VITE_REVERB_HOST=skillserve-backend.onrender.com
-     VITE_REVERB_PORT=443
-     VITE_REVERB_SCHEME=https
-     ```
-
-### Option C: Backend repo as a standalone Docker web service
-
-This is the setup this project actually uses: the backend is deployed from its
-own repository, so there is no Blueprint and the dashboard is the single source
-of truth for its configuration.
+### Backend — Docker web service
 
 1. [Render Dashboard](https://dashboard.render.com) → **New** → **Web Service**.
 2. Connect the `skillserve-web-backend` repo.
@@ -178,6 +86,11 @@ of truth for its configuration.
    SESSION_DRIVER=database
    CACHE_STORE=database
    QUEUE_CONNECTION=database
+   SANCTUM_EXPIRATION=1440
+   LOGIN_RATE_LIMIT=5
+   REVERB_APP_ID=skillserve
+   REVERB_APP_KEY=generate-a-random-key
+   REVERB_APP_SECRET=generate-a-random-secret
    SEED_MODE=admin-only
    ADMIN_EMAIL=admin@yourdomain.com
    ADMIN_PASSWORD=replace-me-with-a-strong-password
@@ -208,6 +121,64 @@ of truth for its configuration.
    derives it by stripping `-pooler` from `DB_HOST`. Set it only for a host that
    does not follow Neon's naming. A `DB_DIRECT_HOST` that still points at the
    pooler is ignored, because migrations cannot run through it.
+
+### Uploaded files — Render persistent disk
+
+A Render web service has an **ephemeral filesystem**: every deploy or restart
+resets the container, and anything written to it is lost. Uploads —
+profile photos, portfolio images, provider verification documents and dispute
+evidence — are all written under `storage/app` by Laravel's local disks:
+
+| Disk | Folder | Holds | Access |
+|------|--------|-------|--------|
+| `public` | `storage/app/public` | profile photos, portfolio images | public, served at `/storage/...` |
+| `verification` | `storage/app/private` | provider ID and certificate uploads | private; streamed by the API to admins |
+| `dispute_evidence` | `storage/app/private/dispute-evidence` | dispute photos | private; streamed by the API to admins |
+
+To keep them, attach a **persistent disk** to the backend service so that
+folder lives outside the container:
+
+1. The service must be on a paid instance type (**Starter** or above); the
+   free tier cannot have a disk. Change it under **Settings → Instance Type**.
+2. **Settings → Disks → Add Disk**:
+   - Mount Path: `/var/www/html/storage/app` (the app lives in
+     `/var/www/html`, see `Dockerfile.render`)
+   - Size: 1 GB is plenty to start; it can be grown later, not shrunk.
+3. Save. Render redeploys with the disk mounted.
+
+On start-up, `deploy/render/start.sh` recreates the folders on a new, empty
+disk and links `public/storage` to `storage/app/public`. It logs a warning if
+`storage/app` is not writable, and `GET /api/health` then reports
+`services.storage` as `down`. Check both after the first deploy with the disk.
+
+Things to know:
+
+- A service with a disk runs as **one instance** and has a few seconds of
+  downtime on each deploy, because the disk can be attached to one running
+  container at a time. That is fine for this project.
+- Render snapshots the disk daily; restore from **Disks → Snapshots**.
+- Files uploaded before the disk existed lived in the old container and are
+  already gone; those users re-upload them.
+- Only `storage/app` is on the disk. Logs, caches and compiled views stay in
+  the container and are rebuilt on every start.
+
+### Frontend — static site
+
+1. [Render Dashboard](https://dashboard.render.com) → **New** → **Static Site**.
+2. Connect the `skillserve-web-frontend` repo.
+3. Build Command: `npm install && npm run build`. Publish Directory: `dist`.
+4. **Redirects/Rewrites** tab: add a rewrite from `/*` to `/index.html`, so a
+   refresh on a deep link such as `/admin/bookings` still loads the app.
+5. Set these on the **Environment** tab. Vite inlines them at build time, so
+   changing one needs a redeploy:
+
+   ```
+   VITE_API_BASE_URL=https://skillserve-backend.onrender.com/api
+   VITE_REVERB_APP_KEY=same-value-as-the-backend-REVERB_APP_KEY
+   VITE_REVERB_HOST=skillserve-backend.onrender.com
+   VITE_REVERB_PORT=443
+   VITE_REVERB_SCHEME=https
+   ```
 
 ---
 
@@ -388,7 +359,7 @@ For production, consider upgrading to a paid plan for better performance.
 
 ### Migrations fail on deploy
 - Check Render logs: **Logs** tab → filter by service.
-- Ensure `APP_KEY` is generated (Render auto-generates it via `generateValue`).
+- Ensure `APP_KEY` is set (use the **Generate** button on the Environment tab).
   The log line `Unable to set application key. APP_KEY is already present in the
   environment.` is harmless — it only means the key came from the platform
   instead of the `.env` file.
