@@ -5296,6 +5296,52 @@
                 ]
             }
         },
+        "/api/client/v1/bookings/{booking}/messages/read": {
+            "post": {
+                "tags": [
+                    "Booking Messages"
+                ],
+                "summary": "Mark the messages received on a booking as read",
+                "description": "For an open conversation that already shows a pushed message: clears its unread state without re-reading the thread, and returns the account's remaining unread total for the Messages badge.",
+                "operationId": "5416d6a18643569c796e52ddf24180c5",
+                "parameters": [
+                    {
+                        "name": "booking",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Marked read",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MessagesMarkedReadEnvelope"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Booking participant access required"
+                    },
+                    "404": {
+                        "description": "Booking not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/client/v1/notifications": {
             "get": {
                 "tags": [
@@ -18895,6 +18941,31 @@
                             },
                             "meta": {
                                 "$ref": "#/components/schemas/PaginationMeta"
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "MessagesMarkedReadEnvelope": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ApiEnvelope"
+                    },
+                    {
+                        "properties": {
+                            "data": {
+                                "properties": {
+                                    "marked_read": {
+                                        "description": "Messages in this thread newly marked read",
+                                        "type": "integer"
+                                    },
+                                    "unread_count": {
+                                        "description": "Unread messages left across every thread",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
                             }
                         },
                         "type": "object"

@@ -77,15 +77,7 @@ marked **(also mobile)**.
 
 ## Low
 
-### 9. Mobile sessions end after 14 idle days (also mobile)
-- **Where:** `backend/config/client-auth.php` — `CLIENT_REFRESH_TOKEN_EXPIRATION` defaults to
-  20160 minutes. Each app open rotates the refresh token, so an active user stays signed in;
-  someone who does not open the app for 14 days must sign in again.
-- **Fix:** raise the env value if a longer idle window is wanted.
-
-### 10. Messaging makes two requests per incoming message (also mobile)
-- While a conversation is open, each pushed message re-reads the thread (to mark it read) and the
-  inbox. Correct, but chatty. A dedicated "mark thread read" endpoint would halve it.
+Nothing open.
 
 ---
 
@@ -102,3 +94,10 @@ marked **(also mobile)**.
   (`POST /api/client/v1/bookings/{booking}/dispute/evidence`). Files are private; admins open them
   through `GET /api/disputes/{booking}/evidence/{evidence}` from the dispute details modal.
 - Admin report reason filter now includes the reasons the mobile app files.
+- Mobile sessions no longer end after 14 idle days: the refresh-token window
+  (`CLIENT_REFRESH_TOKEN_EXPIRATION`, counted from last use) defaults to one year and is now in
+  `backend/.env.example`. A password change, suspension, deletion or reuse of a rotated token still
+  ends a session.
+- Messaging: `POST /api/client/v1/bookings/{booking}/messages/read` marks a thread read and returns
+  the remaining unread total, so an open conversation no longer re-reads the thread and the inbox
+  for every incoming message.
