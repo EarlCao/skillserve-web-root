@@ -169,7 +169,23 @@ Things to know:
 3. Build Command: `npm install && npm run build`. Publish Directory: `dist`.
 4. **Redirects/Rewrites** tab: add a rewrite from `/*` to `/index.html`, so a
    refresh on a deep link such as `/admin/bookings` still loads the app.
-5. Set these on the **Environment** tab. Vite inlines them at build time, so
+5. **Headers** tab: add these for the path `/*`. The admin's API token lives in
+   the browser's localStorage, so the site must never be framed by another page
+   or sniffed into running something else. (The build already ships a
+   Content-Security-Policy `<meta>` tag — see `frontend/vite.config.js` — but
+   framing can only be blocked by a real header.)
+
+   | Header | Value |
+   |--------|-------|
+   | `X-Frame-Options` | `DENY` |
+   | `Content-Security-Policy` | `frame-ancestors 'none'` |
+   | `X-Content-Type-Options` | `nosniff` |
+   | `Referrer-Policy` | `strict-origin-when-cross-origin` |
+   | `Permissions-Policy` | `camera=(), microphone=(), geolocation=()` |
+
+   Also keep **Admin → Settings → System → Session timeout** short (for
+   example 480 minutes, one working day), so a stolen token stops working soon.
+6. Set these on the **Environment** tab. Vite inlines them at build time, so
    changing one needs a redeploy:
 
    ```
@@ -182,53 +198,34 @@ Things to know:
 
 ---
 
-## Step 3 — Dev/Prod Workflow
+## Step 3 — Release Workflow
 
-### Branch Strategy
+There is no `dev` branch: each of the three repositories (`backend/`, `frontend/`, and this root
+repo for docs) is developed directly on `main`, and **Render deploys every push to `main`** of the
+backend and frontend repos. So a push is a release — verify locally first.
 
-```
-main (production)     ← stable, deployed to Render
-  ↑
-dev                   ← active development, test here first
-  ↑
-feature-branches      ← individual features
-```
-
-### Workflow
-
-1. **Create a feature branch** from `dev`:
-   ```bash
-   git checkout dev
-   git checkout -b feature/my-feature
-   ```
-
-2. **Develop locally** using Docker (local PostgreSQL):
+1. **Develop locally** with Docker (local PostgreSQL on port 5433):
    ```bash
    docker compose up -d --build
    ```
-
-3. **Test locally** — run the app at `http://localhost:5173` and verify the API at `http://localhost:8000/api`.
-
-4. **Merge to `dev`** when ready:
+2. **Run the checks** in the repo you changed:
    ```bash
-   git checkout dev
-   git merge feature/my-feature
-   git push origin dev
+   docker compose exec backend composer test
+   docker compose exec backend ./vendor/bin/pint --dirty
+   (cd frontend && npm run lint && npm run build)
    ```
+3. **Try it** at `http://localhost:5173` (admin) and `http://localhost:8000/api` (API), and from
+   the Flutter app with `--dart-define-from-file=env/local.json`.
+4. **If endpoints changed**, regenerate the API docs (`php artisan l5-swagger:generate`, then
+   `php api-docs/generate.php` from the root) and copy `api-docs/` into the Flutter repo.
+5. **If a migration was added**, confirm it is additive or has a rollback, because the container
+   runs `php artisan migrate --force` on start. Deploy the backend before a frontend or app build
+   that depends on it.
+6. **Commit and push to `main`** (conventional commits, e.g. `feat(bookings): …`). Watch the
+   Render deploy log, then check `GET /api/health` (database and storage `up`).
 
-5. **Test on dev NeonDB branch** (optional):
-   - Create a separate NeonDB branch for dev testing
-   - Or use a separate NeonDB project for dev
-   - Update `DB_URL` in your local `.env` to point to the dev NeonDB
-   - Connect pgAdmin to verify data
-
-6. **Merge to `main`** when dev is verified:
-   ```bash
-   git checkout main
-   git merge dev
-   git push origin main
-   ```
-   - Render auto-deploys on push to `main`
+**Rollback:** in the Render dashboard, redeploy the previous successful deploy of that service. A
+migration that already ran stays applied, which is why migrations must stay backward-compatible.
 
 ---
 

@@ -4,6 +4,41 @@ SkillServe admin platform: a **Laravel** backend (`backend/`), a **React + Vite*
 
 New to the project? Start with [Local setup](#local-setup-step-by-step).
 
+Related documents: `DEPLOYMENT.md` (Render + NeonDB), `PENDING_FIXES.md` (open work, master list
+for web and mobile), `TEST_PLAN.md` (UAT and requirements traceability), `api-docs/` (generated
+API reference), `AGENT.md` (coding rules). Requirements: `SkillServe_Admin_Web_Functionalities.pdf`.
+
+## Modules
+
+The admin web implements the 19 modules of the requirements document. Each lives in
+`backend/app/Modules/<Name>` (API) and `frontend/src/modules/<name>` (pages):
+
+| # | Module | Backend module | Admin page |
+|---|--------|----------------|------------|
+| 1 | Admin Authentication (login, RBAC, password, session) | `Authentication` | `/login`, `/admin/change-password` |
+| 2 | Admin Dashboard | `Dashboard` | `/admin` |
+| 3 | User Management | `Users` | `/admin/users` |
+| 4 | Service Provider Management | `Providers` | `/admin/providers` |
+| 5 | Service Management | `Services` | `/admin/services` |
+| 6 | Service Category Management | `ServiceCategories` | `/admin/service-categories` |
+| 7 | Booking Management (incl. payments/refunds) | `Bookings` | `/admin/bookings` |
+| 8 | Reviews and Ratings | `Reviews` | `/admin/reviews` |
+| 9 | Reports and Moderation | `ReportsAndModeration` | `/admin/reports` |
+| 10 | Dispute Management | `Bookings` (disputes) | `/admin/disputes` |
+| 11 | Notifications and Announcements | `Notifications` | `/admin/notifications` |
+| 12 | Provider Recognition | `ProviderRecognition` | `/admin/provider-recognition` |
+| 13 | Reports and Analytics | `Analytics` | `/admin/analytics` |
+| 14 | Support Management | `Support` | `/admin/support` |
+| 15 | Admin Management (admins, roles, permissions) | `Administrators` | `/admin/administrators` |
+| 16 | Security and Audit Logs | `Audit` | `/admin/audit-logs` |
+| 17 | System Settings | `Settings` | `/admin/settings` |
+| 18 | Data Management | `DataManagement` | `/admin/data-management` |
+| 19 | Logout | `Authentication` | header menu |
+
+The Flutter app (separate repo) uses the client API under `/api/client/v1/*`, served by the
+`ClientAuthentication`, `ClientMarketplace`, `ClientCommunication` and `ClientPreferences`
+modules; realtime runs on Laravel Reverb.
+
 ## Local setup (step by step)
 
 Follow these steps to run SkillServe on your own machine after cloning.
@@ -543,3 +578,6 @@ database runs in Docker. `backend/.env` already points at `127.0.0.1:5433`.
 
 - `backend/` — Laravel API/application (own git repo)
 - `frontend/` — React SPA (own git repo)
+- `api-docs/` — generated OpenAPI spec and per-module markdown (copied into the Flutter repo)
+- `scripts/` — `fresh-demo.sh` / `fresh-admin.sh` (these run `migrate:fresh` and wipe the database)
+- `docker-compose.yml` — local stack: PostgreSQL, backend, Vite, Reverb
