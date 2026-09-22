@@ -1,0 +1,9 @@
+{
+  "newFileLocation": "folder",
+  "newFileFolderPath": "99 - Meta/Inbox",
+  "attachmentFolderPath": "99 - Meta/Attachments",
+  "alwaysUpdateLinks": true,
+  "showFrontmatter": true,
+  "useMarkdownLinks": false,
+  "readableLineLength": true
+}

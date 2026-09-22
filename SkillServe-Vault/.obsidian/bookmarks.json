@@ -1,0 +1,6 @@
+{ "items": [
+  { "type": "file", "path": "Home.md", "title": "Home" },
+  { "type": "file", "path": "99 - Meta/Needs Verification Register.md", "title": "Needs Verification" },
+  { "type": "file", "path": "12 - Troubleshooting/Known Issues and Gaps.md", "title": "Known Issues" },
+  { "type": "file", "path": "08 - Development/AI Agent Guide.md", "title": "AI Agent Guide" }
+] }
