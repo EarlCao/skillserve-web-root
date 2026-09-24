@@ -9,6 +9,56 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-09-24 — Commission tiers, National ID verification, two payment methods
+
+Added on the project owner's instruction; none of this is in the requirements PDFs
+([[Requirements Sources]]).
+
+### Commission
+- **Tiered rates** (`commission_tiers`) replace the flat `marketplace.commission_rate`, which stays
+  as the fallback so an unconfigured deployment behaves exactly as before. Overlapping active bands
+  are refused by the service on every driver and by a PostgreSQL exclusion constraint.
+- **The commission is inclusive** — it comes out of the price the provider advertises, so the
+  customer pays that price and the provider receives the rest. `bookings.total_price` keeps its
+  meaning and the mobile booking contract is unchanged. This **supersedes** the owner's earlier
+  written example of adding the commission on top.
+- Each booking snapshots its rate and tier, so changing the tiers never moves an existing booking.
+- Providers see the split before publishing a price, and on every booking.
+- A paid on-hand job leaves the provider holding SkillServe's share; it is tracked as outstanding
+  until an administrator records the remittance. While anything is outstanding they cannot accept
+  new bookings or publish services — work already agreed to is never blocked.
+  See [[Commission Tiers and Settlement]].
+
+### Identity
+- **Philippine National ID verification** for customers and providers through one pipeline, separate
+  from provider business verification so existing verified providers are untouched.
+- The card number is never stored in the clear: an HMAC blind index is the only column compared and
+  a partial unique index enforces one active account per ID
+  ([[ADR-018 Blind Index for National ID Uniqueness]]).
+- An ID is released for reuse only on **permanent** deletion, never on soft deletion.
+- Admin review queue with separate view/approve/reject permissions and an audited document download.
+- **Enforcement ships switched off** and grandfathers accounts created before a configurable date.
+  See [[Identity Verification Lifecycle]].
+
+### Payments
+- Narrowed to **`on_hand` and `gcash`**. `cash` is accepted as a deprecated alias; `credit_card`,
+  `debit_card`, `bank_transfer` and `paypal` are removed and now return 422.
+- `PaymentGateway` abstraction with a manual implementation (today's behaviour) and a PayMongo
+  **stub that throws**. No credentials, no webhook route, no payment_intents table — those land with
+  the integration ([[ADR-019 Payment Gateway Abstraction with PayMongo Deferred]]).
+
+### Admin web
+- [[Commission Management]] (`/admin/commissions`) and [[Identity Verification]]
+  (`/admin/identity-verifications`).
+
+### Follow-up
+> [!warning] The Flutter app must be updated
+> It offers all six old payment methods and **defaults to `cash`**. The alias keeps that default
+> working, but Card, Bank transfer and PayPal now fail with 422, and there is no label for
+> `on_hand`. The app also has no screen for National ID submission or for an outstanding commission.
+
+**Tests:** 549 backend tests pass (85 new). `npm run lint` and `npm run build` pass.
+
 ## 2026-09-22 — Knowledge base created
 - Created `SkillServe-Vault/` (this Obsidian vault) from a read-only audit of all four repos.
 - Added generator `99 - Meta/Scripts/generate_endpoint_notes.py` (221 routes → 33 endpoint notes).

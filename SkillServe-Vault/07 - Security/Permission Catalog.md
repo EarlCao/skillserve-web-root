@@ -16,6 +16,8 @@ All **66** permissions created by `RolePermissionSeeder` (guard `web`), plus the
 | Services | `manage services` (seeder) · `view/create/edit/delete/approve/reject/feature services` (migration only) | |
 | Service Categories | `manage service categories`, `view service categories`, `create service categories`, `edit service categories`, `delete service categories` | |
 | Bookings | `manage bookings`, `view bookings`, `cancel bookings`, `manage booking disputes`, `manage booking payments` | |
+| Commissions | `view commissions`, `manage commissions`, `settle commissions` | `manage` configures the tiers; `settle` records or waives what a provider owes. Deliberately separate — configuring rates and writing off revenue are different powers |
+| Identity | `view identity verifications`, `verify identities`, `reject identities` | Reviewing means handling government ID documents, so these are granted through a custom role rather than carried by a general admin role. Approving does not imply rejecting |
 | Reviews | `view reviews`, `manage reviews`, `edit reviews`, `delete reviews` | |
 | Reports | `view reports` ✅, `manage reports`, `investigate reports`, `resolve reports`, `manage moderation` | partial |
 | Notifications | `view notifications`, `send announcements`, `target notifications`, `schedule announcements` | |

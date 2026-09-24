@@ -118,6 +118,29 @@ flagged.
   `WHERE` clause, run without a driver guard on both PostgreSQL and the SQLite test database (SQLite
   also supports partial unique indexes).
 
+## 2026-09-24 — commissions and identity verification
+
+- **`2026_09_24_000001_create_commission_tiers_table`** — new table. On PostgreSQL it also adds an
+  `EXCLUDE USING gist` constraint so two *active* bands cannot claim the same peso amount; the
+  statement is guarded by a driver check because SQLite has no exclusion constraints, so that rule
+  is application-only in the test database.
+- **`2026_09_24_000002_add_commission_permissions`** — permission data migration.
+- **`2026_09_24_000003_add_commission_snapshot_to_bookings`** — adds `commission_rate` and
+  `commission_tier_id`, both nullable. `platform_fee` keeps its meaning, so no backfill: existing
+  rows read correctly as "charged before tiers existed".
+- **`2026_09_24_000004_add_commission_settlement`** — adds `commission_status` (NOT NULL with a
+  default, a metadata-only change on PostgreSQL 11+) and `commission_settled_at`, plus the
+  `commission_settlements` table. Every existing booking becomes `pending`, and because only
+  bookings paid *after* the deploy move to `outstanding`, no provider is retroactively put in debt.
+- **`2026_09_24_000005_create_identity_verification_tables`** — three new tables. Raw SQL adds the
+  partial unique index `identity_verifications_active_id_number`, run **without** a driver guard
+  because PostgreSQL and SQLite both support partial indexes (same approach as
+  `2026_09_21_000001`). `user_id` is `nullOnDelete` on purpose so the record outlives the account.
+- **`2026_09_24_000006_add_identity_verification_permissions`** — permission data migration.
+
+All six are additive. Rolling back 000005 drops every verification decision, and the stored ID
+images must be removed from the private disk separately.
+
 ## Related
 
 [[Database Overview]] · [[Changelog]] · [[Database Index]]

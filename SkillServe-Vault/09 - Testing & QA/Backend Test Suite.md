@@ -22,6 +22,9 @@ Counted by static inspection (`public function test…` / `#[Test]`), audit 2026
 | Dashboard | DashboardTest (3) |
 | DataManagement | DataManagementTest (4) |
 | Notifications | AnnouncementsMigrationTest (1), NotificationsTest (5) |
+| Commissions | CommissionTierTest (21), CommissionCalculationTest (13), CommissionLedgerTest (14) |
+| IdentityVerification | IdentityVerificationTest (19), IdentityVerificationReviewTest (11), IdentityEnforcementTest (12) |
+| Payments | PaymentGatewayTest (10) |
 | ProviderRecognition | ProviderRecognitionTest (4) |
 | Providers | ProviderSecurityTest (1) |
 | ReportsAndModeration | ReportsAndModerationTest (24) |

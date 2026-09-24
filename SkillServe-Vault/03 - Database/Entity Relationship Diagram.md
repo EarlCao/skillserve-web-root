@@ -38,6 +38,12 @@ erDiagram
   provider_profiles ||--o{ reviews : "[restrict]"
   bookings ||--o{ messages : "booking_id [null]"
   support_tickets ||--o{ support_ticket_messages : "[cascade]"
+  commission_tiers ||--o{ bookings : "commission_tier_id [null]"
+  bookings ||--o| commission_settlements : "booking_id unique [cascade]"
+  provider_profiles ||--o{ commission_settlements : "[cascade]"
+  users ||--o| identity_verifications : "user_id unique [null, survives deletion]"
+  identity_verifications ||--o{ identity_documents : "[cascade]"
+  identity_verifications ||--o{ identity_verification_events : "[cascade]"
 
   users {
     bigint id PK
@@ -61,11 +67,36 @@ erDiagram
     string approval_status
     bool is_hidden
   }
+  commission_tiers {
+    bigint id PK
+    decimal min_amount
+    decimal max_amount "null = open ended"
+    decimal percentage
+    bool is_active
+    timestamp deleted_at
+  }
+  commission_settlements {
+    bigint id PK
+    bigint booking_id FK "unique"
+    decimal amount
+    string method
+    timestamp settled_at
+  }
+  identity_verifications {
+    bigint id PK
+    bigint user_id FK "unique; null once purged"
+    string status
+    string id_number_hash "HMAC, partial UK"
+    string id_number_last4
+    timestamp released_at
+  }
   bookings {
     bigint id PK
     string booking_number UK
     string status
     string payment_status
+    string commission_status
+    decimal platform_fee
     string dispute_status
     timestamp scheduled_date
   }

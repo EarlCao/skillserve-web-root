@@ -15,6 +15,13 @@ Two PDFs are the product requirements. Requirement IDs used across the project d
 
 The PDF text was extracted during the audit; module names below are verbatim.
 
+> [!important] Built beyond the PDFs
+> Commission management, payment methods and Philippine National ID verification are **not** in
+> either requirements PDF — neither has a commission, payment or identity module. They were added
+> on the project owner's instruction in 2026-09. See [[Commission Management]],
+> [[Identity Verification]], [[Commission Tiers and Settlement]] and
+> [[Identity Verification Lifecycle]]. The PDFs have not been amended.
+
 ## Admin Web — 19 modules
 
 | # | Module | Functionalities | Feature note |

@@ -54,6 +54,8 @@ Severity uses the `AGENT_REVIEW.md` scale. Open questions without a confirmed de
 |---|---|
 | KI-24 | UAT Result columns and automated-check run tables in both `TEST_PLAN.md` files are empty — no recorded acceptance evidence |
 | KI-25 | Go-live owner actions (paid Render + disk, signing keystore, Google OAuth SHA-1, admin content, smoke test) are not recorded as done ([[Go-Live Checklist]]) |
+| KI-26 | **Flutter app is behind the API (2026-09-24).** It offers six payment methods and defaults to `cash`; the alias keeps that default working, but Card, Bank transfer and PayPal now return **422**, and there is no label for `on_hand`. It also has no screen for National ID submission (`/client/v1/identity-verification`), for transaction eligibility, or for an outstanding commission — so a blocked account currently sees a bare 403. See [[Payments and Refunds]] · [[Identity Verification Lifecycle]] |
+| KI-27 | Commission enforcement has **no threshold**: a provider owing ₱20 is blocked exactly like one owing ₱5,000, and every on-hand job creates a small debt an administrator must clear by hand. Raised with the owner, who chose the simple rule; revisit if it proves too blunt in practice |
 
 When an item is fixed: update the code, move the row to [[Changelog]] with the date, and update the
 affected notes.

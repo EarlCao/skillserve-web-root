@@ -10,6 +10,7 @@ sources: [backend/app/Modules/ClientMarketplace/Requests/SubmitProviderVerificat
 | Profile photo | `POST /client/v1/auth/me/photo` | `image`, jpg/jpeg/png/webp, ≤5 MB | `public` (`profile-photos/`) | anyone with the URL |
 | Portfolio image | `POST /client/v1/provider/portfolio` | `image`, jpg/jpeg/png/webp, ≤5 MB; title ≤255, description ≤2000 | `public` (`portfolio/`) | anyone |
 | Verification documents | `POST /client/v1/provider/verification` | 1–5 files, jpg/jpeg/png/pdf, ≤10 MB each; type ∈ government_id/certificate/other | `verification` (private) | admins with `view providers`, via streaming endpoint |
+| National ID images | `POST /client/v1/identity-verification` | 1–3 files, jpg/jpeg/png/pdf, ≤10 MB each; type ∈ id_front/id_back/selfie | `identity` (private) | admins with `view identity verifications`, via streaming endpoint; **every open is audited**, and the document must belong to the submission in the path |
 | Dispute evidence | `POST /client/v1/bookings/{id}/dispute/evidence` | `image`, jpg/jpeg/png/webp, ≤5 MB; ≤5 per dispute; caption ≤500 | `dispute_evidence` (private) | admins with `view bookings`, via streaming endpoint |
 
 - Files are stored with generated names (`store` / `storeAs`), outside the web root for private
