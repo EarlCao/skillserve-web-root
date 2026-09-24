@@ -27,5 +27,6 @@ New decisions: copy [[Template - ADR]] and add a row.
 | 015 | [[ADR-015 Swagger Attributes and Generated API Docs]] | 2026-08-07 (l5-swagger), 2026-09-10 (api-docs generator) |
 | 016 | [[ADR-016 Soft Delete with 30-Day Purge]] | 2026-09-08 |
 | 017 | [[ADR-017 Separate Customer and Provider Shells]] | 2026-09-17 onwards |
+| 018 | [[ADR-018 Blind Index for National ID Uniqueness]] | 2026-09-24 |
 
 Back to [[Home]]

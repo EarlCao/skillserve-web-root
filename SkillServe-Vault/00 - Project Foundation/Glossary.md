@@ -22,7 +22,9 @@ tags: [foundation, glossary]
 | **Badge** | Admin-defined recognition (`provider_badges`) assigned to providers. |
 | **Featured** | `services.is_featured` or `provider_profiles.is_featured`; shown in the app's featured rails. |
 | **Announcement** | Admin broadcast to all / customers / providers / selected users, optionally scheduled. |
-| **Platform fee** | Commission recorded on a booking = price × `marketplace.commission_rate`%. |
+| **Platform fee** | SkillServe's commission on a booking, stored in `bookings.platform_fee`. The rate comes from the matching `commission_tiers` band (`marketplace.commission_rate` is only the fallback when no band is configured) and is snapshotted onto the booking as `commission_rate`. |
+| **Inclusive commission** | The commission is contained *within* the price the provider advertises: the customer pays that price, and the provider receives it less the commission. It is never added on top. |
+| **Outstanding commission** | `bookings.commission_status = outstanding` — the provider has been paid and holds SkillServe's share until they remit it. While anything is outstanding they cannot accept new bookings or publish services. |
 | **Cancellation window / late fee** | Cancelling a *confirmed* booking inside `booking.cancellation_window_hours` records a fee on the booking. |
 | **Business time** | `BUSINESS_TIMEZONE` (Asia/Manila). Storage is UTC. |
 | **Envelope** | The JSON response shape `{ success, message, data, errors, meta }`. |

@@ -41,6 +41,13 @@ Soft-deleted tables: `users`, `service_categories`, `service_subcategories`, `se
 - Admin: `DELETE /api/users/{id}` (soft, tokens revoked).
 - Self-service: `DELETE /api/client/v1/auth/me` with password; refused while a booking is
   pending/confirmed/active/disputed. An admin can restore it within 30 days.
+- **Permanent deletion releases the account's National ID** for reuse, and only then — a
+  soft-deleted account can be restored for 30 days, so releasing earlier would allow two live
+  accounts on one ID. The verification record itself survives with `user_id` nulled, as the audit
+  trail for the decision; the encrypted number and the ID images are dropped. See
+  [[Identity Verification Lifecycle]].
+- **National ID images** are purged on their own timer by `identity:purge-documents` (daily), once
+  System Settings → Identity → retention has passed. The decision and its history are kept.
 - Account data export: `GET /api/client/v1/auth/me/data-export` (profile, preferences, provider
   profile, bookings, reviews, reports, support tickets, favorites).
 

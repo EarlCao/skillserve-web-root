@@ -18,7 +18,10 @@ JSON payload); read everywhere through `SettingsService::value(group, name)`; ed
 | marketplace | `provider_registration_enabled` | bool | true | `ProviderSignups` (provider sign-up closed) |
 | marketplace | `service_approval_required` | bool | true | `ProviderServiceService` (new/edited services → pending) |
 | marketplace | `featured_services_enabled` | bool | true | `ServiceService` refuses featuring; catalog hides featured flag |
-| marketplace | `commission_rate` | 0–100 % | 10 | `BookingRules::platformFee` |
+| marketplace | `commission_rate` | 0–100 % | 10 | **Fallback only** — used by `CommissionCalculator` when no active `commission_tiers` row exists. Configured tiers take precedence; see [[Commission Tiers and Settlement]] |
+| identity | `identity_verification_required` | bool | **false** | `IdentityGate` — master switch for National ID enforcement; see [[Identity Verification Lifecycle]] |
+| identity | `identity_verification_enforced_from` | date | `''` | `IdentityGate` — accounts created before this date are grandfathered; empty applies the rule to everyone |
+| identity | `identity_document_retention_days` | int 1–3650 | 90 | `identity:purge-documents` (daily) |
 | booking | `booking_enabled` | bool | true | `BookingRules::assertBookingEnabled` (new bookings only) |
 | booking | `cancellation_window_hours` | int 0–720 | 24 | [[Cancellation and Fees]] |
 | booking | `client_cancellation_fee_percent` | 0–100 | 0 | same |

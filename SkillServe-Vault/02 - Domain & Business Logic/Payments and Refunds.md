@@ -37,5 +37,9 @@ Rules (`BookingPaymentService`):
 The mobile **Payments** screens (customer) and **Earnings** screen (provider) derive their data from
 bookings — there is no payments table or endpoint.
 
-Related: [[Booking Lifecycle]] · [[Booking Management]] · [[Client Payments View]] ·
+> [!note] The commission is settled separately
+> Recording a booking as paid also makes the provider's commission **outstanding**, because the
+> commission is included in the price they were paid. See [[Commission Tiers and Settlement]].
+
+Related: [[Commission Tiers and Settlement]] · [[Booking Lifecycle]] · [[Booking Management]] · [[Client Payments View]] ·
 [[Provider Earnings and Statistics]]

@@ -57,7 +57,8 @@ A wrong-status transition returns **422** with `errors.status`. All transitions 
    ("2 hours", "30 minutes", "1 day"; default +1 hour).
 8. Written by `CreateClientBookingAction`: `booking_number = "BK-" + 12 random uppercase chars`,
    `status pending`, `payment_status unpaid`, `total_price = service_price = service.price`,
-   `platform_fee = price × commission_rate%`, `currency` from the service; plus
+   `platform_fee` and `commission_rate` from the matching commission tier (snapshotted, so later
+   tier changes never move an existing booking), `currency` from the service; plus
    `payment_method` (cash, credit_card, debit_card, bank_transfer, gcash, paypal), `client_notes`,
    `service_address`, `contact_phone`.
 

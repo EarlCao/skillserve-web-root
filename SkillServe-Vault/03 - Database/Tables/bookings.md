@@ -24,7 +24,11 @@ Customer bookings. Also the chat thread and the dispute record.
 | `status` | string default 'pending' | pending / confirmed / active / completed / cancelled / disputed |
 | `payment_status` | string default 'unpaid' | unpaid / paid / partially_refunded / refunded |
 | `total_price, service_price` | decimal(10,2) |  |
-| `platform_fee` | decimal(10,2) default 0 | commission |
+| `platform_fee` | decimal(10,2) default 0 | SkillServe's commission, **included in** `total_price` rather than added to it |
+| `commission_rate` | decimal(5,2) null | the percentage applied, snapshotted at booking time so later tier changes never move this booking |
+| `commission_tier_id` | FK commission_tiers nullOnDelete | which band was matched; null for bookings made before tiers existed |
+| `commission_status` | string default `pending`, indexed with provider_id | pending / outstanding / settled / waived / voided — see [[Commission Tiers and Settlement]] |
+| `commission_settled_at` | timestamp null | |
 | `currency` | string(3) default 'PHP' |  |
 | `payment_method, payment_reference` | string null |  |
 | `paid_at, payment_recorded_by` |  | settlement |
@@ -78,4 +82,4 @@ Customer bookings. Also the chat thread and the dispute record.
 
 ## Related
 
-[[Booking Lifecycle]] · [[Payments and Refunds]] · [[Disputes Lifecycle]] · [[Cancellation and Fees]] · [[reviews]] · [[messages]] · [[Database Index]]
+[[Booking Lifecycle]] · [[Payments and Refunds]] · [[Commission Tiers and Settlement]] · [[commission_settlements]] · [[Disputes Lifecycle]] · [[Cancellation and Fees]] · [[reviews]] · [[messages]] · [[Database Index]]

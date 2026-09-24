@@ -5,6 +5,11 @@ sources: [backend/app/Modules/ClientMarketplace/Services/ProviderVerificationSer
 ---
 # Provider Verification Lifecycle
 
+> [!note] Distinct from National ID verification
+> This proves a provider is a legitimate tradesperson and gates *publishing services*.
+> [[Identity Verification Lifecycle]] proves who an account holder is and gates *transacting*.
+> The two are stored and reviewed separately.
+
 Two status fields move together:
 - `provider_profiles.verification_status` ∈ `unverified, pending, verified, rejected, additional_info_required`
 - `verification_requests.status` ∈ `pending, approved, rejected, additional_info_required`

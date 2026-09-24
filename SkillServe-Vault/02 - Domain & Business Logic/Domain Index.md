@@ -15,6 +15,8 @@ business rules — AGENT.md).
 - [[Booking Lifecycle]]
 - [[Cancellation and Fees]]
 - [[Payments and Refunds]]
+- [[Commission Tiers and Settlement]]
+- [[Identity Verification Lifecycle]]
 - [[Disputes Lifecycle]]
 - [[Provider Verification Lifecycle]]
 - [[Service Approval Lifecycle]]

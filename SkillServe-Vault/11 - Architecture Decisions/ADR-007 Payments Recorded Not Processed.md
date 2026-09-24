@@ -22,7 +22,11 @@ Bookings carry payment fields; providers mark "payment received" on completed jo
 ## Consequences
 
 - No PCI scope; simple model.
-- Commission (`platform_fee`) and cancellation fees are recorded numbers only — nothing is collected.
+- Cancellation fees are recorded numbers only — nothing is collected.
+- Commission (`platform_fee`) **is** now tracked as a debt and settled: because the commission is
+  included in the price the provider advertises, a provider paid in cash is holding SkillServe's
+  share and owes it back. See [[Commission Tiers and Settlement]]. Settlement is still *recorded*,
+  not processed — no gateway is called.
 - Earnings/payments screens are derived from bookings.
 
 ## Evidence
