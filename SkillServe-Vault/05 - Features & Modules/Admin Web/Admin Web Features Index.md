@@ -27,5 +27,7 @@ The 19 admin modules from `SkillServe_Admin_Web_Functionalities.pdf`.
 | 17 | [[System Settings]] | `/admin/settings` | implemented (UAT pending) |
 | 18 | [[Data Management]] | `/admin/data-management` | implemented (UAT pending) |
 | 19 | [[Logout (Admin)]] | `header menu → Sign out` | implemented (UAT pending) |
+| — | [[Commission Management]] | `/admin/commissions` | implemented (UAT pending) · **not in the requirements PDF** |
+| — | [[Identity Verification]] | `/admin/identity-verifications` | implemented (UAT pending) · **not in the requirements PDF** |
 
 Navigation: [[Admin Web Navigation Map]] · Back to [[Features Index]]
