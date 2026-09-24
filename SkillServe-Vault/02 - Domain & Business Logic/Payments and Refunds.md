@@ -10,6 +10,27 @@ off-platform (cash, GCash, …). See [[ADR-007 Payments Recorded Not Processed]]
 
 `bookings.payment_status` ∈ `unpaid, paid, partially_refunded, refunded`.
 
+## Payment methods
+
+Exactly two, as `App\Modules\Bookings\Enums\PaymentMethod`:
+
+| Value | Meaning |
+|---|---|
+| `on_hand` | Paid directly to the provider, in person |
+| `gcash` | Paid through GCash — **recorded by hand** until PayMongo is integrated |
+
+`cash` is still accepted on input as a deprecated alias for `on_hand` and is canonicalised on the way
+in. `credit_card`, `debit_card`, `bank_transfer` and `paypal` were removed and are now rejected with
+422. Bookings created before the change keep their stored value as display-only history.
+
+> [!warning] The mobile app must be updated
+> The Flutter build in the field offers all six old methods and **defaults to `cash`**. The alias
+> keeps that default working, but a customer who picks Card, Bank transfer or PayPal now receives a
+> validation error. The app should be updated to offer only the two methods and to label `on_hand`.
+
+Which gateway handles a method is configuration (`config/payments.php`); both point at the manual
+gateway today. See [[ADR-019 Payment Gateway Abstraction with PayMongo Deferred]].
+
 ```mermaid
 stateDiagram-v2
   [*] --> unpaid
