@@ -19,7 +19,7 @@ sources: [backend/.gitignore, frontend/.gitignore, skill-serve-mobile-applicatio
 | `frontend/.env*` | no (`.env`, `.env.*` ignored, `.env.example` allowed) | `VITE_API_BASE_URL`, `VITE_REVERB_*` |
 | mobile `env/local.json`, `env/production.json` | **yes** | only `API_BASE_URL` (public URLs) |
 | mobile `android/key.properties`, `*.jks`, `*.keystore` | no | release signing — back up securely |
-| Render environment | n/a | `APP_KEY`, `DB_*` (Neon), `REVERB_APP_SECRET`, `BREVO_API_KEY`/SMTP, `GOOGLE_CLIENT_ID`, `ADMIN_PASSWORD`, `SYSTEM_ADMIN_PASSWORD` |
+| Render environment | n/a | `APP_KEY`, `DB_*` (Neon), `REVERB_APP_SECRET`, `BREVO_API_KEY`/SMTP, `GOOGLE_CLIENT_ID`, `ADMIN_PASSWORD`, `PAYMONGO_SECRET_KEY`, `PAYMONGO_WEBHOOK_SECRET`, `SYSTEM_ADMIN_PASSWORD` |
 
 ## Values that are public by design
 

@@ -9,6 +9,25 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-09-25 — GCash live through PayMongo
+
+- `PayMongoGateway` is now a real integration, replacing the throwing stub: Payment Intent → `gcash`
+  Payment Method → attach → redirect → webhook, the flow PayMongo currently documents (checked
+  against their live docs first — the previous docs site had been restructured and the Sources API
+  is no longer the recommended path).
+- New `POST /api/client/v1/bookings/{booking}/pay` and `POST /api/webhooks/paymongo`, plus the
+  `payment_intents` table.
+- The **webhook** marks a booking paid, never the customer's return redirect. Signature verification
+  runs on the raw body with a 5-minute replay tolerance, and events are deduplicated by event id
+  because PayMongo redelivers.
+- Credentials come from the environment only; `config/payments.php` routes GCash back to manual
+  settlement when no key is configured.
+- **PayMongo settles into SkillServe's account**, so a GCash commission settles on payment instead of
+  becoming outstanding — and SkillServe then owes the provider their net, which is **not built**
+  (KI-28). See [[ADR-020 PayMongo Collects Into the Platform Account]].
+
+**Tests:** 568 backend tests pass (19 new), none of which touch a real PayMongo account.
+
 ## 2026-09-25 — Seeding reduced to the super-admin only
 
 - `RolePermissionSeeder` now creates **only** `admin@skillserve.test` (super-admin). The second

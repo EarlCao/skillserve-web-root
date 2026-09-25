@@ -28,8 +28,27 @@ in. `credit_card`, `debit_card`, `bank_transfer` and `paypal` were removed and a
 > keeps that default working, but a customer who picks Card, Bank transfer or PayPal now receives a
 > validation error. The app should be updated to offer only the two methods and to label `on_hand`.
 
-Which gateway handles a method is configuration (`config/payments.php`); both point at the manual
-gateway today. See [[ADR-019 Payment Gateway Abstraction with PayMongo Deferred]].
+Which gateway handles a method is configuration (`config/payments.php`). `on_hand` is always
+manual. `gcash` uses **PayMongo** when `PAYMONGO_SECRET_KEY` is set, and falls back to manual
+settlement when it is not — so a deployment without credentials behaves exactly as it did before.
+
+## Online payment (GCash via PayMongo)
+
+`POST /api/client/v1/bookings/{booking}/pay` starts a payment on the customer's own unpaid booking,
+once the provider has accepted it, and returns `redirect_url`. Tapping pay again resumes the same
+attempt.
+
+PayMongo's flow: create a Payment Intent → create a `gcash` Payment Method → attach → redirect the
+customer → `payment.paid` / `payment.failed` webhook.
+
+> [!important] The webhook marks the booking paid, never the return redirect
+> The customer's return from the payment page is a browser navigation anyone can forge by visiting
+> the URL. `POST /api/webhooks/paymongo` verifies `Paymongo-Signature` against the **raw** body
+> before parsing, and is the only thing that records payment.
+
+Because PayMongo settles into SkillServe's account, a GCash commission is **settled on payment**
+rather than becoming outstanding — and SkillServe then owes the provider their net, which is not yet
+built (KI-28). See [[ADR-020 PayMongo Collects Into the Platform Account]].
 
 ```mermaid
 stateDiagram-v2

@@ -19,6 +19,7 @@ tags: [index, database]
 | Catalog | [[service_categories]] · [[service_subcategories]] · [[services]] |
 | Bookings | [[bookings]] · [[reviews]] · [[messages]] |
 | Commissions | [[commission_tiers]] · [[commission_settlements]] |
+| Payments | [[payment_intents]] |
 | Identity | [[identity_verifications]] · [[identity_documents]] · [[identity_verification_events]] |
 | Moderation | [[reports]] |
 | Support | [[support_tickets]] · [[support_ticket_messages]] |

@@ -29,5 +29,6 @@ New decisions: copy [[Template - ADR]] and add a row.
 | 017 | [[ADR-017 Separate Customer and Provider Shells]] | 2026-09-17 onwards |
 | 018 | [[ADR-018 Blind Index for National ID Uniqueness]] | 2026-09-24 |
 | 019 | [[ADR-019 Payment Gateway Abstraction with PayMongo Deferred]] | 2026-09-24 |
+| 020 | [[ADR-020 PayMongo Collects Into the Platform Account]] | 2026-09-25 |
 
 Back to [[Home]]

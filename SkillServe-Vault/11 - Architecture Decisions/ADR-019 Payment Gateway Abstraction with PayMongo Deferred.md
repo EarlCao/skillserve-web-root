@@ -8,7 +8,7 @@ tags: [adr, architecture, payments]
 
 | | |
 |---|---|
-| Status | **Accepted** |
+| Status | **Accepted**, and **superseded in part** by [[ADR-020 PayMongo Collects Into the Platform Account]] (2026-09-25), which records the integration actually being built |
 | First evidence | 2026-09-24 |
 
 ## Context
@@ -49,9 +49,11 @@ Deliberately **not** built yet:
   let a booking be marked paid with nothing collected, which is the worst failure this subsystem can
   have. `verifyWebhook()` returns false rather than throwing, so an unverifiable webhook is refused
   instead of becoming a retryable server error.
-- Whether PayMongo can split the commission off automatically, or whether it must be reconciled
-  afterwards, is **still open**. Nothing in the codebase assumes an answer, and the current API and
-  supported Philippine flows must be verified before implementation begins.
+- Whether PayMongo can split the commission off automatically was **open at the time**; it was
+  answered when the integration was built. See
+  [[ADR-020 PayMongo Collects Into the Platform Account]].
+- The three deferred pieces have since landed: `payment_intents` exists, the webhook route is
+  registered, and credentials are read from the environment.
 
 ## Related
 
