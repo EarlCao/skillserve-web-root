@@ -26,14 +26,17 @@ needed.
 Anyone holding an `sk_live_` key can charge, refund and create webhooks on the account, so a key
 that has been pasted anywhere shared is burned and must be replaced.
 
-Dashboard → **Developers** → API keys → regenerate. PayMongo confirms, then sends an OTP to the
-registered email or mobile number; the dashboard afterwards shows when the keys were last
-regenerated.
+Dashboard → **Developers → API Keys**. A *Viewing live data* toggle switches the page between the
+test keys (`sk_test_` / `pk_test_`) and the live ones (`sk_live_` / `pk_live_`) — make sure the
+right mode is showing before regenerating, because they are separate keys. Regenerate, confirm, then
+enter the OTP sent to the registered email or mobile number. The page afterwards shows when the keys
+were last regenerated.
 
-> [!warning] Not verified first-hand
-> PayMongo retired their "Regenerating API keys" documentation page during a docs restructure (it
-> now 404s), so the exact button wording may differ from the above. If it cannot be found in the
-> Developers section, ask support@paymongo.com — rotation is a standard request.
+> [!warning] Button wording not verified first-hand
+> PayMongo retired their "Regenerating API keys" page during a docs restructure (it now 404s), so
+> the exact label on the regenerate control could not be confirmed. The location — Developers → API
+> Keys — is current. If the control cannot be found there, ask support@paymongo.com; rotation is a
+> standard request.
 
 Rotating **invalidates the old key immediately**. That is free while GCash is still unconfigured,
 because nothing is using it yet: with no `PAYMONGO_SECRET_KEY` set, `config/payments.php` routes
