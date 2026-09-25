@@ -96,8 +96,6 @@ be. Keep it in step with the dashboard when you change either.
    BUSINESS_TIMEZONE=Asia/Manila
    ADMIN_EMAIL=admin@yourdomain.com
    ADMIN_PASSWORD=replace-me-with-a-strong-password
-   SYSTEM_ADMIN_EMAIL=system@yourdomain.com
-   SYSTEM_ADMIN_PASSWORD=replace-me-with-a-strong-password
    ```
 
    ⚠️ **Seeding.** `SEED_MODE=starter` seeds the roles, permissions, the
@@ -108,7 +106,7 @@ be. Keep it in step with the dashboard when you change either.
    since the container seeds on every start, leaving it on `demo` re-seeds demo
    data on every restart. Production seeding also refuses the built-in default
    password (`SkillServe#2026`), so `ADMIN_PASSWORD` and
-   `SYSTEM_ADMIN_PASSWORD` must be set to real values before the first deploy.
+must be set to a real value before the first deploy.
 
    ⚠️ Both hosts must be **bare hostnames** copied from Neon's *Connect* panel.
    Do not set `DB_URL` unless it holds a complete connection string — when it is
@@ -270,7 +268,6 @@ You can now browse tables, run queries, and verify data after each deployment.
 | `APP_TIMEZONE` | `UTC` | `UTC` — storage; keep it |
 | `BUSINESS_TIMEZONE` | `Asia/Manila` | `Asia/Manila` — provider hours and booking times |
 | `ADMIN_PASSWORD` | `SkillServe#2026` | required, non-default |
-| `SYSTEM_ADMIN_PASSWORD` | `SkillServe#2026` | required, non-default |
 | `DB_PORT` | `5433` | `5432` |
 | `DB_DATABASE` | `group6_db` | Neon database name |
 | `DB_SSLMODE` | `prefer` | `require` |
@@ -289,7 +286,7 @@ Do these in order on the real services and note the date and result of each — 
    `APP_KEY`, `APP_URL`, `FRONTEND_URL`, the Neon `DB_*`, `REVERB_APP_ID/KEY/SECRET`,
    `BUSINESS_TIMEZONE=Asia/Manila`, mail (Brevo) for OTP and password-reset mail,
    `GOOGLE_CLIENT_ID`, `SEED_MODE=starter` and strong `ADMIN_PASSWORD` /
-   `SYSTEM_ADMIN_PASSWORD`. Leave `SWAGGER_UI_ENABLED` off unless you will demo the API docs.
+   Leave `SWAGGER_UI_ENABLED` off unless you will demo the API docs.
 2. **Deploy and verify** — the log shows migrations and seeding; `GET /api/health` returns
    database `up` and storage `up`; `GET /api/client/v1/platform` answers.
 3. **Frontend static site** — `VITE_API_BASE_URL`, `VITE_REVERB_*` (key = backend
@@ -362,9 +359,9 @@ For production, consider upgrading to a paid plan for better performance.
   constraint ...`), not the one that actually failed, so don't chase the
   constraint itself.
 
-### `Production seeding requires non-default ADMIN_PASSWORD and SYSTEM_ADMIN_PASSWORD values`
+### `Production seeding requires a non-default ADMIN_PASSWORD value`
 - `RolePermissionSeeder` refuses to create admin accounts in production with the
-  built-in default password. Set `ADMIN_PASSWORD` and `SYSTEM_ADMIN_PASSWORD` in
+  built-in default password. Set `ADMIN_PASSWORD` in
   the service environment to real values.
 - These are only read when the account is *created* — `firstOrCreate` means
   changing the variable later does not update an existing account's password.

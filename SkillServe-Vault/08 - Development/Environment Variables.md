@@ -34,7 +34,7 @@ Names only; see [[Secrets and Environment]] for where values live.
 | `CLIENT_PROFILE_PHOTO_DISK` | `public` | — | same |
 | `CLIENT_PASSWORD_RESET_URL` | `APP_URL/client/reset-password` | **not documented** | mobile reset email link (KI-02) |
 | `GOOGLE_CLIENT_ID` | empty | web client id | Google token audience check |
-| `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `SYSTEM_ADMIN_EMAIL`, `SYSTEM_ADMIN_PASSWORD` | `*@skillserve.test`, `SkillServe#2026` | real, non-default (enforced) | `RolePermissionSeeder` |
+| `ADMIN_EMAIL`, `ADMIN_PASSWORD` (`SYSTEM_ADMIN_*` retired — no second admin is seeded) | `*@skillserve.test`, `SkillServe#2026` | real, non-default (enforced) | `RolePermissionSeeder` |
 | `DEMO_CUSTOMER_EMAIL`, `DEMO_PROVIDER_EMAIL`, `DEMO_ACCOUNT_PASSWORD` | defaults | skipped in prod unless non-default | `DemoAccountSeeder` |
 | `SEED_MODE` | `demo` | `starter` then `admin-only` | `DatabaseSeeder` |
 | `L5_SWAGGER_GENERATE_ALWAYS` | true | false | l5-swagger |

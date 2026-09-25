@@ -32,7 +32,7 @@ sources: [frontend/src, CLAUDE.md, AGENT.md]
 ## Manual verification (no test framework)
 
 Run the page against the local stack signed in as `admin@skillserve.test` and as
-`system@skillserve.test` (limited admin) to check permission gating; follow the matching UAT row in
+a staff account created in Administrator Management (limited admin) to check permission gating; follow the matching UAT row in
 `TEST_PLAN.md`.
 
 Related: [[Admin Web Frontend Architecture]] · [[Admin Web UI System]]

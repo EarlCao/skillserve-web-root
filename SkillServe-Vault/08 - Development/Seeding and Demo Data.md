@@ -31,7 +31,7 @@ All seeders are idempotent top-ups ("re-running only tops up what's missing").
 
 ## Safety
 
-- `RolePermissionSeeder` throws in production if `ADMIN_PASSWORD`/`SYSTEM_ADMIN_PASSWORD` are empty
+- `RolePermissionSeeder` seeds the super-admin and **nothing else**, and throws in production if `ADMIN_PASSWORD` is empty
   or the default. Accounts use `firstOrCreate`, so changing the env var later does **not** change an
   existing password.
 - Production start runs `php artisan db:seed-if-empty` — seeds only when `roles` is empty

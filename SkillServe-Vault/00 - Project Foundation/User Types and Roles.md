@@ -59,7 +59,7 @@ Full catalogue: [[Permission Catalog]]. Mechanics: [[Authorization and RBAC]].
 | Email | Role | Seeded in mode |
 |---|---|---|
 | `admin@skillserve.test` (override `ADMIN_EMAIL`) | super-admin | all modes |
-| `system@skillserve.test` (override `SYSTEM_ADMIN_EMAIL`) | admin | all modes |
+| *(none)* | — | Seeding creates **only** the super-admin. The former `system@skillserve.test` account was removed by migration `2026_09_25_000001`; further staff accounts are created by hand in Administrator Management |
 | `customer@skillserve.test` | customer | demo |
 | `provider@skillserve.test` | provider | demo |
 | 150 demo customers (password `password`) | customer | demo |

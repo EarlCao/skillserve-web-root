@@ -11,7 +11,7 @@ sources: [DEPLOYMENT.md → Troubleshooting, skill-serve-mobile-application/SETU
 | SSL errors to Neon | SSL not required | `DB_SSLMODE=require` |
 | `could not translate host name "ep-xxx.neon.tech/dbname?sslmode=require"` | a connection-string tail in `DB_HOST` | bare hostname only; keep other parts in separate vars; unset `DB_URL` unless complete |
 | `SQLSTATE[25P02] current transaction is aborted` during migrations | migrations running through the **pooler** | ensure the direct host is used (derived from `-pooler`, or set `DB_DIRECT_HOST` without `-pooler`) — the error names the *second* statement |
-| `Production seeding requires non-default ADMIN_PASSWORD and SYSTEM_ADMIN_PASSWORD values` | default/empty admin passwords in production | set real values (only read on account *creation*) |
+| `Production seeding requires a non-default ADMIN_PASSWORD value` | default/empty admin passwords in production | set real values (only read on account *creation*) |
 | Login times out (~2 min) after idle | free-tier cold start; boot runs migrations/seed before serving | `db:seed-if-empty` avoids reseeding; `PHP_CLI_SERVER_WORKERS=4`; keep-alive ping on `/up` or a paid instance |
 | Announcements/notifications never delivered | queue worker/scheduler not running or asleep | `start.sh` supervises both; on free tier they sleep — scheduled items send on wake |
 | Migrations fail on deploy | missing `APP_KEY` etc. | generate `APP_KEY` in Render; "APP_KEY is already present" log line is harmless |

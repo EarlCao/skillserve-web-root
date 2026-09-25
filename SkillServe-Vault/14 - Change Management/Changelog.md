@@ -9,6 +9,21 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-09-25 — Seeding reduced to the super-admin only
+
+- `RolePermissionSeeder` now creates **only** `admin@skillserve.test` (super-admin). The second
+  seeded administrator (`system@skillserve.test` / `SYSTEM_ADMIN_*`) is gone, so a deployment starts
+  with exactly one way in and every further staff account is created by hand in Administrator
+  Management.
+- Migration **`2026_09_25_000001_remove_seeded_system_administrator`** soft-deletes that account on
+  existing databases, revoking its tokens and detaching its staff role. A seeder change alone would
+  not have touched production: `db:seed-if-empty` skips once roles exist, whereas migrations run on
+  every deploy.
+- `SYSTEM_ADMIN_EMAIL` / `SYSTEM_ADMIN_PASSWORD` are retired; production seeding now only requires a
+  non-default `ADMIN_PASSWORD`.
+- The removal is a soft delete, so it is restorable from Data Management for 30 days before the
+  scheduled purge removes it for good. Administrator accounts created by hand are untouched.
+
 ## 2026-09-24 — Commission tiers, National ID verification, two payment methods
 
 Added on the project owner's instruction; none of this is in the requirements PDFs

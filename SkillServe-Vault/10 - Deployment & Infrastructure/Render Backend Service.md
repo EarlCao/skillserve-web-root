@@ -55,7 +55,7 @@ everything else to PHP, returns a JSON 503 on 502/504, and allows 20 MB bodies.
 `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`, `DB_SSLMODE=require`, `SESSION_DRIVER/CACHE_STORE/
 QUEUE_CONNECTION=database`, `SANCTUM_EXPIRATION`, `LOGIN_RATE_LIMIT`, `REVERB_APP_ID/KEY/SECRET`,
 `SEED_MODE=starter` (first deploy) then `admin-only`, `APP_TIMEZONE=UTC`,
-`BUSINESS_TIMEZONE=Asia/Manila`, `ADMIN_EMAIL/PASSWORD`, `SYSTEM_ADMIN_EMAIL/PASSWORD` (non-default),
+`BUSINESS_TIMEZONE=Asia/Manila`, `ADMIN_EMAIL/PASSWORD` (non-default; `SYSTEM_ADMIN_*` retired),
 mail (Brevo), `GOOGLE_CLIENT_ID`; `SWAGGER_UI_ENABLED` off unless demoing.
 
 Verify after deploy: logs show migrations/seeding; `GET /api/health` → database and storage `up`;

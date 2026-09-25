@@ -177,8 +177,6 @@ GOOGLE_CLIENT_ID=
 # Seeded accounts (local defaults — never use these passwords in production).
 ADMIN_EMAIL=admin@skillserve.test
 ADMIN_PASSWORD="SkillServe#2026"
-SYSTEM_ADMIN_EMAIL=system@skillserve.test
-SYSTEM_ADMIN_PASSWORD="SkillServe#2026"
 # demo = full sample data; admin-only = just the two admin accounts.
 SEED_MODE=demo
 
@@ -247,7 +245,6 @@ Open <http://localhost:5173>. All seeded accounts use the password
 | Account                     | Role        | Used in              |
 |-----------------------------|-------------|----------------------|
 | `admin@skillserve.test`     | super-admin | Admin web            |
-| `system@skillserve.test`    | admin       | Admin web            |
 | `customer@skillserve.test`  | customer    | Mobile app (demo seed) |
 | `provider@skillserve.test`  | provider    | Mobile app (demo seed) |
 
@@ -340,7 +337,6 @@ Seeding produces exactly this account layout:
 | Type | Count | Account |
 |------|-------|---------|
 | Super admin | 1 | `admin@skillserve.test` (`super-admin` role, bootstrap) |
-| System admin | 1 | `system@skillserve.test` (`admin` role; override via `SYSTEM_ADMIN_EMAIL` / `SYSTEM_ADMIN_PASSWORD`) |
 | Customers | 150 | Demo `customer` accounts (password `password`) |
 
 The **150 customer accounts** (`UsersSeeder`) populate the User Management

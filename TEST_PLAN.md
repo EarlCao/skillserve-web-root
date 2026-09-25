@@ -61,7 +61,7 @@ Columns: **Page** in the admin web · **API** endpoints · **Tests** (backend fe
 |----|-------------|------|-----|-------|----------------|--------|
 | A 1.1 | Admin login | `/login` | `POST /auth/login` | AuthenticationTest | Valid credentials → dashboard; wrong password → "Invalid email or password"; 6 fast attempts → rate-limited | |
 | A 1.2 | Admin logout | Header → Sign out | `POST /auth/logout` | AuthenticationTest | Sign out → login page; old token rejected (reload stays logged out) | |
-| A 1.3 | Role-based access control | All pages | Spatie permissions on every route | AuthenticationTest, UserRolesTest, RoleManagementTest | Sign in as `system@skillserve.test` → only permitted menu items; opening a forbidden URL shows "not authorized" | |
+| A 1.3 | Role-based access control | All pages | Spatie permissions on every route | AuthenticationTest, UserRolesTest, RoleManagementTest | Sign in as a staff account created in Administrator Management → only permitted menu items; opening a forbidden URL shows "not authorized" | |
 | A 1.4 | Password management | `/admin/change-password`, `/forgot-password`, `/reset-password` | `POST /auth/change-password`, `/auth/forgot-password`, `/auth/reset-password` | AuthenticationTest, AdminPasswordResetTest | Change password → other sessions end; "Forgot password?" → email link → new password works, old one does not | |
 | A 1.5 | Session management | — | token expiry = Settings → System → Session timeout | AuthenticationTest | Set timeout to 5 min, wait → next action returns to login | |
 
