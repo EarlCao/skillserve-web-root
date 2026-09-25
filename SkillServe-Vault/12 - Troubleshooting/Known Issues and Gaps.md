@@ -61,4 +61,15 @@ Severity uses the `AGENT_REVIEW.md` scale. Open questions without a confirmed de
 When an item is fixed: update the code, move the row to [[Changelog]] with the date, and update the
 affected notes.
 
+> [!info] This note describes; `PENDING_FIXES.md` acts
+> The root `PENDING_FIXES.md` is the working to-do list: each entry there says what to *do* about a
+> gap, who it is for, and how to verify the fix. This note is the reference description. Keep the
+> two in step — a gap recorded in one belongs in the other.
+>
+> | Here | There |
+> |---|---|
+> | KI-26 Flutter app behind the API | **H6** |
+> | KI-27 no commission threshold | **M8** |
+> | KI-28 provider payouts not built | **C6** |
+
 Related: [[Security Findings]] · [[Project Status]] · [[Needs Verification Register]]

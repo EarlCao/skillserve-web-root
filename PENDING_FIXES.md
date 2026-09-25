@@ -1,9 +1,11 @@
 # Pending Fixes — SkillServe (Backend, Admin Web, Mobile, Deployment)
 
-Last full audit: 2026-09-21, against `SkillServe_Admin_Web_Functionalities.pdf`,
-`SkillServe_User_Mobile_Functionalities_Flutter.pdf`, the code in `backend/`, `frontend/` and the
-Flutter repo, and the Render deployment. This is the master list; the Flutter repo's
-`PENDING_FIXES.md` repeats the items that touch the app.
+Last updated: **2026-09-25** (commissions, National ID verification, PayMongo, seeding).
+Previous full audit: 2026-09-21.
+
+Requirements now live in `SkillServe-Vault/` (Obsidian), which supersedes the two functionality
+PDFs — those are kept for the original module numbering (**A x.y** / **M x.y**) only. This is the
+master list; the Flutter repo's `PENDING_FIXES.md` repeats the items that touch the app.
 
 Each item has an ID, the requirement it satisfies (Admin **A x.y** / Mobile **M x.y**), where the
 problem is, the fix, and how to verify it. All Critical, High, Medium and Low items are resolved (below); what remains are the owner
@@ -16,13 +18,74 @@ Tags: **[BE]** Laravel backend · **[AW]** React admin web · **[MB]** Flutter a
 
 ## Critical
 
-Nothing open.
+### C5 · Rotate the exposed PayMongo live secret key **[DEP]** — owner action
+**Where:** PayMongo dashboard → Developers → API Keys.
+**Problem:** `sk_live_w7xdt7…` was pasted into a chat transcript, so it must be treated as public.
+Anyone holding it can charge and refund real money and create webhooks on the account.
+**Fix:** switch *Viewing live data* **on**, regenerate, confirm, enter the OTP. The test key
+(`sk_test_YKg9…`) is unaffected and is what the app should use for now.
+**Verify:** the API Keys page shows a new "last regenerated" timestamp, and the old key returns 401.
+**Status:** the account was checked on 2026-09-25 and had **no webhooks**, so the key had not been
+used to divert payment events. Rotation is still required.
+
+### C6 · Provider payouts do not exist **[BE]** — needs a decision, then building
+**Where:** the whole payment flow. See `ADR-020` and Known Issues **KI-28**.
+**Problem:** PayMongo settles into **SkillServe's** account, not the provider's. A ₱200 GCash
+booking leaves SkillServe holding the provider's ₱180 with **nothing recording that it is owed**.
+The commission half is handled (it settles automatically); the payout half is missing entirely.
+**Fix — decide first:**
+  a. *Manual payouts* — add a provider payout ledger (what is owed, what has been paid, by whom)
+     and settle by bank/GCash transfer by hand. Smallest change; a person must do the transfers.
+  b. *PayMongo Platforms* — onboard every provider as a linked sub-account so splits are automatic.
+     Needs per-provider KYC, an onboarding flow and a commercial agreement with PayMongo.
+**Verify:** a completed GCash booking shows the provider what they are owed, and an administrator
+can mark it paid.
+**Until then:** do not take real GCash bookings — money would arrive with no record of the debt.
 
 ---
 
 ## High
 
-Nothing open.
+### H6 · Flutter app is behind the API **[MB]** — partly in progress
+**Where:** the Flutter repo. See Known Issues **KI-26**.
+**Problem:** the app predates the September API work.
+  - It offers six payment methods and **defaults to `cash`**. The backend accepts `cash` as a
+    deprecated alias, but Card, Bank transfer and PayPal now return **422**, and there is no label
+    for `on_hand`.
+  - No National ID screens, so a blocked account sees a bare 403 with no way to fix it.
+  - No transaction-eligibility check, no outstanding-commission screen, no GCash payment screen.
+**Fix:** trim the payment methods to GCash and On-hand; add the identity capture flow (**in
+progress**: `lib/features/identity/`), an eligibility banner, a commission-owed screen for
+providers, and a pay screen that opens the PayMongo redirect.
+**Verify:** register a new account, capture both sides of the ID, and pay a ₱1 booking with GCash.
+
+### H7 · GCash has never been run end to end **[DEP]**
+**Where:** production.
+**Problem:** the integration is built and unit-tested with a faked HTTP client, but no real payment
+has ever gone through it. The webhook endpoint is live and rejecting unsigned requests, which is as
+far as testing has gone.
+**Fix:** with test keys in Render, make a booking, pay ₱1 (the PayMongo minimum) and confirm the
+booking flips to paid within seconds of the webhook landing.
+**Verify:** `bookings.payment_status = paid`, `commission_status = settled`, one row in
+`payment_intents` with `status = succeeded`.
+
+### H8 · Identity enforcement is switched off **[DEP]** — owner action
+**Where:** Admin web → System Settings → Identity.
+**Problem:** National ID verification is built but **not enforced**: it ships off deliberately so
+deploying changed nothing.
+**Fix:** when ready, set *Require National ID verification to transact* on, and set *Require it for
+accounts created from* to the cutover date. Leaving that date **empty applies the rule to every
+existing account**, which freezes the marketplace until the review queue is cleared — set a date.
+**Verify:** an account created after the date cannot book until verified; one created before still
+can.
+
+### H9 · Push the outstanding 401 fix **[BE]**
+**Where:** `backend` repo, commit `6f4c46c`, committed but not pushed.
+**Problem:** every protected endpoint returned **500 instead of 401** to a client that omitted
+`Accept: application/json`. Pre-existing, affecting old and new routes alike.
+**Fix:** already made (`redirectGuestsTo(fn () => null)` plus a regression test). Just needs
+pushing so Render picks it up.
+**Verify:** `curl https://skillserve-web-backend.onrender.com/api/bookings` returns 401, not 500.
 
 ### Owner actions before go-live (cannot be done from the code)
 1. **Render:** a paid backend instance with the persistent disk, and the environment from
@@ -40,6 +103,20 @@ Nothing open.
 ---
 
 ## Medium
+
+### M8 · Commission blocking has no threshold **[BE]** — decision taken, worth revisiting
+**Where:** `CommissionLedger` / `TransactionEligibility`. Known Issues **KI-27**.
+**Problem:** a provider owing **₱20** is blocked from new work exactly like one owing ₱5,000, and
+every on-hand job creates a small debt an administrator must clear by hand.
+**Fix if it proves too blunt:** a minimum balance and/or an age before blocking starts, as System
+Settings values. The ledger and eligibility service already funnel through one place, so this is a
+small change.
+**Verify:** a provider owing less than the threshold can still accept work.
+
+### M9 · Mobile `api-docs/` is synced but uncommitted **[MB]**
+**Where:** Flutter repo, `api-docs/`.
+**Fix:** `git add api-docs && git commit` in that repo. It is regenerated by the `sync-api-docs`
+skill and was left uncommitted because the mobile repo is the owner's to commit.
 
 Nothing open.
 
