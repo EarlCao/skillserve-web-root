@@ -5,7 +5,7 @@ tags: [index, deployment, infrastructure]
 # Deployment & Infrastructure Index
 
 - [[Docker Compose Local Stack]] — the four local containers
-- [[Render Backend Service]] — production container (nginx + PHP + Reverb + queue + scheduler)
+- [[Render Backend Service]] · [[PayMongo Setup]] — production container (nginx + PHP + Reverb + queue + scheduler)
 - [[Frontend Hosting]] — Render static site (and the Vercel config)
 - [[NeonDB]] — production PostgreSQL with pooler/direct hosts
 - [[Render Persistent Disk]] — uploads storage
