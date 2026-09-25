@@ -9,6 +9,28 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-09-25 — Direct payment: SkillServe never holds the money
+
+Reverses the money flow decided earlier the same day, after the owner chose it against two
+alternatives ([[ADR-021 Direct Payment with Provider-Remitted Commission]]).
+
+- The customer pays the **provider directly** — GCash to the provider's own number, or cash — and
+  the provider then remits the commission to keep taking work. A GCash booking now behaves exactly
+  like a cash one, with no special case in the ledger.
+- `config/payments.php` routes **both** methods to the manual gateway unconditionally, even with
+  PayMongo credentials present. This matters operationally: the keys were already in Render, so
+  without this change production would have started collecting booking totals into SkillServe's
+  account.
+- `provider_profiles` gained `gcash_number` and `gcash_name`. Shown to a customer only on their own
+  unpaid GCash booking, never in the public catalog.
+- **KI-28 (provider payouts) is closed by removing the cause**, not by building a payout system.
+- The PayMongo integration stays, tested but unused for bookings. Its defensible future use is the
+  provider paying their own outstanding commission — SkillServe collecting its own revenue.
+- Trade accepted: no escrow, no payment guarantee. A customer who pays and receives nothing is a
+  dispute, not something the platform can reverse.
+
+**Tests:** 579 backend tests pass (10 new).
+
 ## 2026-09-25 — GCash live through PayMongo
 
 - `PayMongoGateway` is now a real integration, replacing the throwing stub: Payment Intent → `gcash`

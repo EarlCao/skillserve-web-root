@@ -28,6 +28,18 @@ Anyone holding it can charge and refund real money and create webhooks on the ac
 **Status:** the account was checked on 2026-09-25 and had **no webhooks**, so the key had not been
 used to divert payment events. Rotation is still required.
 
+### ~~C6 · Provider payouts do not exist~~ — **RESOLVED 2026-09-25**
+**Decision:** the customer pays the provider **directly** (GCash to the provider's own number, or
+cash), and the provider remits the commission to keep their account active. SkillServe is never in
+the payment path and never holds customer money, so there is no payout obligation to build.
+**Done:** both payment methods route to the manual gateway unconditionally; `provider_profiles`
+gained `gcash_number` / `gcash_name`; the customer sees `payment_instructions` on an unpaid GCash
+booking. See `ADR-021`.
+**Trade accepted:** no escrow and no payment guarantee — a customer who pays and gets nothing is a
+dispute, not something the platform can reverse.
+
+<details><summary>Original entry</summary>
+
 ### C6 · Provider payouts do not exist **[BE]** — needs a decision, then building
 **Where:** the whole payment flow. See `ADR-020` and Known Issues **KI-28**.
 **Problem:** PayMongo settles into **SkillServe's** account, not the provider's. A ₱200 GCash
@@ -41,6 +53,8 @@ The commission half is handled (it settles automatically); the payout half is mi
 **Verify:** a completed GCash booking shows the provider what they are owed, and an administrator
 can mark it paid.
 **Until then:** do not take real GCash bookings — money would arrive with no record of the debt.
+
+</details>
 
 ---
 

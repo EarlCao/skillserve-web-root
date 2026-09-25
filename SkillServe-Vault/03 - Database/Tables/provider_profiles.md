@@ -35,6 +35,8 @@ Professional profile of a provider account; the id used by services, bookings an
 | `is_featured` | bool default false, indexed |  |
 | `is_accepting_bookings` | bool default true |  |
 | `created_at, updated_at` |  |  |
+| `gcash_number` | string(20) null | where customers send payment; stored normalised as `09XXXXXXXXX` |
+| `gcash_name` | string(120) null | registered GCash account name, for the customer to check before sending |
 
 ## Indexes & constraints
 
@@ -47,6 +49,14 @@ Professional profile of a provider account; the id used by services, bookings an
 
 - user_id → users **cascade on delete**
 - verified_by, suspended_by → users null on delete
+
+## Payment details and privacy
+
+`gcash_number` / `gcash_name` are personal payment details, not public profile fields. They are
+exposed only on the provider's **own** profile and to a customer who has an unpaid GCash booking
+with them (`payment_instructions` on `ClientBookingResource`). `ClientProviderResource`, which the
+public catalog uses, deliberately does not carry them. See
+[[ADR-021 Direct Payment with Provider-Remitted Commission]].
 
 ## Related
 

@@ -8,7 +8,7 @@ tags: [adr, architecture, payments, commissions]
 
 | | |
 |---|---|
-| Status | **Accepted** |
+| Status | **Superseded in part** by [[ADR-021 Direct Payment with Provider-Remitted Commission]] (2026-09-25). Its finding — that PayMongo settles into the platform's account — still holds and is *why* ADR-021 was decided; its consequence, that SkillServe would collect booking totals, no longer applies |
 | First evidence | 2026-09-25 |
 
 ## Context
@@ -43,11 +43,11 @@ The commission side is handled: `CommissionLedger` asks the gateway whether the 
 so a GCash booking settles its commission the moment the webhook lands and the provider is never
 blocked over it.
 
-> [!warning] Provider payouts are not built
-> A GCash booking leaves SkillServe holding the provider's net (₱180 of a ₱200 job). There is no
-> payout ledger and no payout mechanism — that money must currently be transferred to the provider
-> by hand, and nothing in the system tracks the obligation. This is the **largest open gap** in the
-> payment design; see [[Known Issues and Gaps]] KI-28.
+> [!success] Resolved by ADR-021
+> This was the largest open gap: a GCash booking would have left SkillServe holding the provider's
+> net with nothing tracking the obligation. It is closed by
+> [[ADR-021 Direct Payment with Provider-Remitted Commission]], which removes the cause — the
+> customer now pays the provider directly and SkillServe never holds the money.
 
 Other consequences:
 

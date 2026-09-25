@@ -30,5 +30,6 @@ New decisions: copy [[Template - ADR]] and add a row.
 | 018 | [[ADR-018 Blind Index for National ID Uniqueness]] | 2026-09-24 |
 | 019 | [[ADR-019 Payment Gateway Abstraction with PayMongo Deferred]] | 2026-09-24 |
 | 020 | [[ADR-020 PayMongo Collects Into the Platform Account]] | 2026-09-25 |
+| 021 | [[ADR-021 Direct Payment with Provider-Remitted Commission]] | 2026-09-25 |
 
 Back to [[Home]]

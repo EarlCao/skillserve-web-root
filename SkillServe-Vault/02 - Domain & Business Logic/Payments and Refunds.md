@@ -32,7 +32,31 @@ Which gateway handles a method is configuration (`config/payments.php`). `on_han
 manual. `gcash` uses **PayMongo** when `PAYMONGO_SECRET_KEY` is set, and falls back to manual
 settlement when it is not — so a deployment without credentials behaves exactly as it did before.
 
-## Online payment (GCash via PayMongo)
+## How money actually moves
+
+**SkillServe is never in the payment path.** The customer pays the provider directly — GCash to the
+provider's own number, or cash on the job — and the provider then owes SkillServe its commission,
+which they must remit to keep taking work. See
+[[ADR-021 Direct Payment with Provider-Remitted Commission]].
+
+Both payment methods therefore route to the **manual** gateway unconditionally, even when PayMongo
+credentials are configured. A GCash booking is settled exactly like a cash one, and its commission
+becomes `outstanding` the same way.
+
+The customer sees the provider's GCash details as `payment_instructions` on their own booking —
+number, account name, amount and the booking number to use as a reference. They appear only while
+the booking is an unpaid GCash job, and never in the public catalog: they are the provider's
+personal payment details.
+
+`gcash_name` is shown alongside the number so the customer can check it against the recipient name
+GCash displays before confirming — that is what catches a mistyped number.
+
+> [!warning] No escrow, no payment guarantee
+> Because the platform never holds the money, it cannot reverse a payment. A customer who pays and
+> receives nothing, or a provider who works unpaid, is a dispute — not something SkillServe can
+> undo. That is the trade accepted for not handling other people's money.
+
+## PayMongo (built, not used for bookings)
 
 `POST /api/client/v1/bookings/{booking}/pay` starts a payment on the customer's own unpaid booking,
 once the provider has accepted it, and returns `redirect_url`. Tapping pay again resumes the same
