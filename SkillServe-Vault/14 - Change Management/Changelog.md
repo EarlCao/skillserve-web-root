@@ -9,6 +9,14 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-09-30 — Production reset to the super-admin only (C7 closed)
+
+Production had been seeded with the demo dataset (`SEED_MODE` defaults to `demo` when unset), which
+left about 170 active accounts with the password `password`. The owner set `SEED_MODE=admin-only`,
+wiped the Neon schema and redeployed; `start.sh` migrated the empty database and seeded only roles,
+permissions and the super-admin. The catalog now reports 0 services, providers and categories.
+The same day, a crash in the new dashboard commission card was fixed (frontend `2e55e67`).
+
 ## 2026-09-30 — The leaked PayMongo key is rotated (C5 closed)
 
 The owner regenerated the **live secret key** in PayMongo → Developers → API keys, so the key pasted

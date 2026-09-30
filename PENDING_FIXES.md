@@ -9,7 +9,7 @@ master list; the Flutter repo's `PENDING_FIXES.md` repeats the items that touch 
 
 Each item has an ID, the requirement it satisfies (Admin **A x.y** / Mobile **M x.y**), where the
 problem is, the fix, and how to verify it. Every item that could be fixed in code is resolved
-(below). What remains is **owner action only** (plus the **C7** decision): turn the
+(below). What remains is **owner action only**: turn the
 National ID requirement on when ready (**H8**), the go-live list, and the defense material.
 
 Tags: **[BE]** Laravel backend · **[AW]** React admin web · **[MB]** Flutter app · **[DEP]** deployment
@@ -57,6 +57,14 @@ skipped because the old key is no longer at hand; regeneration itself invalidate
 same day. Closed. Once the backend is pushed, `php artisan paymongo:status` on Render should report
 "No key is set".
 
+### ~~C7 · Production holds the demo dataset, with guessable passwords~~ — **RESOLVED 2026-09-30**
+**Done:** `SEED_MODE=admin-only` set on Render, Neon schema wiped, backend redeployed. Verified from
+outside: `/api/health` up, and the public catalog reports 0 services, 0 providers, 0 categories.
+The only account is the super-admin from `ADMIN_EMAIL`. **Left:** delete the Neon
+`backup-before-reset` branch once the super-admin login and the new setup are confirmed.
+
+<details><summary>Original entry</summary>
+
 ### C7 · Production holds the demo dataset, with guessable passwords **[DEP]** — decided: wipe, owner action
 **Found 2026-09-30** (read-only check of the public catalog): the live marketplace lists the
 `ProviderSeeder` / `ServiceSeeder` data (e.g. "Garcia Plumbing Solutions", "Calculus Tutoring",
@@ -85,6 +93,8 @@ Procedure (no code change; `start.sh` rebuilds an empty database on boot):
 Consequences: every account, booking, review, report and setting is deleted, every session ends,
 and there are **no service categories** until an administrator creates them. Uploaded files on the
 disk become orphans (harmless). Delete the Neon backup branch once the new setup is confirmed.
+
+</details>
 **Verify:** signing in as a seeded address with `password` fails.
 
 ### ~~C6 · Provider payouts do not exist~~ — **RESOLVED 2026-09-25**
