@@ -9,7 +9,7 @@ master list; the Flutter repo's `PENDING_FIXES.md` repeats the items that touch 
 
 Each item has an ID, the requirement it satisfies (Admin **A x.y** / Mobile **M x.y**), where the
 problem is, the fix, and how to verify it. Every item that could be fixed in code is resolved
-(below). What remains is **owner action only**: rotate the exposed PayMongo key (**C5**), turn the
+(below). What remains is **owner action only** (plus the **C7** decision): rotate the exposed PayMongo key (**C5**), turn the
 National ID requirement on when ready (**H8**), the go-live list, and the defense material.
 
 Tags: **[BE]** Laravel backend · **[AW]** React admin web · **[MB]** Flutter app · **[DEP]** deployment
@@ -50,6 +50,24 @@ been used to divert payment events. Rotation is still required.
     say to leave every PayMongo variable unset.
 
 **What is left is the dashboard rotation itself**, which needs the account's OTP.
+
+### C7 · Production holds the demo dataset, with guessable passwords **[DEP]** — needs a decision
+**Found 2026-09-30** (read-only check of the public catalog): the live marketplace lists the
+`ProviderSeeder` / `ServiceSeeder` data (e.g. "Garcia Plumbing Solutions", "Calculus Tutoring",
+20 services, 8 categories), so production was seeded with `SEED_MODE=demo` at some point.
+**Problem:** demo accounts are active and email-verified with the password **`password`** —
+providers are `firstname.lastname@example.com`, customers are on `example.com/.org/.net` — and the
+provider names are public. Anyone can guess an address and sign in as that account on the live
+system.
+**Fix — decide first:**
+  a. *Keep the demo catalogue, lock the accounts* (recommended for the defense): a one-off data
+     migration gives every mobile account on an `example.*` address a random password and revokes
+     its tokens. The catalogue stays for browsing; nobody can sign in as a seeded account.
+  b. *Remove the demo data*: delete the seeded accounts and their services, bookings and reviews
+     (a data migration), or wipe and reseed with `SEED_MODE=starter` — loses any real sign-ups.
+**Also:** set `SEED_MODE=admin-only` on Render (Step 3 of the owner guide) so a restart can never
+seed demo data again.
+**Verify:** signing in as a seeded address with `password` fails.
 
 ### ~~C6 · Provider payouts do not exist~~ — **RESOLVED 2026-09-25**
 **Decision:** the customer pays the provider **directly** (GCash to the provider's own number, or
