@@ -60,7 +60,9 @@ same day. Closed. Once the backend is pushed, `php artisan paymongo:status` on R
 ### ~~C7 · Production holds the demo dataset, with guessable passwords~~ — **RESOLVED 2026-09-30**
 **Done:** `SEED_MODE=admin-only` set on Render, Neon schema wiped, backend redeployed. Verified from
 outside: `/api/health` up, and the public catalog reports 0 services, 0 providers, 0 categories.
-The only account is the super-admin from `ADMIN_EMAIL`. **Left:** delete the Neon
+The first rebuild created **no** super-admin: `db:seed-if-empty` mistook the roles the migrations
+insert for a seeded database. Fixed in backend `924cf14`; the following deploy seeds the super-admin
+from `ADMIN_EMAIL`. **Left:** delete the Neon
 `backup-before-reset` branch once the super-admin login and the new setup are confirmed.
 
 <details><summary>Original entry</summary>

@@ -32,7 +32,7 @@ container.
 
 | Command | Used by |
 |---|---|
-| `db:seed-if-empty {--fresh}` (`SeedIfEmpty`) | production start-up: seeds only if `roles` is empty, so cold starts don't re-seed |
+| `db:seed-if-empty {--fresh}` (`SeedIfEmpty`) | production start-up: seeds only if no super-admin account exists, so cold starts don't re-seed |
 | `inspire` | framework default |
 
 ## Free-tier caveat

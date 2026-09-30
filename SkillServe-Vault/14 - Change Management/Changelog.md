@@ -9,6 +9,13 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-09-30 — A reset database now gets its super-admin
+
+After the production reset nobody could sign in: `users` was empty. `db:seed-if-empty` treated any
+row in `roles` as "already seeded", and the 2026_09_18 migration inserts the fixed roles, so a freshly
+migrated database was always skipped. The marker is now the super-admin account itself (backend
+`924cf14`, `SeedIfEmptyTest`); the next start seeds it from `ADMIN_EMAIL` / `ADMIN_PASSWORD`.
+
 ## 2026-09-30 — Production reset to the super-admin only (C7 closed)
 
 Production had been seeded with the demo dataset (`SEED_MODE` defaults to `demo` when unset), which

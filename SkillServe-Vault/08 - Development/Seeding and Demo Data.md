@@ -34,7 +34,10 @@ All seeders are idempotent top-ups ("re-running only tops up what's missing").
 - `RolePermissionSeeder` seeds the super-admin and **nothing else**, and throws in production if `ADMIN_PASSWORD` is empty
   or the default. Accounts use `firstOrCreate`, so changing the env var later does **not** change an
   existing password.
-- Production start runs `php artisan db:seed-if-empty` — seeds only when `roles` is empty
+- Production start runs `php artisan db:seed-if-empty` — seeds only when **no super-admin account
+  exists** (`users.role_id` = super-admin). Until 2026-09-30 it checked for any role, which a freshly
+  migrated database always has (the 2026_09_18 migration inserts the fixed roles), so a reset
+  database never got its super-admin
   (`--fresh` forces).
 - `scripts/fresh-demo.sh` / `scripts/fresh-admin.sh` run `migrate:fresh --seed` inside the backend
   container → **wipe the database**. Only for disposable local databases; never run without asking
