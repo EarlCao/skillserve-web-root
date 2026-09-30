@@ -9,6 +9,13 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-09-30 — The leaked PayMongo key is rotated (C5 closed)
+
+The owner regenerated the **live secret key** in PayMongo → Developers → API keys, so the key pasted
+into a chat no longer works, and deleted `PAYMONGO_SECRET_KEY` and `PAYMONGO_WEBHOOK_SECRET` from
+Render. The new key is stored nowhere in the project, because nothing uses it (ADR-021). The optional
+`--probe-key` check was skipped because the old key was no longer at hand.
+
 ## 2026-09-30 — The app's catch-up is committed, and providers see their commission split (M10, L2 / KI-31)
 
 - **M10.** The 2026-09-26 app work (identity verification, provider Commissions and GCash details

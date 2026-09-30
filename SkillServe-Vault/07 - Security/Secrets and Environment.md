@@ -27,8 +27,9 @@ Nothing routes to PayMongo ([[ADR-021 Direct Payment with Provider-Remitted Comm
 `PAYMONGO_SECRET_KEY` and `PAYMONGO_WEBHOOK_SECRET` should be **unset everywhere**, including
 Render. A key that is never stored cannot be leaked.
 
-Two controls back that up, because the previous leak (`PENDING_FIXES.md` → **C5**) happened by a key
-being pasted into a chat:
+Two controls back that up, because the previous leak (`PENDING_FIXES.md` → **C5**, resolved
+2026-09-30: live secret key regenerated in PayMongo, both variables deleted from Render) happened by a
+key being pasted into a chat:
 
 - `PayMongoClient` refuses every request while an `sk_live_` key is configured unless
   `PAYMONGO_ALLOW_LIVE=true` is set as well. The refusal is logged as `critical`; the key never is.

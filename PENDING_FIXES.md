@@ -9,7 +9,7 @@ master list; the Flutter repo's `PENDING_FIXES.md` repeats the items that touch 
 
 Each item has an ID, the requirement it satisfies (Admin **A x.y** / Mobile **M x.y**), where the
 problem is, the fix, and how to verify it. Every item that could be fixed in code is resolved
-(below). What remains is **owner action only** (plus the **C7** decision): rotate the exposed PayMongo key (**C5**), turn the
+(below). What remains is **owner action only** (plus the **C7** decision): turn the
 National ID requirement on when ready (**H8**), the go-live list, and the defense material.
 
 Tags: **[BE]** Laravel backend · **[AW]** React admin web · **[MB]** Flutter app · **[DEP]** deployment
@@ -19,7 +19,7 @@ Tags: **[BE]** Laravel backend · **[AW]** React admin web · **[MB]** Flutter a
 
 ## Critical
 
-### C5 · Rotate the exposed PayMongo live secret key **[DEP]** — owner action
+### ~~C5 · Rotate the exposed PayMongo live secret key~~ — **RESOLVED 2026-09-30**
 **Where:** PayMongo dashboard → Developers → API Keys. Nothing in the repositories can do this.
 **Problem:** `sk_live_w7xdt7…` was pasted into a chat transcript, so it must be treated as public.
 Anyone holding it can charge and refund real money and create webhooks on the account.
@@ -53,8 +53,9 @@ been used to divert payment events. Rotation is still required.
 API keys (the public key and the test keys were left alone). The new key is deliberately stored
 nowhere in the project or Render, since nothing uses it. The optional `--probe-key` check was
 skipped because the old key is no longer at hand; regeneration itself invalidates it.
-**Left to confirm:** `PAYMONGO_SECRET_KEY` (and `PAYMONGO_WEBHOOK_SECRET`) removed from Render →
-Environment. Then this item is closed.
+`PAYMONGO_SECRET_KEY` and `PAYMONGO_WEBHOOK_SECRET` were **deleted from Render → Environment** the
+same day. Closed. Once the backend is pushed, `php artisan paymongo:status` on Render should report
+"No key is set".
 
 ### C7 · Production holds the demo dataset, with guessable passwords **[DEP]** — needs a decision
 **Found 2026-09-30** (read-only check of the public catalog): the live marketplace lists the

@@ -13,7 +13,7 @@ sources: [backend/config/payments.php, backend/app/Modules/Payments]
 > `php artisan paymongo:status` answers "No key is set" when the environment is right.
 >
 > This note is kept for two reasons: **section 1** is the rotation runbook for the exposed key
-> (`PENDING_FIXES.md` → **C5**), and the rest documents how the integration would be switched on if
+> (`PENDING_FIXES.md` → **C5**, done 2026-09-30), and the rest documents how the integration would be switched on if
 > the one remaining candidate — a provider paying their own outstanding commission — is ever built.
 
 | Variable | What it is | Where it comes from |
