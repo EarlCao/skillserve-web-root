@@ -210,7 +210,23 @@ Nothing open.
 
 ## Low
 
-Nothing open.
+### L1 · (KI-30) A provider is not told when their commission is settled or waived **[BE]**
+**Where:** `CommissionSettled` / `CommissionWaived` are only audit-logged
+(`LogCommissionSettlementActivity` in `AppServiceProvider`).
+**Problem:** the provider is unblocked silently and only finds out by refreshing Commissions.
+**Fix:** a `NotifyProviderOfCommissionSettlement` listener on both events, sending a database +
+realtime notification ("Your ₱75 commission for BK-… was recorded — you can take new bookings"),
+deep-linking to `/commissions`.
+**Verify:** settle a commission from the admin web; the provider's phone shows the notification.
+
+### L2 · (KI-31) The app does not show SkillServe's share when a provider prices a service **[MB]**
+**Where:** Flutter `lib/features/provider/views/service_form.dart`.
+**Problem:** the API offers `GET /api/client/v1/provider/commission-preview?amount=` and an
+`earnings` block on each provider service, but the form shows neither, so a provider learns the
+commission only after a job.
+**Fix:** call the preview as the price changes (debounced) and show "SkillServe 15% · ₱75 — you keep
+₱425" under the price; show the same `earnings` on My Services.
+**Verify:** typing ₱500 under the Standard rates shows ₱75 / ₱425.
 
 ---
 
@@ -220,10 +236,11 @@ Nothing open.
   `TEST_PLAN.md` (mobile) map every requirement to its page/screen, endpoint, automated tests and
   UAT steps. Fill in the Result column on the deployed system; every row must pass before the
   defense.
-- **D2. Demo script and data.** A short end-to-end scenario on the deployed system: customer books →
-  provider accepts → reschedule → job done → provider records payment → review → report → admin
-  moderates → dispute → admin resolves → notifications on both phones. Use `scripts/fresh-demo.sh`
-  only on a **local/demo** database (it wipes data).
+- **D2. Demo script and data.** Written 2026-09-30: `DEMO_SCRIPT.md` — preparation, then booking →
+  reschedule → accept → job → GCash payment → commission block and settlement → review → report and
+  moderation → dispute → admin wrap-up, with the expected result of every step. **Owner action:**
+  rehearse it on the deployed system and record results in both `TEST_PLAN.md` files. Use
+  `scripts/fresh-demo.sh` only on a **local/demo** database (it wipes data).
 - **D3. Architecture and security talking points.** Monolith (Laravel API + React admin) plus Flutter
   client; Sanctum tokens with rotating refresh tokens; role/permission model (Spatie); realtime via
   Reverb (no Firebase — and why); closed-app notifications via WorkManager polling with a read-only

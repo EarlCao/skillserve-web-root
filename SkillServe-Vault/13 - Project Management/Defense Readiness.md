@@ -11,7 +11,7 @@ defines three deliverables:
 | ID | Deliverable | State |
 |---|---|---|
 | D1 | Requirements traceability matrix | ✅ both `TEST_PLAN.md` files exist; Result columns empty |
-| D2 | Demo script and data: customer books → provider accepts → reschedule → job done → provider records payment → review → report → admin moderates → dispute → admin resolves → notifications on both phones | script defined; not yet recorded as rehearsed; use `scripts/fresh-demo.sh` only on a local/demo DB |
+| D2 | Demo script and data: customer books → provider accepts → reschedule → job done → provider records payment → review → report → admin moderates → dispute → admin resolves → notifications on both phones | **written** — root `DEMO_SCRIPT.md` (step-by-step, with expected results); not yet rehearsed on the deployed system; use `scripts/fresh-demo.sh` only on a local/demo DB |
 | D3 | Architecture and security talking points | see below |
 
 ## Talking points (from repo docs, each backed by a vault note)
