@@ -172,10 +172,9 @@ freezing every existing account.
 Commit `6f4c46c` (`redirectGuestsTo(fn () => null)` plus a regression test) is on `origin/main`;
 the entry was stale. `curl https://skillserve-web-backend.onrender.com/api/bookings` should return
 401, not 500 — worth confirming once against the deployed backend.
-**Still unpushed (2026-09-30):** every commit ahead of `origin/main` in all four repos
-(`git log --oneline origin/main..main` lists them), starting with `248fa4b` in the backend. Render auto-deploys `main`, so pushing is the owner's
-call. Push the **backend first** (its deploy runs the rating migration), then the frontend; root and
-Flutter pushes deploy nothing.
+**Pushed 2026-09-30:** all four repos are on `origin/main`. The backend deploy ran the two new
+migrations and went live (the new `/api/commission-tiers/presets` answers 401 unauthenticated;
+`/api/health` up); the frontend was pushed after it.
 
 ### Owner actions before go-live (cannot be done from the code)
 1. **Render:** a paid backend instance with the persistent disk, and the environment from
