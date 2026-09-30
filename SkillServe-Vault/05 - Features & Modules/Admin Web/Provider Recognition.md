@@ -25,7 +25,7 @@ Admin requirement module **12** ([[Requirements Sources]]).
 | A 12.2 | Assign Provider Badge | `POST …/providers/{p}/badges` → shown on the app profile |
 | A 12.3 | Remove Provider Badge | `DELETE …/providers/{p}/badges/{b}` |
 | A 12.4 | Manage Featured Providers | `PATCH …/providers/{p}/featured` |
-| A 12.5 | Manage Top-Rated Providers | `GET …/top-rated` |
+| A 12.5 | Manage Top-Rated Providers | `GET …/top-rated` — ranked by the stored provider rating (average of service ratings, [[Reviews and Ratings Rules]]) |
 
 **Status:** code present for every functionality above. UAT result columns in `TEST_PLAN.md` are
 still empty (not yet executed on the deployed system) — see [[UAT and Traceability]].

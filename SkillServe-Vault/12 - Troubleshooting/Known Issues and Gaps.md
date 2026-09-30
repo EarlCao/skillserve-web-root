@@ -54,9 +54,10 @@ Severity uses the `AGENT_REVIEW.md` scale. Open questions without a confirmed de
 |---|---|
 | KI-24 | UAT Result columns and automated-check run tables in both `TEST_PLAN.md` files are empty — no recorded acceptance evidence |
 | KI-25 | Go-live owner actions (paid Render + disk, signing keystore, Google OAuth SHA-1, admin content, smoke test) are not recorded as done ([[Go-Live Checklist]]) |
-| KI-26 | **Flutter app is behind the API (2026-09-24).** It offers six payment methods and defaults to `cash`; the alias keeps that default working, but Card, Bank transfer and PayPal now return **422**, and there is no label for `on_hand`. It also has no screen for National ID submission (`/client/v1/identity-verification`), for transaction eligibility, or for an outstanding commission — so a blocked account currently sees a bare 403. See [[Payments and Refunds]] · [[Identity Verification Lifecycle]] |
+| ~~KI-29~~ | **Resolved 2026-09-26.** System Settings in the admin web rendered six of the seven setting groups: the `identity` group had no tab, so the National ID requirement and its cutover date could not be reached from the UI at all — the setting H8 asks the owner to turn on. Found while working through H8 |
+| ~~KI-26~~ | **Resolved 2026-09-26.** The app offered six payment methods and defaulted to `cash`, and had no screen for National ID submission, transaction eligibility or an outstanding commission, so a blocked account saw a bare 403. It now offers `on_hand` and `gcash` only, captures the National ID at registration and from Settings, shows an eligibility banner on both homes, lists what a provider owes, and shows the customer where to send a GCash payment. See [[Changelog]] 2026-09-26 |
 | ~~KI-28~~ | **Resolved 2026-09-25.** Provider payouts were the largest open gap while PayMongo collected booking totals. Closed by removing the cause: the customer now pays the provider directly and SkillServe never holds the money. See [[ADR-021 Direct Payment with Provider-Remitted Commission]] |
-| KI-27 | Commission enforcement has **no threshold**: a provider owing ₱20 is blocked exactly like one owing ₱5,000, and every on-hand job creates a small debt an administrator must clear by hand. Raised with the owner, who chose the simple rule; revisit if it proves too blunt in practice |
+| ~~KI-27~~ | ~~Commission enforcement has no threshold~~ — **resolved 2026-09-30**: a minimum unpaid amount and a grace period in days are now System Settings; see [[Commission Tiers and Settlement#What an outstanding commission blocks]] |
 
 When an item is fixed: update the code, move the row to [[Changelog]] with the date, and update the
 affected notes.
@@ -68,8 +69,8 @@ affected notes.
 >
 > | Here | There |
 > |---|---|
-> | KI-26 Flutter app behind the API | **H6** |
-> | KI-27 no commission threshold | **M8** |
+> | ~~KI-26~~ Flutter app behind the API — resolved | ~~H6~~ |
+> | ~~KI-27~~ no commission threshold — resolved | ~~M8~~ |
 > | ~~KI-28~~ provider payouts — resolved | ~~C6~~ |
 
 Related: [[Security Findings]] · [[Project Status]] · [[Needs Verification Register]]

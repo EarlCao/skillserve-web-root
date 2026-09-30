@@ -126,7 +126,8 @@ classDiagram
   reports and support tickets ([[Data Retention and Deletion]]).
 - **Aggregates are denormalised:** `provider_profiles.average_rating/total_reviews/total_bookings/
   completed_bookings`, `services.average_rating/total_reviews/total_bookings/completed_bookings`
-  (review aggregates recalculated by `RecalculateClientReviewAggregatesAction`).
+  (ratings recalculated by `RecalculateRatingAggregatesAction`; a provider's rating is the average
+  of its services' ratings — see [[Reviews and Ratings Rules]]).
 - **Money:** `decimal(10,2)`; `currency` char(3) default `PHP` since migration
   `2026_09_17_000001` ([[ADR-011 Philippine Peso Currency]]).
 - **Audit trail:** `activity_log` (spatie) written by `Log…Activity` listeners.

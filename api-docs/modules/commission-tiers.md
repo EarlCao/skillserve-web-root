@@ -107,6 +107,90 @@ Response schema: `see openapi.json`
 
 Response schema: `see openapi.json`
 
+## `GET /api/commission-tiers/presets`
+
+Ready-made tier sets that can replace the active tiers in one step.
+
+**Authentication:** Bearer token
+
+### Parameters
+
+None.
+
+### Request body and validation
+
+No JSON request body.
+
+### Responses
+
+#### HTTP 200: Commission presets
+
+```json
+{
+    "success": true,
+    "message": "Commission presets retrieved.",
+    "data": [
+        {
+            "key": "flat_10",
+            "name": "Flat 10%",
+            "description": "The same 10% on every booking, whatever its amount.",
+            "tiers": [
+                {
+                    "name": "All bookings",
+                    "min_amount": "0.00",
+                    "max_amount": null,
+                    "percentage": "10.00"
+                }
+            ]
+        }
+    ],
+    "errors": null,
+    "meta": null
+}
+```
+
+#### HTTP 401: Unauthenticated
+
+Response schema: `see openapi.json`
+
+#### HTTP 403: Missing the view commissions permission
+
+Response schema: `see openapi.json`
+
+## `POST /api/commission-tiers/presets/{preset}/apply`
+
+Retires every enabled tier and creates the preset's bands in their place, in one transaction. Disabled tiers are left alone. Bookings already made keep their own rate snapshot.
+
+**Authentication:** Bearer token
+
+### Parameters
+
+| Name | Location | Required | Type / allowed values |
+|---|---|---:|---|
+| `preset` | path | yes | string |
+
+### Request body and validation
+
+No JSON request body.
+
+### Responses
+
+#### HTTP 200: Preset applied; the new tiers, lowest band first
+
+Response schema: `#/components/schemas/ApiEnvelope`
+
+#### HTTP 401: Unauthenticated
+
+Response schema: `see openapi.json`
+
+#### HTTP 403: Missing the manage commissions permission
+
+Response schema: `see openapi.json`
+
+#### HTTP 404: Preset not found
+
+Response schema: `see openapi.json`
+
 ## `DELETE /api/commission-tiers/{commissionTier}`
 
 Soft deletion. Bookings charged under this tier keep their rate snapshot, so past commissions never change.

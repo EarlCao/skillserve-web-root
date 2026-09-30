@@ -1,6 +1,6 @@
 # Pending Fixes — SkillServe (Backend, Admin Web, Mobile, Deployment)
 
-Last updated: **2026-09-25** (commissions, National ID verification, PayMongo, seeding).
+Last updated: **2026-09-30** (M8 threshold built; service-based provider ratings, dashboard commission card and general Excel report added).
 Previous full audit: 2026-09-21.
 
 Requirements now live in `SkillServe-Vault/` (Obsidian), which supersedes the two functionality
@@ -8,8 +8,9 @@ PDFs — those are kept for the original module numbering (**A x.y** / **M x.y**
 master list; the Flutter repo's `PENDING_FIXES.md` repeats the items that touch the app.
 
 Each item has an ID, the requirement it satisfies (Admin **A x.y** / Mobile **M x.y**), where the
-problem is, the fix, and how to verify it. All Critical, High, Medium and Low items are resolved (below); what remains are the owner
-actions before go-live and the defense material.
+problem is, the fix, and how to verify it. Every item that could be fixed in code is resolved
+(below). What remains is **owner action only**: rotate the exposed PayMongo key (**C5**), turn the
+National ID requirement on when ready (**H8**), the go-live list, and the defense material.
 
 Tags: **[BE]** Laravel backend · **[AW]** React admin web · **[MB]** Flutter app · **[DEP]** deployment
 · **[DOC]** defense material.
@@ -19,14 +20,36 @@ Tags: **[BE]** Laravel backend · **[AW]** React admin web · **[MB]** Flutter a
 ## Critical
 
 ### C5 · Rotate the exposed PayMongo live secret key **[DEP]** — owner action
-**Where:** PayMongo dashboard → Developers → API Keys.
+**Where:** PayMongo dashboard → Developers → API Keys. Nothing in the repositories can do this.
 **Problem:** `sk_live_w7xdt7…` was pasted into a chat transcript, so it must be treated as public.
 Anyone holding it can charge and refund real money and create webhooks on the account.
-**Fix:** switch *Viewing live data* **on**, regenerate, confirm, enter the OTP. The test key
-(`sk_test_YKg9…`) is unaffected and is what the app should use for now.
-**Verify:** the API Keys page shows a new "last regenerated" timestamp, and the old key returns 401.
-**Status:** the account was checked on 2026-09-25 and had **no webhooks**, so the key had not been
-used to divert payment events. Rotation is still required.
+**Fix:** remove `PAYMONGO_SECRET_KEY` from Render first (nothing uses it), then switch *Viewing live
+data* **on**, regenerate, confirm, enter the OTP. Do **not** put the new key back — see below.
+**Verify:** the API Keys page shows a new "last regenerated" timestamp, and
+`php artisan paymongo:status --probe-key` answers **401** for the old key.
+**Status:** the live account was checked on 2026-09-25 and had **no webhooks**, so the key had not
+been used to divert payment events. Rotation is still required.
+
+**Code side, done 2026-09-26** — the blast radius is now closed even before rotation:
+  - **A live key cannot be used by accident.** `PayMongoClient` refuses every request while an
+    `sk_live_` key is configured unless `PAYMONGO_ALLOW_LIVE=true` is *also* set, logs it as
+    `critical`, and never logs the key. One mistyped variable should not be all that stands between
+    a deploy and real money. Test: `LiveKeyGuardTest`.
+  - **`php artisan paymongo:status`** reports the environment's posture — key present, test or live,
+    whether live is allowed, the webhook secret, and the gateway each payment method resolves to.
+    "No key is set" is the healthy answer. `--probe` checks the configured key against PayMongo;
+    `--probe-key` prompts for one (hidden, never stored), which is how the rotated-out key is
+    confirmed dead.
+  - **The key is nowhere in the repositories.** All four working trees and their full git history
+    were searched for `sk_live_`: only truncated references in documentation. `backend/.env` is
+    gitignored and its live key had already been removed by hand.
+  - **The docs no longer invite it back.** `.env.example`, `DEPLOYMENT.md` (environment table,
+    go-live step 6 and a "Rotating an exposed PayMongo key" runbook) and the vault's
+    [[PayMongo Setup]] all said or implied that setting a key switches GCash on. That has been
+    untrue since ADR-021 — both methods route to the manual gateway unconditionally — so they now
+    say to leave every PayMongo variable unset.
+
+**What is left is the dashboard rotation itself**, which needs the account's OTP.
 
 ### ~~C6 · Provider payouts do not exist~~ — **RESOLVED 2026-09-25**
 **Decision:** the customer pays the provider **directly** (GCash to the provider's own number, or
@@ -60,31 +83,42 @@ can mark it paid.
 
 ## High
 
-### H6 · Flutter app is behind the API **[MB]** — partly in progress
-**Where:** the Flutter repo. See Known Issues **KI-26**.
-**Problem:** the app predates the September API work.
-  - It offers six payment methods and **defaults to `cash`**. The backend accepts `cash` as a
-    deprecated alias, but Card, Bank transfer and PayPal now return **422**, and there is no label
-    for `on_hand`.
-  - No National ID screens, so a blocked account sees a bare 403 with no way to fix it.
-  - No transaction-eligibility check, no outstanding-commission screen, no GCash payment screen.
-**Fix:** trim the payment methods to GCash and On-hand; add the identity capture flow (**in
-progress**: `lib/features/identity/`), an eligibility banner, a commission-owed screen for
-providers, and a pay screen that opens the PayMongo redirect.
-**Verify:** register a new account, capture both sides of the ID, and pay a ₱1 booking with GCash.
+### ~~H6 · Flutter app is behind the API~~ — **RESOLVED 2026-09-26**
+The app predated the September API work: six payment methods defaulting to `cash`, no National ID
+screens, no eligibility check and no commission screen, so a blocked account saw a bare 403.
+**Done:**
+  - Payment methods trimmed to **On-hand** and **GCash**, the only two the API accepts. Codes on
+    older bookings still read back with a label, because the API does not rewrite them.
+  - National ID capture is reachable at `/identity-verification` — on the Profile tab for both
+    roles, and where registration lands straight after the OTP (a provider carries on to business
+    onboarding). Skipping is offered only while the platform does not require it of that account.
+  - `EligibilityBanner` on the customer home and provider dashboard renders
+    `GET /transaction-eligibility` as a prompt that opens the screen which fixes it, and draws
+    nothing when the account is eligible.
+  - `/commissions` shows a provider what they owe, per booking, and what the block stops them doing.
+  - `/gcash-details` lets a provider save the number and account name customers pay.
+  - A "How to pay" card on an unpaid GCash booking shows the provider's GCash details, the amount
+    and the booking reference, from the API's `payment_instructions`.
+**Verify:** register a new account, capture both sides of the ID, and make a GCash booking — the
+booking shows the provider's GCash details, and the provider sees the commission become outstanding
+once they confirm the payment.
+**Tests:** `identity_test` (new), `booking_test`, `app_sweep_test`; 270 Flutter tests pass.
 
-### H7 · GCash has never been run end to end **[DEP]**
-**Where:** production.
-**Problem:** the integration is built and unit-tested with a faked HTTP client, but no real payment
-has ever gone through it. The webhook endpoint is live and rejecting unsigned requests, which is as
-far as testing has gone.
-**Fix:** with test keys in Render, make a booking, pay ₱1 (the PayMongo minimum) and confirm the
-booking flips to paid within seconds of the webhook landing.
-**Verify:** `bookings.payment_status = paid`, `commission_status = settled`, one row in
-`payment_intents` with `status = succeeded`.
+### ~~H7 · GCash has never been run end to end~~ — **SUPERSEDED 2026-09-26**
+**Why:** H7 asked for a ₱1 payment through the PayMongo redirect. Since `ADR-021` there is no such
+path: `config/payments.php` routes **both** methods to the manual gateway, so
+`POST /bookings/{booking}/pay` refuses every booking with a 422 and no payment intent is ever
+created. The integration stays in the codebase, tested but unused for bookings; its one defensible
+future use is a provider paying their **own** outstanding commission, which is not built.
+**What replaces it** — verify the *direct* payment flow on the deployed system, as part of the D2
+demo script: a customer makes a GCash booking, sees the provider's GCash details, pays, the provider
+confirms the payment, the commission becomes outstanding and blocks new work, and an administrator
+settles it. No real card or gateway is involved, so this costs nothing to rehearse.
+**Also done:** the stale comments in `config/payments.php` and the pay endpoint's Swagger
+description (which still claimed a GCash booking could be paid online) now match ADR-021.
 
 ### H8 · Identity enforcement is switched off **[DEP]** — owner action
-**Where:** Admin web → System Settings → Identity.
+**Where:** Admin web → System Settings → **Identity**.
 **Problem:** National ID verification is built but **not enforced**: it ships off deliberately so
 deploying changed nothing.
 **Fix:** when ready, set *Require National ID verification to transact* on, and set *Require it for
@@ -92,14 +126,18 @@ accounts created from* to the cutover date. Leaving that date **empty applies th
 existing account**, which freezes the marketplace until the review queue is cleared — set a date.
 **Verify:** an account created after the date cannot book until verified; one created before still
 can.
+**Code side done 2026-09-26:** the Identity tab did not exist. `SettingsPage.jsx` builds its tabs
+from its own list, not from the API's groups, so the `identity` group was returned by the API and
+rendered nowhere — this owner action could not be performed at all. The tab is now there, the
+cutover date is a date picker, and turning the switch on with the date empty raises a warning about
+freezing every existing account.
 
-### H9 · Push the outstanding 401 fix **[BE]**
-**Where:** `backend` repo, commit `6f4c46c`, committed but not pushed.
-**Problem:** every protected endpoint returned **500 instead of 401** to a client that omitted
-`Accept: application/json`. Pre-existing, affecting old and new routes alike.
-**Fix:** already made (`redirectGuestsTo(fn () => null)` plus a regression test). Just needs
-pushing so Render picks it up.
-**Verify:** `curl https://skillserve-web-backend.onrender.com/api/bookings` returns 401, not 500.
+### ~~H9 · Push the outstanding 401 fix~~ — **RESOLVED**
+Commit `6f4c46c` (`redirectGuestsTo(fn () => null)` plus a regression test) is on `origin/main`;
+the entry was stale. `curl https://skillserve-web-backend.onrender.com/api/bookings` should return
+401, not 500 — worth confirming once against the deployed backend.
+**Still unpushed:** `248fa4b` (`feat(payments): pay the provider directly, provider remits the
+commission`), plus the 2026-09-26 work. Render auto-deploys `main`, so pushing is the owner's call.
 
 ### Owner actions before go-live (cannot be done from the code)
 1. **Render:** a paid backend instance with the persistent disk, and the environment from
@@ -118,6 +156,19 @@ pushing so Render picks it up.
 
 ## Medium
 
+### ~~M8 · Commission blocking has no threshold~~ — **RESOLVED 2026-09-30**
+**Done:** two System Settings → Marketplace values decide when unpaid commission blocks a provider:
+*Block providers once unpaid commission reaches (₱)* and *Also block when a commission stays unpaid
+for (days)*. Whichever is reached first blocks. Defaults (₱0, 0 = off) keep the original behaviour —
+any debt blocks at once — so deploying changes nothing until an administrator sets them.
+`GET /api/client/v1/provider/commissions` and `/transaction-eligibility` now also return
+`block_threshold` and `block_deadline`. Tests in `CommissionLedgerTest`.
+**Owner action:** pick the values (for example ₱200 and 7 days) in the admin web when ready.
+**Optional mobile follow-up:** the app already obeys `eligible`; it could also show "remit by
+{block_deadline}" to warn a provider before the block. Not required for correctness.
+
+<details><summary>Original entry</summary>
+
 ### M8 · Commission blocking has no threshold **[BE]** — decision taken, worth revisiting
 **Where:** `CommissionLedger` / `TransactionEligibility`. Known Issues **KI-27**.
 **Problem:** a provider owing **₱20** is blocked from new work exactly like one owing ₱5,000, and
@@ -126,6 +177,8 @@ every on-hand job creates a small debt an administrator must clear by hand.
 Settings values. The ledger and eligibility service already funnel through one place, so this is a
 small change.
 **Verify:** a provider owing less than the threshold can still accept work.
+
+</details>
 
 ### M9 · Mobile `api-docs/` is synced but uncommitted **[MB]**
 **Where:** Flutter repo, `api-docs/`.

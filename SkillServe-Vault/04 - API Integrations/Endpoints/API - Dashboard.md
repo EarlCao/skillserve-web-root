@@ -12,7 +12,7 @@ tags: [api, endpoints, generated]
 > Authorization is extracted from controller/policy source; request/response shapes live in the
 > generated OpenAPI reference (`api-docs/modules/*.md`, Swagger UI at `/api/documentation`).
 
-Admin dashboard read model.
+Admin dashboard read model. `commission_summary` is included only for viewers holding `view commissions` or `manage commissions`.
 
 Feature note: [[Admin Dashboard]] · Conventions: [[API Conventions]] · Index: [[API Index]]
 

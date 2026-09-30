@@ -12,7 +12,7 @@ tags: [api, endpoints, generated]
 > Authorization is extracted from controller/policy source; request/response shapes live in the
 > generated OpenAPI reference (`api-docs/modules/*.md`, Swagger UI at `/api/documentation`).
 
-Admin reports and CSV export.
+Admin reports, per-category CSV export, and the Excel general report.
 
 Feature note: [[Reports and Analytics]] · Conventions: [[API Conventions]] · Index: [[API Index]]
 
@@ -20,5 +20,6 @@ Feature note: [[Reports and Analytics]] · Conventions: [[API Conventions]] · I
 |---|---|---|---|---|
 | GET | `/api/analytics/reports` | `Analytics::ReportController@index` | `auth:sanctum` | `view analytics` |
 | GET | `/api/analytics/reports/export` | `Analytics::ReportController@export` | `auth:sanctum` | `export analytics` |
+| GET | `/api/analytics/reports/general/export` | `Analytics::ReportController@generalExport` | `auth:sanctum` | `export analytics` |
 
 Every `api/*` route also runs the `api` group: `throttle:api` (60/min per user or IP), `SubstituteBindings`, `ForceJsonResponse`, `CacheApiResponse`, `AddRateLimitHeaders`.

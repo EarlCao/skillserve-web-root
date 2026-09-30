@@ -4,7 +4,7 @@ All examples and validation details in this file come from the Laravel backend O
 
 ## `GET /api/client/v1/provider/commissions`
 
-SkillServe's commission is included in the price the provider advertises, so on an on-hand job the provider collects the whole amount and owes the platform's share back. While anything is outstanding the provider cannot accept or start jobs, or publish services; declining and cancelling stay available so they can still clear their queue.
+SkillServe's commission is included in the price the provider advertises, so on an on-hand job the provider collects the whole amount and owes the platform's share back. Once the block applies the provider cannot accept new jobs or publish services; declining, cancelling and finishing agreed work stay available. By default any unpaid commission blocks at once; an administrator can instead start the block at a minimum unpaid total (`block_threshold`) and/or after the oldest unpaid commission reaches an age (`block_deadline`, null when off). Whichever comes first blocks.
 
 `eligible` is false with `reason` = `outstanding_commission` when the block applies.
 
@@ -33,6 +33,8 @@ No JSON request body.
         "reason": "outstanding_commission",
         "outstanding_total": "20.00",
         "outstanding_count": 1,
+        "block_threshold": "0.00",
+        "block_deadline": null,
         "currency": "PHP",
         "outstanding": [
             {

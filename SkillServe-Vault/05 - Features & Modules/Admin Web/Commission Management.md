@@ -35,6 +35,11 @@ Overlap with another active band is a cross-row rule decided by the server, so a
 422 naming the band it collides with rather than being guessed at in the browser. Retiring a tier
 warns that bookings already charged under it keep their own snapshotted rate.
 
+The dashboard's commission card offers the quick path: change a band's percentage in place, or
+apply a preset (**Standard** 5/10/15/20%, **Flat 10%**) that replaces the active tiers in one step —
+see [[Admin Dashboard#Commission card]] and [[Commission Tiers and Settlement#Presets]]. Its
+**Custom…** button leads here for range changes.
+
 ### Commissions & Payments tab
 
 One row per booking: what the customer paid, what the provider received, the commission and its

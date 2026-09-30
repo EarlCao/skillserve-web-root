@@ -32,6 +32,23 @@ constraint (`commission_tiers_no_active_overlap`, `EXCLUDE USING gist` over
 the database too, which is what closes the race between two administrators saving at once. Disabled
 and soft-deleted bands are exempt — they charge nobody.
 
+## Presets
+
+`config/commissions.php` holds ready-made tier sets an administrator can apply in one step from
+the dashboard ([[Admin Dashboard]]):
+
+| Key | Name | Bands |
+|---|---|---|
+| `standard` | Standard | the four bands in the table above (5 / 10 / 15 / 20%) |
+| `flat_10` | Flat 10% | one open-ended band from ₱0 at 10% |
+
+Applying a preset (`CommissionTierService::applyPreset`) runs in one transaction: every **active**
+tier is retired (soft-deleted, firing `CommissionTierDeleted` as a manual retirement would), then the
+preset's bands are created through the normal overlap-checked `store()` path (firing
+`CommissionTierCreated`), so the audit log shows exactly what changed. Disabled tiers are left alone.
+Bookings already made keep their snapshot. Adding a preset is a config change; each preset must
+cover every amount from ₱0 without overlaps.
+
 ## Which rate applies
 
 `CommissionCalculator` is the single authority. The client never calculates a commission.
@@ -89,6 +106,16 @@ identical behaviour from the API.
 | Decline / cancel | No |
 | Anything the **customer** does | No — never |
 
+**When the block starts** is set in System Settings → Marketplace. It applies once *either*
+
+- the unpaid total reaches `commission_block_min_amount` (₱; **0 = any debt**), or
+- the oldest unpaid commission — dated by the booking's `paid_at` — is older than
+  `commission_block_after_days` (**0 = off**).
+
+The defaults (₱0, off) block on any debt at once, the original rule. `forProvider()` reports
+`block_threshold` and `block_deadline` alongside `outstanding_total`, so the app can warn a provider
+before they are stopped.
+
 Work the provider has already agreed to is deliberately never blocked: a customer who is already
 booked must not be stranded by a debt between the provider and the platform, and a provider paid up
 front would otherwise be unable to begin the very job that put them in debt.
@@ -98,6 +125,8 @@ front would otherwise be unable to begin the very job that put them in debt.
 | Surface | Endpoint | Permission |
 |---|---|---|
 | Admin | `GET/POST/PUT/PATCH/DELETE /api/commission-tiers` | `view commissions` to read, `manage commissions` to change |
+| Admin | `GET /api/commission-tiers/presets` | `view commissions` |
+| Admin | `POST /api/commission-tiers/presets/{preset}/apply` | `manage commissions` |
 | Admin | `GET /api/commissions` (+ `meta.totals`) | `view commissions` |
 | Admin | `PATCH /api/commissions/{booking}/settle` · `/waive` | `settle commissions` |
 | Provider | `GET /api/client/v1/provider/commission-preview?amount=` | provider account |

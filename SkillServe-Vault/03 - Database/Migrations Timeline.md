@@ -141,6 +141,15 @@ flagged.
 All six are additive. Rolling back 000005 drops every verification decision, and the stored ID
 images must be removed from the private disk separately.
 
+## 2026-09-30 — service-based provider ratings
+
+- **`2026_09_30_000001_recalculate_ratings_from_service_ratings`** — data only, no schema change.
+  Rewrites `services.average_rating/total_reviews` and `provider_profiles.average_rating/
+  total_reviews` from the active reviews under the rule in [[Reviews and Ratings Rules]]. Provider
+  ratings move wherever a provider's services have different review counts; service ratings move
+  only where admin moderation had left them stale. Idempotent. `down()` restores the old plain
+  review average for providers and keeps the corrected service ratings.
+
 ## Related
 
 [[Database Overview]] · [[Changelog]] · [[Database Index]]

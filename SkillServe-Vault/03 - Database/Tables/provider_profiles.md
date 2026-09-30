@@ -26,7 +26,7 @@ Professional profile of a provider account; the id used by services, bookings an
 | `latitude, longitude` | decimal(10,7) null |  |
 | `website` | string null |  |
 | `social_links, portfolio, skills, certifications, languages` | json null | `portfolio` JSON predates `provider_portfolio_items` |
-| `average_rating` | decimal(3,2) default 0, indexed |  |
+| `average_rating` | decimal(3,2) default 0, indexed | average of the rated services' ratings, each service once — [[Reviews and Ratings Rules]] |
 | `total_reviews, total_bookings, completed_bookings` | int default 0 | aggregates |
 | `verification_status` | string default 'unverified', indexed | unverified / pending / verified / rejected / additional_info_required |
 | `verified_at, verified_by` |  |  |

@@ -32,7 +32,7 @@ Provider service listings.
 | `rejection_reason` | text null |  |
 | `is_featured, is_hidden` | bool default false |  |
 | `total_bookings, completed_bookings, total_reviews` | int default 0 |  |
-| `average_rating` | decimal(3,2) default 0 |  |
+| `average_rating` | decimal(3,2) default 0 | average of the service's active reviews — [[Reviews and Ratings Rules]] |
 | `created_by, updated_by, approved_by` | FK users null |  |
 | `approved_at` | timestamp null |  |
 | `created_at, updated_at` |  |  |

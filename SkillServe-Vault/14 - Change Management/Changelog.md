@@ -9,6 +9,130 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-09-30 — Commission blocking gets a threshold (M8 / KI-27)
+
+A provider owing ₱20 was blocked exactly like one owing ₱5,000. Two System Settings → Marketplace
+values now decide when the block starts: a minimum unpaid total (₱, 0 = any debt) and a grace period
+after which even a small debt blocks (days, 0 = off). Whichever is reached first applies. The
+defaults keep the original behaviour, so the deploy changes nothing until an administrator sets
+them. The provider commission and transaction-eligibility endpoints also return `block_threshold`
+and `block_deadline` (additive). The admin Settings page explains both fields.
+
+**Tests:** 3 new in `CommissionLedgerTest`; 610 backend tests pass.
+
+## 2026-09-30 — Commission on the dashboard, and a general Excel report
+
+- **Dashboard commission card.** Collected commission in pesos and as a percentage of the settled
+  bookings it came from (e.g. ₱350 = 17.5% of ₱2,000), outstanding and waived totals, and the rates
+  in force. Administrators with `manage commissions` can edit a band's percentage in place or apply
+  a preset — **Standard** (5/10/15/20%) or **Flat 10%** — which retires the active tiers and creates
+  the preset's bands in one transaction. The block is omitted from `GET /api/dashboard` for viewers
+  without a commission permission. See [[Admin Dashboard#Commission card]].
+- **Presets** live in `config/commissions.php`; new endpoints `GET /api/commission-tiers/presets`
+  and `POST /api/commission-tiers/presets/{preset}/apply`. See
+  [[Commission Tiers and Settlement#Presets]].
+- **Commission report category** (`type=commissions`) on the Reports page and in CSV export.
+- **General report.** `GET /api/analytics/reports/general/export` builds one Excel workbook: a
+  Summary sheet plus a sheet for each of the seven categories, over the selected date range. The
+  CSV formula-injection guard moved into `ReportService::exportCell` so both exports share it. See
+  [[Reports and Analytics#General report]].
+
+**Tests:** 4 preset tests in `CommissionTierTest`, 3 in `DashboardTest`, 4 in `AnalyticsTest` (the
+workbook is opened with PhpSpreadsheet and checked sheet by sheet); 607 backend tests pass.
+Frontend `npm run lint` and `npm run build` pass. No schema change.
+
+## 2026-09-30 — A provider's rating is the average of its services' ratings
+
+Customers rate services; the provider's rating is now built from those. Five services rated 3.50,
+5.00, 4.60, 3.30 and 3.50 give the provider **3.98**, each service counting once however many
+reviews it has. It used to be the plain average of every review, so one busy service outweighed the
+rest. Full rule in [[Reviews and Ratings Rules]].
+
+- **One place calculates ratings.** `RecalculateClientReviewAggregatesAction` moved to the Reviews
+  module as `RecalculateRatingAggregatesAction`. Unrated services are left out rather than counted
+  as zero; deleted and hidden services still count, so deleting a poorly rated service cannot lift
+  a provider.
+- **Admin moderation now recalculates.** Hiding, restoring or removing a review — from the Reviews
+  page or a report moderation action — and restoring a removed review from Data Management used to
+  leave both ratings stale until the next customer review. They now update at once.
+- **Admin screens read the stored rating.** Provider Management and Provider Recognition (list,
+  sort, Top Rated and its `min_rating` filter) computed their own review average, so they could
+  disagree with the mobile app. They now read `provider_profiles.average_rating`.
+- **Migration `2026_09_30_000001_recalculate_ratings_from_service_ratings`** rewrites the stored
+  ratings on deploy. Data only; see [[Migrations Timeline]].
+- **No change to service ownership.** Providers already create their own services from the app and
+  administrators only moderate them (approve, reject, edit, hide, feature, delete) — see
+  [[Service Approval Lifecycle]]. API response shapes are unchanged.
+
+**Tests:** `RatingAggregatesTest` (5 new); 596 backend tests pass.
+
+## 2026-09-26 — A leaked PayMongo key can no longer be spent by accident
+
+Code side of **C5**. The rotation itself is a dashboard action with an OTP, which nothing in the
+repositories can perform — what could be built is everything that makes the leak harmless and the
+rotation checkable.
+
+- **`PayMongoClient` refuses a live key.** An `sk_live_` key is rejected before the HTTP call unless
+  `PAYMONGO_ALLOW_LIVE=true` is set as well, with a `critical` log line that never contains the key
+  and a deliberately vague 502 to the caller. One mistyped environment variable should not be all
+  that stands between a deploy and real money — and under
+  [[ADR-021 Direct Payment with Provider-Remitted Commission]] nothing is supposed to reach PayMongo
+  at all, so a live key in the environment is a misconfiguration by definition.
+- **`php artisan paymongo:status`** reports the posture of any environment: whether a key is set and
+  whether it is test or live, whether live is allowed, whether a webhook secret is set, and which
+  gateway each payment method resolves to. "No key is set" is the healthy answer.
+- **`--probe` / `--probe-key`** ask PayMongo to read a payment intent that cannot exist. A rejected
+  key answers 401 whatever it is asked for, so this is how a rotated-out key is confirmed dead. The
+  prompted key is hidden, not logged and not stored.
+- **The key is in no repository.** All four working trees and their full git history were searched
+  for `sk_live_`; only truncated references in documentation. `backend/.env` is gitignored and its
+  live key had already been removed by hand.
+- **The documentation stopped inviting it back.** `.env.example`, `DEPLOYMENT.md` and
+  [[PayMongo Setup]] all said, in one form or another, that setting a key switches GCash on. That
+  has been untrue since ADR-021: both methods route to the manual gateway unconditionally. They now
+  say to leave every PayMongo variable unset, and `DEPLOYMENT.md` gained a "Rotating an exposed
+  PayMongo key" runbook and a go-live step that checks the posture.
+
+**Tests:** `LiveKeyGuardTest` (11 new); 591 backend tests pass.
+
+## 2026-09-26 — The app catches up with the API, and Identity is reachable from the admin web
+
+Closes **H6** (KI-26) and the part of **H8** that was not an owner action at all.
+
+- **Mobile payment methods trimmed to the two the API accepts.** The booking form offered six and
+  defaulted to `cash`; Card, Bank transfer and PayPal had been returning **422** since the methods
+  were trimmed. It now offers `on_hand` and `gcash` only. Codes on older bookings (`cash`,
+  `credit_card`, `paypal`, …) still read back with a label, because the API deliberately does not
+  rewrite them.
+- **National ID capture is wired up.** The screen existed but no route reached it. It is now
+  `/identity-verification`, on the Profile tab for both roles, and is where registration lands —
+  after the OTP for an email sign-up, and after "Finish signing up" for a Google one, which has no
+  OTP step because Google verifies the address. A provider carries on to business onboarding
+  afterwards. It can be skipped while the platform does not require verification of that account.
+- **A blocked account is told why, before it is stopped.** `EligibilityBanner` renders
+  `GET /transaction-eligibility` on the customer home and the provider dashboard and sends the
+  person to the screen that fixes it. It draws nothing at all when the account is eligible, so a
+  verified user never sees it. Previously the first sign of a block was a bare 403 at the moment of
+  booking.
+- **Providers can see what they owe.** `/commissions` lists each unremitted booking, the total, and
+  what the block stops them doing — and says plainly that there is nothing to pay in the app,
+  because SkillServe never handles the money.
+- **Providers can save their GCash details** (`/gcash-details`), which is what makes
+  `payment_instructions` useful. Without them the customer is only told to message the provider.
+- **The customer sees where to pay.** A "How to pay" card on an unpaid GCash booking shows the
+  provider's number, the name GCash will display, the amount and the booking reference, with a copy
+  button — straight from `payment_instructions`, never guessed at by the app.
+- **The admin web had no Identity tab.** System Settings rendered six of the seven setting groups,
+  so the switch H8 asks the owner to turn on was not reachable in the UI at all. The tab is now
+  there, the cutover date is a real date picker, and turning the requirement on with the date empty
+  raises a warning that it freezes every existing account.
+- `payment_instructions` and `cancellation_policy` are now in the OpenAPI schema; the pay endpoint's
+  description no longer claims a booking can be paid online, which has not been true since
+  [[ADR-021 Direct Payment with Provider-Remitted Commission]].
+
+**Tests:** 270 Flutter tests pass (23 new), `flutter analyze` clean; 579 backend tests pass; admin
+web lint and build clean.
+
 ## 2026-09-25 — Direct payment: SkillServe never holds the money
 
 Reverses the money flow decided earlier the same day, after the owner chose it against two

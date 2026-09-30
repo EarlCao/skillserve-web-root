@@ -29,12 +29,15 @@ Admin requirement module **8** ([[Requirements Sources]]).
 | A 8.6 | Remove Review | `DELETE /api/reviews/{id}` → status removed + soft delete; restorable |
 | A 8.7 | Restore Review | `PATCH …/hide {is_hidden: false}`; reviewer and provider notified |
 
+Hiding, removing and restoring a review recalculates the service's and the provider's rating at
+once; a provider's rating is the average of its services' ratings ([[Reviews and Ratings Rules]]).
+
 **Status:** code present for every functionality above. UAT result columns in `TEST_PLAN.md` are
 still empty (not yet executed on the deployed system) — see [[UAT and Traceability]].
 
 ## Automated tests
 
-`ReviewListTest`, `ReviewRemovalTest`, `ClientReportTest` — see [[Backend Test Suite]].
+`ReviewListTest`, `ReviewRemovalTest`, `RatingAggregatesTest`, `ClientReportTest` — see [[Backend Test Suite]].
 
 ## Related
 

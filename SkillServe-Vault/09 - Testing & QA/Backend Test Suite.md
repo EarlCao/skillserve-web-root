@@ -11,7 +11,7 @@ Counted by static inspection (`public function test…` / `#[Test]`), audit 2026
 | Module / area | Test class (methods) |
 |---|---|
 | Administrators | AdministratorManagementTest (23), RoleManagementTest (14) |
-| Analytics | AnalyticsTest (7) |
+| Analytics | AnalyticsTest (11) |
 | Audit | AuditLogTest (4) |
 | Authentication | AuthenticationTest (12), AdminPasswordResetTest (3) |
 | Bookings | BookingCancellationTest (2), BookingListTest (3), BookingPaymentTest (8), DisputeManagementTest (6) |
@@ -19,16 +19,16 @@ Counted by static inspection (`public function test…` / `#[Test]`), audit 2026
 | ClientCommunication | BackgroundNotificationTest (7), ClientCommunicationTest (4), ClientReportTest (15), ConversationTest (11), ProviderSupportTicketTest (3) |
 | ClientMarketplace | BookingDisputeTest (14), BookingRescheduleTest (7), ClientMarketplaceTest (18), FavoriteProviderTest (6), ProviderAccountTest (12), ProviderBookingTest (14), ProviderServiceTest (10), ProviderVerificationTest (6) |
 | ClientPreferences | ClientPreferencesTest (10) |
-| Dashboard | DashboardTest (3) |
+| Dashboard | DashboardTest (6) |
 | DataManagement | DataManagementTest (4) |
 | Notifications | AnnouncementsMigrationTest (1), NotificationsTest (5) |
-| Commissions | CommissionTierTest (21), CommissionCalculationTest (13), CommissionLedgerTest (14) |
+| Commissions | CommissionTierTest (25), CommissionCalculationTest (13), CommissionLedgerTest (17) |
 | IdentityVerification | IdentityVerificationTest (19), IdentityVerificationReviewTest (11), IdentityEnforcementTest (12) |
 | Payments | PaymentGatewayTest (10) |
 | ProviderRecognition | ProviderRecognitionTest (4) |
 | Providers | ProviderSecurityTest (1) |
 | ReportsAndModeration | ReportsAndModerationTest (24) |
-| Reviews | ReviewListTest (2), ReviewRemovalTest (4) |
+| Reviews | RatingAggregatesTest (5), ReviewListTest (2), ReviewRemovalTest (4) |
 | ServiceCategories | ServiceCategoryManagementTest (15) |
 | Services | ServiceManagementTest (8) |
 | Settings | SettingsTest (3) |
