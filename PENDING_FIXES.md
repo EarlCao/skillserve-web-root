@@ -49,7 +49,12 @@ been used to divert payment events. Rotation is still required.
     untrue since ADR-021 — both methods route to the manual gateway unconditionally — so they now
     say to leave every PayMongo variable unset.
 
-**What is left is the dashboard rotation itself**, which needs the account's OTP.
+**Rotated 2026-09-30:** the owner regenerated the **live secret key** in PayMongo → Developers →
+API keys (the public key and the test keys were left alone). The new key is deliberately stored
+nowhere in the project or Render, since nothing uses it. The optional `--probe-key` check was
+skipped because the old key is no longer at hand; regeneration itself invalidates it.
+**Left to confirm:** `PAYMONGO_SECRET_KEY` (and `PAYMONGO_WEBHOOK_SECRET`) removed from Render →
+Environment. Then this item is closed.
 
 ### C7 · Production holds the demo dataset, with guessable passwords **[DEP]** — needs a decision
 **Found 2026-09-30** (read-only check of the public catalog): the live marketplace lists the
