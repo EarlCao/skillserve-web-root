@@ -17,20 +17,18 @@ Exactly two, as `App\Modules\Bookings\Enums\PaymentMethod`:
 | Value | Meaning |
 |---|---|
 | `on_hand` | Paid directly to the provider, in person |
-| `gcash` | Paid through GCash — **recorded by hand** until PayMongo is integrated |
+| `gcash` | Paid through GCash, to the **provider's own number** — recorded by hand |
 
 `cash` is still accepted on input as a deprecated alias for `on_hand` and is canonicalised on the way
 in. `credit_card`, `debit_card`, `bank_transfer` and `paypal` were removed and are now rejected with
 422. Bookings created before the change keep their stored value as display-only history.
 
-> [!warning] The mobile app must be updated
-> The Flutter build in the field offers all six old methods and **defaults to `cash`**. The alias
-> keeps that default working, but a customer who picks Card, Bank transfer or PayPal now receives a
-> validation error. The app should be updated to offer only the two methods and to label `on_hand`.
+The mobile app was brought into line on 2026-09-26: the booking form offers `on_hand` and `gcash`
+only, and a booking made by an older build still displays whatever method it was stored with.
 
-Which gateway handles a method is configuration (`config/payments.php`). `on_hand` is always
-manual. `gcash` uses **PayMongo** when `PAYMONGO_SECRET_KEY` is set, and falls back to manual
-settlement when it is not — so a deployment without credentials behaves exactly as it did before.
+Which gateway handles a method is configuration (`config/payments.php`), and **both are mapped to
+the manual gateway unconditionally** — configuring `PAYMONGO_SECRET_KEY` does not change that. See
+below.
 
 ## How money actually moves
 
@@ -58,9 +56,16 @@ GCash displays before confirming — that is what catches a mistyped number.
 
 ## PayMongo (built, not used for bookings)
 
-`POST /api/client/v1/bookings/{booking}/pay` starts a payment on the customer's own unpaid booking,
-once the provider has accepted it, and returns `redirect_url`. Tapping pay again resumes the same
-attempt.
+> [!warning] No booking is payable online, and the app has no "Pay now" button
+> `POST /api/client/v1/bookings/{booking}/pay` resolves the booking's method to its gateway, finds
+> the manual one, and refuses with a **422** — for every booking, with or without credentials. No
+> payment intent is ever created. The endpoint is kept because the mapping is configuration rather
+> than code; the one defensible future use is a provider paying their **own** outstanding
+> commission, which is SkillServe collecting its own revenue and is not built.
+
+Were a method ever routed to a collecting gateway, the endpoint would start a payment on the
+customer's own unpaid booking once the provider had accepted it, return `redirect_url`, and resume
+the same attempt when tapped again.
 
 PayMongo's flow: create a Payment Intent → create a `gcash` Payment Method → attach → redirect the
 customer → `payment.paid` / `payment.failed` webhook.
@@ -70,9 +75,11 @@ customer → `payment.paid` / `payment.failed` webhook.
 > the URL. `POST /api/webhooks/paymongo` verifies `Paymongo-Signature` against the **raw** body
 > before parsing, and is the only thing that records payment.
 
-Because PayMongo settles into SkillServe's account, a GCash commission is **settled on payment**
-rather than becoming outstanding — and SkillServe then owes the provider their net, which is not yet
-built (KI-28). See [[ADR-020 PayMongo Collects Into the Platform Account]].
+Were PayMongo ever used for a booking it would settle into SkillServe's account, so the GCash
+commission would be **settled on payment** rather than becoming outstanding — and SkillServe would
+then owe the provider their net, with no mechanism to pay it. That is exactly why the mapping is
+fixed to manual. See [[ADR-020 PayMongo Collects Into the Platform Account]] and
+[[ADR-021 Direct Payment with Provider-Remitted Commission]].
 
 ```mermaid
 stateDiagram-v2

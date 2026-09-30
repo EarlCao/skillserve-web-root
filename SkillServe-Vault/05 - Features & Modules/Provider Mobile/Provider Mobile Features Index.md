@@ -14,6 +14,7 @@ Provider-only mobile features (the provider shell).
 | [[Provider Availability]] | M10.6 | implemented |
 | [[Provider Jobs]] | (provider side of M5) | implemented |
 | [[Provider Earnings and Statistics]] | (extra) | implemented |
+| [[Provider Commissions (Mobile)]] | (extra) | implemented |
 | [[Provider Portfolio and Badges]] | M9.2, M4.6 | implemented |
 
 Navigation: [[Mobile Navigation Map]] · Back to [[Features Index]]

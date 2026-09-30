@@ -89,6 +89,18 @@ What an unverified (but covered) account can and cannot do:
 inherit identical behaviour from the API rather than each implementing it. `GET /api/client/v1/transaction-eligibility`
 lets the app *explain* a refusal; it is advisory, and every protected action re-checks server-side.
 
+## Where each surface shows this
+
+| Surface | Screen |
+|---|---|
+| Mobile, both roles | `/identity-verification` — captures both sides of the card and the number, shows the review state and a rejection reason, and offers "I'll do this later" only while the requirement does not cover that account. Reached from the Profile tab and, for a new account, straight after the OTP. |
+| Mobile, both roles | `EligibilityBanner` on the customer home and the provider dashboard: renders the eligibility `reason` as a prompt that opens the screen which fixes it, and draws nothing at all while the account is eligible. |
+| Mobile, provider | `/commissions` for `outstanding_commission`, which is the other thing that stops a provider transacting. |
+| Admin web | System Settings → **Identity** (the master switch, the cutover date and the retention days) and the Identity Verifications review queue. |
+
+Turning the requirement on with the cutover date empty applies it to **every existing account**, so
+the settings page warns about that before it is saved.
+
 ## Documents and retention
 
 Images (`id_front`, `id_back`, `selfie`; JPG/PNG/PDF ≤10 MB) live on the private `identity` disk with

@@ -5,11 +5,21 @@ sources: [backend/config/payments.php, backend/app/Modules/Payments]
 ---
 # PayMongo Setup
 
-How to get GCash working in production. Two values go into Render and nowhere else.
+> [!danger] Nothing should be set today
+> GCash does **not** go through PayMongo. The customer pays the provider's own number directly and
+> the provider remits the commission ([[ADR-021 Direct Payment with Provider-Remitted Commission]]),
+> so `config/payments.php` maps both payment methods to the manual gateway **unconditionally** —
+> setting a key changes nothing about a booking. Every variable below should be empty in Render.
+> `php artisan paymongo:status` answers "No key is set" when the environment is right.
+>
+> This note is kept for two reasons: **section 1** is the rotation runbook for the exposed key
+> (`PENDING_FIXES.md` → **C5**), and the rest documents how the integration would be switched on if
+> the one remaining candidate — a provider paying their own outstanding commission — is ever built.
 
 | Variable | What it is | Where it comes from |
 |---|---|---|
 | `PAYMONGO_SECRET_KEY` | API credential (`sk_test_…` / `sk_live_…`) | Dashboard → Developers |
+| `PAYMONGO_ALLOW_LIVE` | Safety catch: an `sk_live_` key is refused unless this is true | Set by hand; leave `false` |
 | `PAYMONGO_WEBHOOK_SECRET` | Webhook signing secret (`whsk_…`) | Returned when the webhook endpoint is created |
 
 `APP_URL` must also be the real backend URL — the customer's return link is built from it.
@@ -38,9 +48,21 @@ were last regenerated.
 > Keys — is current. If the control cannot be found there, ask support@paymongo.com; rotation is a
 > standard request.
 
-Rotating **invalidates the old key immediately**. That is free while GCash is still unconfigured,
-because nothing is using it yet: with no `PAYMONGO_SECRET_KEY` set, `config/payments.php` routes
-GCash to the manual gateway.
+Rotating **invalidates the old key immediately**. That costs nothing here, because nothing uses the
+key: both payment methods route to the manual gateway whether or not one is set.
+
+Take the key out of Render **before** regenerating, so no deploy is briefly holding a burned
+credential, and confirm with `php artisan paymongo:status`.
+
+### Confirming the old key is dead
+
+```bash
+php artisan paymongo:status --probe-key
+```
+
+Paste the old key at the prompt — it is not echoed, not logged and not stored. The command asks
+PayMongo to read a payment intent that cannot exist: a rejected key answers **401** whatever it is
+asked for, and anything else means the key is still accepted and rotation has not taken effect.
 
 ### After rotating an exposed live key
 
@@ -82,18 +104,21 @@ part of the webhook resource.
 There is a chicken-and-egg: the webhook cannot be registered until the endpoint exists, and the
 endpoint refuses everything until it has the secret.
 
-1. **Deploy first** with no PayMongo variables set. GCash falls back to manual settlement; nothing
-   breaks and nothing charges.
+1. **Deploy first** with no PayMongo variables set. Nothing breaks and nothing charges.
 2. **Register the webhook** against the deployed URL and keep the `whsk_…` value.
-3. **Set both variables in Render.** Saving restarts the service, and GCash switches on by itself.
-4. **Test with a ₱1 booking** — the PayMongo minimum — before trusting it. `payment.paid` should
-   arrive within seconds and flip the booking to paid.
+3. **Set the variables in Render.** Note that this alone does **not** switch GCash on any more: the
+   gateway mapping in `config/payments.php` is hardcoded to manual, and changing it for a booking is
+   forbidden by ADR-021. A key only becomes useful once a flow is built that is meant to reach
+   PayMongo.
+4. **Test with a ₱1 payment** — the PayMongo minimum — before trusting it.
 
 ## 4. Test mode first
 
-Use `sk_test_` until a booking has been paid end to end. `sk_live_` charges real cards on a flow
-nobody has exercised. The code derives live/test from the key prefix and verifies the matching
-signature segment (`li=` vs `te=`), so switching later needs no code change — only the variable.
+Use `sk_test_` until a payment has gone through end to end. `sk_live_` charges real cards on a flow
+nobody has exercised, so `PayMongoClient` **refuses a live key outright** and logs it as critical
+unless `PAYMONGO_ALLOW_LIVE=true` is set as well — one variable should never be all that stands
+between a typo and real money. The code derives live/test from the key prefix and verifies the
+matching signature segment (`li=` vs `te=`), so switching later needs no code change.
 
 ## Troubleshooting
 
@@ -104,6 +129,8 @@ signature segment (`li=` vs `te=`), so switching later needs no code change — 
 | Booking never becomes paid | The webhook never arrived. Check the endpoint URL and that the events include `payment.paid` |
 | Customer returns but nothing happened | Expected — the return redirect is not trusted; only the webhook records payment |
 | 502 on pay | PayMongo refused the request; the response carries their own message |
+| 502 "PayMongo is not available." | A live key is configured without `PAYMONGO_ALLOW_LIVE`. The log has a `critical` line; the key is never logged |
+| 422 on pay, always | Expected. Both methods route to the manual gateway, so no booking is payable online (ADR-021) |
 
 ## Related
 

@@ -274,6 +274,30 @@ You can now browse tables, run queries, and verify data after each deployment.
 | `SESSION_DRIVER` | `database` | `database` |
 | `CACHE_STORE` | `database` | `database` |
 | `FRONTEND_URL` | `http://localhost:5173` | `https://skillserve-frontend.onrender.com` |
+| `PAYMONGO_SECRET_KEY` | _(leave unset)_ | **leave unset** — see below |
+| `PAYMONGO_ALLOW_LIVE` | `false` | `false` |
+| `PAYMONGO_WEBHOOK_SECRET` | _(leave unset)_ | _(leave unset)_ |
+
+### PayMongo: leave it unset
+
+No booking is payable online. The customer pays the provider directly — GCash to the provider's own
+number, or cash on the job — and the provider then remits SkillServe's commission
+(`SkillServe-Vault` → ADR-021). `config/payments.php` maps **both** payment methods to the manual
+gateway unconditionally, so setting `PAYMONGO_SECRET_KEY` changes nothing about a booking; it only
+puts a payment credential somewhere it is not needed.
+
+If a live key is ever set, the client **refuses every request** and logs it as critical, unless
+`PAYMONGO_ALLOW_LIVE=true` is also set. Leave that off. Collecting a booking total into SkillServe's
+account would make SkillServe owe every provider their share, with no payout mechanism to send it.
+
+Check any environment with:
+
+```bash
+php artisan paymongo:status
+```
+
+"No key is set" is the healthy answer. See "Rotating an exposed PayMongo key" under Troubleshooting
+if one was ever leaked.
 
 ---
 
@@ -304,7 +328,9 @@ Do these in order on the real services and note the date and result of each — 
 5. **Mobile release APK** built against production (Flutter repo README → "Building a
    release"), with the Android Google OAuth client registered for `com.skillserve.mobile` and
    the release SHA-1.
-6. **End-to-end smoke test** on the deployed stack, with two phones: register a customer and a
+6. **Payments posture** — `php artisan paymongo:status` on the deployed backend reports
+   "No key is set". If it reports a live key, remove `PAYMONGO_SECRET_KEY` and rotate that key.
+7. **End-to-end smoke test** on the deployed stack, with two phones: register a customer and a
    provider → provider uploads verification → admin approves → provider adds a service → admin
    approves it → customer books → provider accepts → chat → reschedule → start → complete →
    payment received → review → report → admin moderates → notifications arrive on both phones,
@@ -402,3 +428,38 @@ For production, consider upgrading to a paid plan for better performance.
 ### Frontend can't reach backend API
 - Ensure `VITE_API_BASE_URL` is set correctly in the frontend service.
 - Check CORS settings — `FRONTEND_URLS` must include the frontend domain.
+
+### Rotating an exposed PayMongo key
+
+An `sk_live_` key that has been pasted anywhere shared — a chat, a screenshot, a ticket — must be
+treated as public. Anyone holding it can charge and refund real money on the account and create
+webhooks on it. Rotation happens in PayMongo's dashboard; nothing in this repository can do it.
+
+1. **Take it out of the environment first.** Remove `PAYMONGO_SECRET_KEY` from Render (and from any
+   local `.env`) and redeploy. Nothing depends on it — both payment methods settle directly between
+   the customer and the provider — so removing it breaks nothing. Confirm with
+   `php artisan paymongo:status`: "No key is set".
+2. **Regenerate.** Dashboard → **Developers → API Keys**. The *Viewing live data* toggle switches
+   the page between the test and live keys, which are separate — make sure the right mode is showing.
+   Regenerate, confirm, then enter the OTP sent to the registered email or mobile number. The page
+   afterwards shows when the keys were last regenerated.
+3. **Confirm the old key is dead.** Run the probe and paste the old key when prompted — it is not
+   echoed and not stored:
+
+   ```bash
+   php artisan paymongo:status --probe-key
+   ```
+
+   A **401** means the key is rejected, which is what rotation should produce. Any other status means
+   it is still accepted and rotation has not taken effect.
+4. **Check what the holder may have done.** List the account's webhooks and delete any endpoint that
+   is not SkillServe's — one pointed elsewhere would leak every payment event:
+
+   ```bash
+   curl https://api.paymongo.com/v1/webhooks -u "sk_NEW_KEY:"
+   ```
+
+5. **Do not put the new key in Render.** There is nothing for it to do. If a future change needs one
+   (the only candidate is a provider paying their own outstanding commission), start with an
+   `sk_test_` key and set `PAYMONGO_ALLOW_LIVE` only when going live is a decision someone has
+   actually taken.

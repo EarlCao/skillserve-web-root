@@ -15,6 +15,7 @@ Customer-facing (and shared) mobile features. Shared screens are used by provide
 | [[Client Favorites]] | (extra) | implemented |
 | [[Client Booking]] | M5 | implemented |
 | [[Client Payments View]] | (extra) | implemented |
+| [[Mobile Identity Verification]] | (extra) | implemented |
 | [[Client Reviews]] | M6 | implemented |
 | [[Client Messaging]] | M7 | implemented |
 | [[Client Notifications]] | M8 | implemented |

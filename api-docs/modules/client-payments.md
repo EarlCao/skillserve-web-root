@@ -4,11 +4,9 @@ All examples and validation details in this file come from the Laravel backend O
 
 ## `POST /api/client/v1/bookings/{booking}/pay`
 
-Available on the customer's own unpaid booking once it is confirmed, active, completed or disputed, and only when the booking's payment method maps to a gateway that collects money (today: `gcash`, once PayMongo is configured). An `on_hand` booking is refused — it is settled in person.
+**No booking is payable online today.** SkillServe is never in the payment path (ADR-021): both `gcash` and `on_hand` are settled directly between the customer and the provider, so every request to this endpoint is refused with a 422. A customer paying by GCash uses the `payment_instructions` on their own unpaid booking instead, and the provider confirms the payment afterwards.
 
-Returns `redirect_url`; send the customer there. The booking becomes paid when PayMongo calls the webhook, **not** when the customer returns, so poll the booking afterwards rather than assuming success.
-
-Tapping pay again returns the same in-flight payment rather than starting a second one.
+The endpoint remains for a payment method routed to a gateway that collects money. In that case it is available on the customer's own unpaid booking once it is confirmed, active, completed or disputed; it returns `redirect_url` for the app to open, the booking becomes paid when the gateway calls the webhook — **not** when the customer returns — and tapping pay again returns the same in-flight payment rather than starting a second one.
 
 **Authentication:** Bearer token
 
