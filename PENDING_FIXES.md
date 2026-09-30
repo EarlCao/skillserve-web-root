@@ -136,10 +136,10 @@ freezing every existing account.
 Commit `6f4c46c` (`redirectGuestsTo(fn () => null)` plus a regression test) is on `origin/main`;
 the entry was stale. `curl https://skillserve-web-backend.onrender.com/api/bookings` should return
 401, not 500 — worth confirming once against the deployed backend.
-**Still unpushed (2026-09-30):** backend 9 commits (from `248fa4b` direct payment to `678d16b`, including the
-PayMongo key guard, provider ratings with a data migration, dashboard commission, general report and
-M8), frontend 3, root 5 and the Flutter `api-docs` commit. Render auto-deploys `main`, so pushing is
-the owner's call; push the backend first (it runs the rating migration), then the frontend.
+**Still unpushed (2026-09-30):** every commit ahead of `origin/main` in all four repos
+(`git log --oneline origin/main..main` lists them), starting with `248fa4b` in the backend. Render auto-deploys `main`, so pushing is the owner's
+call. Push the **backend first** (its deploy runs the rating migration), then the frontend; root and
+Flutter pushes deploy nothing.
 
 ### Owner actions before go-live (cannot be done from the code)
 1. **Render:** a paid backend instance with the persistent disk, and the environment from
@@ -194,17 +194,9 @@ skill and was left uncommitted because the mobile repo is the owner's to commit.
 
 </details>
 
-### M10 · The app's 2026-09-26 catch-up is still uncommitted **[MB]** — owner action
-**Where:** Flutter repo working tree: identity verification (`lib/features/identity/`), provider
-commissions and GCash details screens, booking and settings changes, and their tests — 19 modified
-and 6 new paths. This is the H6 work; only `api-docs/` was committed with M9.
-**Fix:** on a machine with Flutter, run `flutter analyze` and `flutter test`, then
-`git add -A && git commit -m "feat: identity verification, provider commissions and GCash details"`
-in that repo. It was not committed from here because it could not be built or tested from this
-environment.
-**Verify:** `git status` in the Flutter repo is clean and the tests pass.
-
-Nothing open.
+### ~~M10 · The app's 2026-09-26 catch-up is still uncommitted~~ — **RESOLVED 2026-09-30**
+Verified with `flutter analyze` (no issues) and `flutter test` (270 passed) on Flutter 3.44.2, then
+committed in the Flutter repo as `d79e1a6`.
 
 ---
 
@@ -216,14 +208,10 @@ with the amount, the booking and what is still owed. Type `booking_commission` +
 current app files it under booking updates and opens the booking on tap. Test in
 `CommissionLedgerTest`.
 
-### L2 · (KI-31) The app does not show SkillServe's share when a provider prices a service **[MB]**
-**Where:** Flutter `lib/features/provider/views/service_form.dart`.
-**Problem:** the API offers `GET /api/client/v1/provider/commission-preview?amount=` and an
-`earnings` block on each provider service, but the form shows neither, so a provider learns the
-commission only after a job.
-**Fix:** call the preview as the price changes (debounced) and show "SkillServe 15% · ₱75 — you keep
-₱425" under the price; show the same `earnings` on My Services.
-**Verify:** typing ₱500 under the Standard rates shows ₱75 / ₱425.
+### ~~L2 · (KI-31) The app does not show SkillServe's share when a provider prices a service~~ — **RESOLVED 2026-09-30**
+The service form shows "SkillServe 15% · ₱75.00 · you keep ₱425.00" as the price is typed, and My
+Services shows each service's earnings. Flutter repo `0434a02`; `commission_split_test` (5 tests),
+275 app tests pass.
 
 ---
 

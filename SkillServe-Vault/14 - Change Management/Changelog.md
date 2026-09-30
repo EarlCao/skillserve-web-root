@@ -9,6 +9,16 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-09-30 — The app's catch-up is committed, and providers see their commission split (M10, L2 / KI-31)
+
+- **M10.** The 2026-09-26 app work (identity verification, provider Commissions and GCash details
+  screens, the two-method booking form, payment recording) was verified with `flutter analyze` (no
+  issues) and `flutter test` (270 passed), then committed as `d79e1a6`.
+- **L2.** The service form shows SkillServe's share and what the provider keeps as they type a
+  price, and My Services shows each service's earnings (`0434a02`). 5 new tests; 275 pass.
+- Flutter now runs from WSL through a Linux SDK of the same version against a copy of the app — see
+  [[Mobile Test Suite]].
+
 ## 2026-09-30 — Providers hear when their commission is settled (L1 / KI-30)
 
 Settling or waiving a commission from the admin web used to unblock the provider silently. A

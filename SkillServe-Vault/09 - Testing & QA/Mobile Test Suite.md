@@ -5,7 +5,16 @@ sources: [skill-serve-mobile-application/test]
 ---
 # Mobile Test Suite
 
-26 test files (+ `flutter_test_config.dart`), ≈203 `test`/`testWidgets` cases (static count).
+26 test files (+ `flutter_test_config.dart`), ≈203 `test`/`testWidgets` cases (static count, 2026-09-22).
+**Last run 2026-09-30: 275 passed, `flutter analyze` clean** (Flutter 3.44.2), after `identity_test` and
+`commission_split_test` were added. The per-file table below predates those two.
+
+> [!tip] Running Flutter from WSL
+> The Windows SDK at `C:\src\flutter` cannot run from WSL (CRLF scripts, Windows binaries, and WSL
+> interop is off). A Linux SDK of the **same version** (3.44.2) run against a *copy* of the app works.
+> Copy the project rather than running in place, so `.dart_tool/` never gets Linux paths the
+> Windows build would trip over. Widget tests that make HTTP calls through `ApiClient` must call
+> `SharedPreferences.setMockInitialValues({})`, or the token read never completes.
 
 | File | Cases | Area |
 |---|---|---|

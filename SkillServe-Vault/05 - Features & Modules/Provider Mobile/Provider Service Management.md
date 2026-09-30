@@ -26,6 +26,14 @@ Mobile requirement(s): **M10.1–10.5** ([[Requirements Sources]]).
 
 UAT result columns in the mobile `TEST_PLAN.md` are still empty — see [[UAT and Traceability]].
 
+## Commission split
+
+While the provider types a price, the form shows SkillServe's share and what they keep
+("SkillServe 15% · ₱75.00 · you keep ₱425.00", "per hour" for hourly prices), from
+`GET /provider/commission-preview` once typing pauses (400 ms), ignoring replies for an older price.
+My Services shows each service's `earnings` the same way. Amounts are displayed exactly as the API
+sends them. See [[Commission Tiers and Settlement]].
+
 ## Tests
 
 `provider_services_test`, `ProviderServiceTest` (Flutter tests in snake_case, backend tests in PascalCase — [[Mobile Test Suite]], [[Backend Test Suite]]).
