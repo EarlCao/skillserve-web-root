@@ -11,7 +11,7 @@ sources: [backend/database/seeders, backend/app/Console/Commands/SeedIfEmpty.php
 |---|---|---|
 | `admin-only` | `RolePermissionSeeder` | minimal; production after first deploy |
 | `starter` | + `ServiceCategorySeeder` (8 categories, 25 subcategories; keeps existing) | first production deploy |
-| `demo` (default) | + `UsersSeeder`, `ProviderSeeder`, `DemoAccountSeeder`, `ProviderRecognitionSeeder`, `ServiceSeeder`, `BookingSeeder`, `ReportSeeder`, `NotificationSeeder` | local demos only — **never production** |
+| `demo` (default outside production; **refused in production**, which falls back to `admin-only`) | + `UsersSeeder`, `ProviderSeeder`, `DemoAccountSeeder`, `ProviderRecognitionSeeder`, `ServiceSeeder`, `BookingSeeder`, `ReportSeeder`, `NotificationSeeder` | local demos only — **never production** |
 
 `DatabaseSeeder` uses `WithoutModelEvents`.
 

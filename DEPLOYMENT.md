@@ -101,12 +101,13 @@ be. Keep it in step with the dashboard when you change either.
    ⚠️ **Seeding.** `SEED_MODE=starter` seeds the roles, permissions, the
    bootstrap admin accounts and the default service categories, so the site is
    usable at once (re-running keeps existing categories). `admin-only` skips the
-   categories. The default (`SEED_MODE=demo`) additionally
-   seeds the full demo dataset, which must never run against production — and
-   since the container seeds on every start, leaving it on `demo` re-seeds demo
-   data on every restart. Production seeding also refuses the built-in default
-   password (`SkillServe#2026`), so `ADMIN_PASSWORD` and
-must be set to a real value before the first deploy.
+   categories. `demo` additionally seeds the full demo dataset, which must never
+   run against production — so in production the seeder **refuses it**: an unset
+   `SEED_MODE`, `demo` or any unknown value seeds `admin-only` instead, with a
+   warning in the log. Seeding runs on start only while no super-admin exists.
+   Production seeding also refuses the built-in default password
+   (`SkillServe#2026`), so `ADMIN_PASSWORD` must be set to a real value before the
+   first deploy.
 
    ⚠️ Both hosts must be **bare hostnames** copied from Neon's *Connect* panel.
    Do not set `DB_URL` unless it holds a complete connection string — when it is
