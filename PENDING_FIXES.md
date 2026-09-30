@@ -180,8 +180,9 @@ migrations and went live (the new `/api/commission-tiers/presets` answers 401 un
 1. **Render:** a paid backend instance with the persistent disk, and the environment from
    `DEPLOYMENT.md`, including `SEED_MODE=starter` on the first deploy, then `admin-only`.
    After that, follow `DEPLOYMENT.md` → "Go-live checklist".
-2. **Android signing:** create the upload keystore and `android/key.properties` (Flutter repo
-   `README.md` → "Building a release"). Back up the keystore and its passwords.
+2. ~~**Android signing**~~ — keystore and `android/key.properties` created 2026-09-30 (Flutter repo
+   `PENDING_FIXES.md`). **Still to do: back both up.** Release SHA-1
+   `20:30:88:71:1E:64:1B:EE:90:9B:E5:0C:7E:FE:E1:9D:75:E3:36:1A`.
 3. **Google sign-in:** register an Android OAuth client for `com.skillserve.mobile` with the debug
    and release SHA-1 fingerprints (Flutter repo `SETUP_CREDENTIALS.md`, section 2).
 4. **Admin content:** in Settings, write the Terms of Service, Privacy Policy and Community
