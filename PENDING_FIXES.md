@@ -57,7 +57,7 @@ skipped because the old key is no longer at hand; regeneration itself invalidate
 same day. Closed. Once the backend is pushed, `php artisan paymongo:status` on Render should report
 "No key is set".
 
-### C7 · Production holds the demo dataset, with guessable passwords **[DEP]** — needs a decision
+### C7 · Production holds the demo dataset, with guessable passwords **[DEP]** — decided: wipe, owner action
 **Found 2026-09-30** (read-only check of the public catalog): the live marketplace lists the
 `ProviderSeeder` / `ServiceSeeder` data (e.g. "Garcia Plumbing Solutions", "Calculus Tutoring",
 20 services, 8 categories), so production was seeded with `SEED_MODE=demo` at some point.
@@ -71,8 +71,20 @@ system.
      its tokens. The catalogue stays for browsing; nobody can sign in as a seeded account.
   b. *Remove the demo data*: delete the seeded accounts and their services, bookings and reviews
      (a data migration), or wipe and reseed with `SEED_MODE=starter` — loses any real sign-ups.
-**Also:** set `SEED_MODE=admin-only` on Render (Step 3 of the owner guide) so a restart can never
-seed demo data again.
+**Decision (owner, 2026-09-30): wipe everything and start from the super-admin only.**
+Cause: `DatabaseSeeder` defaults `SEED_MODE` to `demo` when the variable is unset, so a Render
+environment without it seeds the demo dataset on a fresh database.
+Procedure (no code change; `start.sh` rebuilds an empty database on boot):
+  1. Render → Environment: `SEED_MODE=admin-only`, a real `ADMIN_EMAIL`, a strong `ADMIN_PASSWORD`.
+  2. Push the backend, so the rebuilt schema is the current one.
+  3. Neon → Branches → create a backup branch from `main` (the undo button).
+  4. Neon → SQL Editor on `main` / `neondb`: `DROP SCHEMA public CASCADE; CREATE SCHEMA public;`
+  5. Render → Manual Deploy → Restart: `migrate` recreates every table, `db:seed-if-empty` finds
+     no roles and seeds roles, permissions and the super-admin only.
+  6. Verify: `/api/health` up, `/api/client/v1/services` total 0, the super-admin can sign in.
+Consequences: every account, booking, review, report and setting is deleted, every session ends,
+and there are **no service categories** until an administrator creates them. Uploaded files on the
+disk become orphans (harmless). Delete the Neon backup branch once the new setup is confirmed.
 **Verify:** signing in as a seeded address with `password` fails.
 
 ### ~~C6 · Provider payouts do not exist~~ — **RESOLVED 2026-09-25**

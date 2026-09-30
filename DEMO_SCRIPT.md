@@ -16,9 +16,9 @@ page names are the real ones in the app and admin web.
 | **Customer** | Phone A, SkillServe app | Registered during preparation (a real inbox — the OTP is emailed) |
 | **Provider** | Phone B, SkillServe app | Registered during preparation (a second real inbox) |
 
-Production has no demo accounts (`SEED_MODE=starter` creates only the super-admin and the service
-categories), so the customer and provider are created through the app, which also demonstrates
-registration.
+Production has no demo accounts (`SEED_MODE=admin-only` creates only the super-admin), so the
+categories are created in the admin web and the customer and provider are created through the app,
+which also demonstrates registration.
 
 ---
 
@@ -28,6 +28,7 @@ Do these once; they are not part of the live demo unless you want to show regist
 
 | # | Who | Where | Do | Expect |
 |---|---|---|---|---|
+| 0.0 | Admin | Admin web → **Service Categories** | Create **Appliance Repair** (and any others you want to show) | Enabled categories appear in the app's Explore |
 | 0.1 | Admin | Admin web → **System Settings** → Policies | Fill in Terms of Service, Privacy Policy, Community Guidelines. Save. | Saved; the app's policy screens show the text |
 | 0.2 | Admin | **Dashboard** → Commission card → **Standard** → **Apply rates** | Apply the Standard preset | Rates read ₱0–199.99 5% · ₱200–499.99 10% · ₱500–999.99 15% · ₱1,000+ 20% |
 | 0.3 | Provider | Phone B → Register (role **Provider**) → email OTP | Create the provider account | Lands on provider onboarding |
@@ -35,7 +36,7 @@ Do these once; they are not part of the live demo unless you want to show regist
 | 0.5 | Admin | **Provider Management** → the provider → approve verification | Approve | Provider gets a notification; status *verified* |
 | 0.6 | Provider | Profile → **GCash details** | Save a GCash number and account name | Saved |
 | 0.7 | Provider | Services → **Availability** | Publish hours covering the demo time (e.g. Mon–Sun 08:00–18:00) | Saved |
-| 0.8 | Provider | Services → **Add Service** | "Aircon Cleaning", fixed price **₱500**, 2 hours | Status pending approval. At the Standard rates SkillServe's share is 15% (₱75) and the provider keeps ₱425 |
+| 0.8 | Provider | Services → **Add Service** | "Aircon Cleaning" in **Appliance Repair**, fixed price **₱500**, 2 hours | Status pending approval. At the Standard rates SkillServe's share is 15% (₱75) and the provider keeps ₱425 |
 | 0.9 | Admin | **Services** → the service → Approve | Approve | Provider notified; the service appears in the app's catalog |
 | 0.10 | Customer | Phone A → Register (role **Customer**) → email OTP | Create the customer account | Lands on the customer home |
 

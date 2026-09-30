@@ -60,7 +60,7 @@ Severity uses the `AGENT_REVIEW.md` scale. Open questions without a confirmed de
 | ~~KI-27~~ | ~~Commission enforcement has no threshold~~ — **resolved 2026-09-30**: a minimum unpaid amount and a grace period in days are now System Settings; see [[Commission Tiers and Settlement#What an outstanding commission blocks]] |
 | ~~KI-30~~ | ~~No notification when a commission is settled or waived~~ — **resolved 2026-09-30**: `CommissionSettlementNotification` (**L1**) |
 | ~~KI-31~~ | ~~No commission split in the service form~~ — **resolved 2026-09-30** (**L2**) |
-| KI-32 | **Production holds the demo dataset**: seeded providers and customers on `example.*` addresses, active and verified, with the password `password` — guessable, since provider names are public (**C7**) |
+| KI-32 | **Production holds the demo dataset**: seeded providers and customers on `example.*` addresses, active and verified, with the password `password` — guessable, since provider names are public. Cause: `SEED_MODE` defaults to `demo` when unset. Decided 2026-09-30: wipe production and reseed with `admin-only` (**C7**) |
 
 When an item is fixed: update the code, move the row to [[Changelog]] with the date, and update the
 affected notes.
