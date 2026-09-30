@@ -210,14 +210,11 @@ Nothing open.
 
 ## Low
 
-### L1 · (KI-30) A provider is not told when their commission is settled or waived **[BE]**
-**Where:** `CommissionSettled` / `CommissionWaived` are only audit-logged
-(`LogCommissionSettlementActivity` in `AppServiceProvider`).
-**Problem:** the provider is unblocked silently and only finds out by refreshing Commissions.
-**Fix:** a `NotifyProviderOfCommissionSettlement` listener on both events, sending a database +
-realtime notification ("Your ₱75 commission for BK-… was recorded — you can take new bookings"),
-deep-linking to `/commissions`.
-**Verify:** settle a commission from the admin web; the provider's phone shows the notification.
+### ~~L1 · (KI-30) A provider is not told when their commission is settled or waived~~ — **RESOLVED 2026-09-30**
+`NotifyProviderOfCommissionSettlement` sends `CommissionSettlementNotification` on both events,
+with the amount, the booking and what is still owed. Type `booking_commission` + `booking_id`, so the
+current app files it under booking updates and opens the booking on tap. Test in
+`CommissionLedgerTest`.
 
 ### L2 · (KI-31) The app does not show SkillServe's share when a provider prices a service **[MB]**
 **Where:** Flutter `lib/features/provider/views/service_form.dart`.

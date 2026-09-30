@@ -9,6 +9,16 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-09-30 — Providers hear when their commission is settled (L1 / KI-30)
+
+Settling or waiving a commission from the admin web used to unblock the provider silently. A
+`CommissionSettlementNotification` now tells them the amount, the booking and what they still owe.
+It uses the `booking` preference category and the type `booking_commission` with a `booking_id`, so
+the current app already files it with booking updates and opens the booking on tap — no app release
+needed.
+
+**Tests:** 1 new in `CommissionLedgerTest`; 611 backend tests pass.
+
 ## 2026-09-30 — Commission blocking gets a threshold (M8 / KI-27)
 
 A provider owing ₱20 was blocked exactly like one owing ₱5,000. Two System Settings → Marketplace

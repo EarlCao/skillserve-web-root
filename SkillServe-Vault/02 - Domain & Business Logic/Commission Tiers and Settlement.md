@@ -89,6 +89,8 @@ stateDiagram-v2
 - A **full** refund voids the commission; a partial one leaves it alone. A commission already
   settled is never reopened — reversing that is a refund decision of its own.
 - Cancellation voids it, via `VoidCommissionOnCancellation` listening to `BookingCancelled`.
+- Settling or waiving notifies the provider (`NotifyProviderOfCommissionSettlement`), including what
+  they still owe, so they know at once whether they can take new work.
 - `commission_settlements` is one row per booking (unique on `booking_id`), recording amount, method
   (`gcash`, `bank_transfer`, `cash`, `offset`, `other`), reference and who recorded it. The amount is
   always taken from the booking, never from the request.

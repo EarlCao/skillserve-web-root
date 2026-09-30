@@ -56,7 +56,7 @@ no outstanding commission; both phones have notifications allowed.
 | 1.6 | Provider | Booking details → **Payment received** | Record that the customer paid | Payment **paid**; the ₱75 commission becomes **outstanding** |
 | 1.7 | Provider | Profile → **Commissions** | Show the debt | ₱75 owed on one booking; account blocked from new work |
 | 1.8 | Customer, then Provider | Book the service again; Provider taps **Accept request** | Try to take new work | Refused: *"Settle your outstanding commission before taking on new work."* Finishing agreed jobs is never blocked |
-| 1.9 | Admin | **Commissions** → Commissions & Payments → the booking → **Settle** | Method GCash, a reference | Commission **settled**; on Phone B, pull to refresh **Commissions** — nothing owed, and 1.8's booking can now be accepted. (The provider gets no push for this yet — see `PENDING_FIXES.md` L1) |
+| 1.9 | Admin | **Commissions** → Commissions & Payments → the booking → **Settle** | Method GCash, a reference | Commission **settled**; Phone B gets *Commission payment recorded … You have no outstanding commission.* and 1.8's booking can now be accepted |
 | 1.10 | Admin | **Dashboard** → Commission card | Show it | **Collected ₱75 · 15% of ₱500** in settled bookings; the active rates listed |
 
 > Optional (M8): in **System Settings** → Marketplace, set *Block providers once unpaid commission
