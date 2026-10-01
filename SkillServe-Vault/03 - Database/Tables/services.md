@@ -26,7 +26,8 @@ Provider service listings.
 | `price_type` | string default 'fixed' | fixed / hourly / custom |
 | `currency` | string(3) default 'PHP' | was USD |
 | `duration` | string null | free text parsed for booking length |
-| `location` | string null |  |
+| `location` | string null | formatted text; written from `location_*` when the structured area is set |
+| `location_region_code`, `location_province_code`, `location_city_code` (indexed), `location_barangay_code` | char(9) null | service area as PSGC codes ([[Philippine Addresses]]); barangay optional |
 | `status` | string default 'draft' | draft / published / archived |
 | `approval_status` | string default 'pending' | pending / approved / rejected |
 | `rejection_reason` | text null |  |

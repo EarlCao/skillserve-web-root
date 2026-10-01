@@ -29,7 +29,7 @@ Counted by static inspection (`public function test…` / `#[Test]`), audit 2026
 | Providers | ProviderSecurityTest (1) |
 | ReportsAndModeration | ReportsAndModerationTest (24) |
 | Reviews | RatingAggregatesTest (5), ReviewListTest (2), ReviewRemovalTest (4) |
-| Locations | PhLocationTest (11) |
+| Locations | PhLocationTest (11), StructuredAddressTest (6) |
 | ServiceCategories | ServiceCategoryManagementTest (15) |
 | Services | ServiceManagementTest (8) |
 | Settings | SettingsTest (3) |

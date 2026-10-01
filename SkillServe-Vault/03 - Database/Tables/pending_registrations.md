@@ -24,6 +24,8 @@ Sign-ups waiting for OTP verification (no user exists yet).
 | `business_name, specialization` | string null | provider only |
 | `experience_years` | smallint default 0 |  |
 | `bio` | text null |  |
+| `birthday` | date null | read from the National ID; copied to `users.birthday` |
+| `address_*` | as on [[users]] | read from the National ID; copied to the account with its formatted text |
 | `email_otp_hash` | string |  |
 | `email_otp_expires_at` | timestamp |  |
 | `email_otp_attempts` | tinyint default 0 |  |

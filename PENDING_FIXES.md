@@ -24,8 +24,8 @@ Tags: **[BE]** Laravel backend · **[AW]** React admin web · **[MB]** Flutter a
 reads both and fills the form; addresses use Region → Province → City → Barangay everywhere.
 Required for every account; PhilSys card and ePhilID. See vault [[Philippine Addresses]].
 - [x] **Phase 1** — PSGC list, `locations:import`, `/api/client/v1/locations/*` (backend).
-- [ ] **Phase 2** — structured address columns + validation on users, pending registrations,
-  bookings and services (backend; migration explained before it runs).
+- [x] **Phase 2** — structured addresses on sign-up (+ birthday), profile, bookings and services
+  (backend, 2026-10-02; migration `2026_10_01_000002`, additive).
 - [ ] **Phase 3** — ID capture front → back, on-device text + QR reading, pre-filled sign-up,
   ID submitted after the email code (mobile).
 - [ ] **Phase 4** — the picker in Edit Profile, the booking form and Add/Edit Service (mobile).

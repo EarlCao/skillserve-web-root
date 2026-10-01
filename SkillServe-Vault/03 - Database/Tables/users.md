@@ -22,7 +22,10 @@ Every account: staff, customers and providers. `role_id` decides the kind.
 | `last_name` | string null |  |
 | `email` | string unique |  |
 | `phone` | string(30) null |  |
-| `address` | text null |  |
+| `address` | text null | formatted text; written from `address_*` when the structured address is set |
+| `address_region_code`, `address_province_code`, `address_city_code`, `address_barangay_code` | char(9) null | PSGC codes ([[Philippine Addresses]]); province null in NCR |
+| `address_street` | string null | |
+| `address_postal_code` | string(4) null | ZIP |
 | `profile_photo_path` | string null | `public` disk |
 | `birthday` | date null |  |
 | `email_verified_at` | timestamp null |  |

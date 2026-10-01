@@ -35,7 +35,9 @@ Customer bookings. Also the chat thread and the dispute record.
 | `refunded_amount` | decimal(10,2) default 0 |  |
 | `refunded_at, refund_reason` |  |  |
 | `client_notes, provider_notes` | text null |  |
-| `service_address` | string null |  |
+| `service_address` | string null | formatted text; written from `service_*` when the structured address is set |
+| `service_region_code`, `service_province_code`, `service_city_code`, `service_barangay_code` | char(9) null | PSGC codes ([[Philippine Addresses]]) |
+| `service_street`, `service_postal_code` | string null, string(4) null | |
 | `contact_phone` | string(32) null |  |
 | `cancellation_reason` | text null |  |
 | `cancellation_fee` | decimal(10,2) null | late cancellation |

@@ -9,6 +9,16 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-02 — Philippine address picker, Phase 2: structured addresses
+
+Sign-up (email, provider and Google), Edit Profile, bookings and services accept a structured
+address — the client sends a barangay (or, for a service area, a city) and the server derives the
+rest — and store it as PSGC codes plus a formatted copy in the existing text field, so older app
+versions and the admin web are unaffected. Sign-up also accepts `birthday`, read from the National
+ID. Migration `2026_10_01_000002` (additive). See [[Philippine Addresses]].
+
+**Tests:** `StructuredAddressTest` (6); 637 backend tests pass.
+
 ## 2026-10-01 — Philippine address picker, Phase 1: the location list
 
 First phase of the ID-first sign-up the owner asked for. The PSA PSGC (43,778 regions, provinces,

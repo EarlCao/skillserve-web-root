@@ -61,11 +61,32 @@ into codes:
 
 Whatever is matched, the user confirms it in the picker.
 
+## Stored addresses
+
+The client sends only the most specific place and the server derives the rest
+(`PhAddressService`), so a barangay can never be saved under the wrong city. Every structured
+address is also written as formatted text into the existing column, which older app versions and
+the admin web read: *"123 Rizal St, Bagong Pag-asa, Quezon City, Metro Manila 1105"*.
+
+| Where | Request field | Kind | Columns | Text column | Response field |
+|---|---|---|---|---|---|
+| Sign-up (`/auth/register`, `/auth/register-provider`, `/auth/google/register`) | `address_details` (+ `birthday`) | door | `pending_registrations.address_*` → `users.address_*` | `users.address` | `user.address_details` |
+| Edit profile (`PATCH /auth/me`) | `address_details` | door | `users.address_*` | `users.address` | `address_details` |
+| Booking (`POST /bookings`) | `service_address_details` | door | `bookings.service_*` | `service_address` | `service_address_details` (customer and provider) |
+| Service (`POST/PUT /provider/services`) | `location_details` | area | `services.location_*` | `location` | `location_details` |
+
+- **Door:** `{barangay_code, street?, postal_code?}`, barangay required, ZIP four digits.
+- **Area:** `{city_code, barangay_code?}`; a barangay outside that city is a 422.
+- Sending the plain text field instead (older app versions) clears the codes, which would no longer
+  describe it. Sending `null` clears both.
+- The fields are optional in the API so installed app versions keep working; the new app always
+  sends them, and identity enforcement (**H8**) is the server-side gate.
+
 ## Status
 
-Phase 1 of the ID-first sign-up (2026-10-01): the list, the import and the endpoints. Next:
-structured address columns on users, bookings and services (Phase 2), the ID-scanning sign-up
-(Phase 3), the picker in the app's forms (Phase 4) — tracked in `PENDING_FIXES.md` → **F1**.
+Phase 1 (2026-10-01): the list, the import and the endpoints. Phase 2 (2026-10-02): structured
+addresses on sign-up, profile, bookings and services. Next: the ID-scanning sign-up (Phase 3) and
+the picker in the app's forms (Phase 4) — tracked in `PENDING_FIXES.md` → **F1**.
 
 Related: [[ph_locations]] · [[API - Locations]] · [[Identity Verification Lifecycle]] ·
 [[Registration and OTP Flow]] · [[Domain Index]]

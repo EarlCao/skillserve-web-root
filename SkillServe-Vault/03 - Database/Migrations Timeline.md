@@ -156,6 +156,12 @@ images must be removed from the private disk separately.
   existing changes. The 43,778 rows are loaded by `php artisan locations:import` on start, not by
   the migration (see [[Philippine Addresses]]). Rollback drops the table; the next start refills it.
 
+- **`2026_10_01_000002_add_structured_addresses`** — nullable PSGC code columns beside the existing
+  text addresses: `users.address_*` and `pending_registrations.address_*` (+ street, ZIP, and
+  `pending_registrations.birthday`), `bookings.service_*` (+ street, ZIP), `services.location_*`
+  (indexed city). Additive; existing addresses stay as text with no backfill. Rollback drops only
+  the new columns — the text columns already hold a formatted copy.
+
 ## Related
 
 [[Database Overview]] · [[Changelog]] · [[Database Index]]
