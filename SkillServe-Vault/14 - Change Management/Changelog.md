@@ -9,6 +9,13 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-01 — "Verified" no longer means two different things
+
+Customer Management showed **Verified** for any account that had confirmed its email, so a customer
+whose National ID was still pending looked verified. User responses now carry `identity_status`
+(backend `40a8c87`); the list has separate **Email** and **National ID** columns and the profile
+shows both (frontend `1853d82`).
+
 ## 2026-10-01 — Missing upload files explain themselves
 
 Opening a National ID image in the admin web failed with a vague error. The rows existed but the

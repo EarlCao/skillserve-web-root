@@ -23,7 +23,7 @@ Admin requirement module **3** ([[Requirements Sources]]).
 |---|---|---|
 | A 3.1 | View All Users | `GET /api/users` paginated (customers and providers; staff live in Admin Management) |
 | A 3.2 | Search Users | `search` by name, email, id |
-| A 3.3 | Filter Users | type, status, verification filters; sortable by name, created_at, last_login_at |
+| A 3.3 | Filter Users | type, status, verification filters; sortable by name, created_at, last_login_at. The `verification` filter and the **Email** column mean *email confirmed with the sign-up OTP*; the separate **National ID** column shows `identity_status` (unverified / pending / verified / rejected) — see [[Identity Verification Lifecycle]] |
 | A 3.4 | View User Profile | `GET /api/users/{id}` + `moderation-history` (activity log) |
 | A 3.5 | Edit User Information | `PUT/PATCH /api/users/{id}` (`user_type` may only be `customer`) |
 | A 3.6 | Suspend User | `PATCH …/suspend` with reason → app signs the user out; notification |
