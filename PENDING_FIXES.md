@@ -17,6 +17,23 @@ Tags: **[BE]** Laravel backend · **[AW]** React admin web · **[MB]** Flutter a
 
 ---
 
+## Features in progress
+
+### F1 · ID-first sign-up and the Philippine address picker **[BE][MB]** — in progress
+**Asked 2026-10-01:** sign-up starts by photographing the National ID front, then back; the app
+reads both and fills the form; addresses use Region → Province → City → Barangay everywhere.
+Required for every account; PhilSys card and ePhilID. See vault [[Philippine Addresses]].
+- [x] **Phase 1** — PSGC list, `locations:import`, `/api/client/v1/locations/*` (backend).
+- [ ] **Phase 2** — structured address columns + validation on users, pending registrations,
+  bookings and services (backend; migration explained before it runs).
+- [ ] **Phase 3** — ID capture front → back, on-device text + QR reading, pre-filled sign-up,
+  ID submitted after the email code (mobile).
+- [ ] **Phase 4** — the picker in Edit Profile, the booking form and Add/Edit Service (mobile).
+- [ ] **Phase 5** — docs, APK, owner test with a real National ID.
+**Server-side enforcement:** turn on System Settings → Identity (**H8**) at launch.
+
+---
+
 ## Critical
 
 ### ~~C5 · Rotate the exposed PayMongo live secret key~~ — **RESOLVED 2026-09-30**

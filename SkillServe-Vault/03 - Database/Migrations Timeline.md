@@ -150,6 +150,12 @@ images must be removed from the private disk separately.
   only where admin moderation had left them stale. Idempotent. `down()` restores the old plain
   review average for providers and keeps the corrected service ratings.
 
+## 2026-10-01 — Philippine locations
+
+- **`2026_10_01_000001_create_ph_locations_table`** — new reference table [[ph_locations]]; nothing
+  existing changes. The 43,778 rows are loaded by `php artisan locations:import` on start, not by
+  the migration (see [[Philippine Addresses]]). Rollback drops the table; the next start refills it.
+
 ## Related
 
 [[Database Overview]] · [[Changelog]] · [[Database Index]]

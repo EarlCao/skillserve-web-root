@@ -9,6 +9,19 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-01 — Philippine address picker, Phase 1: the location list
+
+First phase of the ID-first sign-up the owner asked for. The PSA PSGC (43,778 regions, provinces,
+cities/municipalities and barangays) ships as a 318 KB snapshot and is loaded by
+`php artisan locations:import` on start. Three public endpoints feed the picker and match a
+National ID's printed address to codes (`GET /api/client/v1/locations/regions`,
+`/{code}/children`, `/match?address=`). Matching was tuned against the real list: "Quezon City" is
+not Quezon province, a province decides between same-named municipalities, and an ambiguous
+address is left for the user. See [[Philippine Addresses]].
+
+**Tests:** `PhLocationTest` (11, real PSGC codes), `ImportPhLocationsTest` (3, including a full
+check of the shipped snapshot, run in its own process for memory); 631 backend tests pass.
+
 ## 2026-10-01 — "Verified" no longer means two different things
 
 Customer Management showed **Verified** for any account that had confirmed its email, so a customer

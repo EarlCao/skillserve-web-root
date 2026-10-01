@@ -34,7 +34,7 @@ OUT = os.path.join(VAULT, "04 - API Integrations", "Endpoints")
 # (note title, predicate on uri, description, feature note link)
 GROUPS = [
     ("API - Admin Authentication", lambda u: u.startswith("api/auth/"), "Admin web sign-in, sign-out, profile and password endpoints (`/api/auth/*`).", "Admin Authentication"),
-    ("API - Dashboard", lambda u: u.startswith("api/dashboard"), "Admin dashboard read model.", "Admin Dashboard"),
+    ("API - Dashboard", lambda u: u.startswith("api/dashboard"), "Admin dashboard read model. `commission_summary` is included only for viewers holding `view commissions` or `manage commissions`.", "Admin Dashboard"),
     ("API - Administrators, Roles and Permissions", lambda u: u.startswith(("api/administrators", "api/roles", "api/permissions")), "Staff accounts, roles and the permission catalogue.", "Admin Management"),
     ("API - Users", lambda u: u.startswith("api/users"), "Admin User Management (customer and provider accounts).", "User Management"),
     ("API - Service Categories", lambda u: u.startswith("api/service-categories"), "Categories and nested subcategories.", "Service Category Management"),
@@ -45,7 +45,7 @@ GROUPS = [
     ("API - Reviews", lambda u: u.startswith("api/reviews"), "Admin review moderation.", "Reviews and Ratings Management"),
     ("API - Reports and Moderation", lambda u: u.startswith("api/reports"), "Admin report queue and moderation actions.", "Reports and Moderation"),
     ("API - Notifications and Announcements", lambda u: u.startswith("api/notifications"), "Admin announcements and notification history.", "Notifications and Announcements"),
-    ("API - Analytics", lambda u: u.startswith("api/analytics"), "Admin reports and CSV export.", "Reports and Analytics"),
+    ("API - Analytics", lambda u: u.startswith("api/analytics"), "Admin reports, per-category CSV export, and the Excel general report.", "Reports and Analytics"),
     ("API - Provider Recognition", lambda u: u.startswith("api/provider-recognition"), "Badges, featured and top-rated providers.", "Provider Recognition"),
     ("API - Audit Logs", lambda u: u.startswith("api/audit-logs"), "Security and audit log viewer.", "Security and Audit Logs"),
     ("API - System Settings", lambda u: u.startswith("api/settings"), "Admin system settings.", "System Settings"),
@@ -65,6 +65,7 @@ GROUPS = [
     ("API - Provider Bookings (Mobile)", lambda u: u.startswith("api/client/v1/provider/bookings"), "The provider's jobs and their lifecycle.", "Provider Jobs"),
     ("API - Provider Services (Mobile)", lambda u: u.startswith("api/client/v1/provider/services"), "Provider-managed services (subject to admin approval).", "Provider Service Management"),
     ("API - Provider Account (Mobile)", lambda u: u.startswith("api/client/v1/provider/"), "Provider profile, portfolio, availability, badges and verification upload.", "Provider Account and Verification"),
+    ("API - Locations", lambda u: u.startswith("api/client/v1/locations"), "Public Philippine address-picker data (PSA PSGC) and the National-ID address matcher.", "Philippine Addresses"),
     ("API - Platform and Infrastructure", lambda u: True, "Health checks, broadcasting auth, Swagger docs, storage and framework routes.", None),
 ]
 

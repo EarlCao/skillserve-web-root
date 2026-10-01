@@ -26,6 +26,7 @@ tags: [index, database]
 | Notifications | [[notifications]] · [[announcements]] |
 | Mobile | [[client_preferences]] · [[favorite_providers]] |
 | Platform | [[settings]] · [[data_archives]] · [[activity_log]] · [[media]] |
+| Reference data | [[ph_locations]] |
 | Framework | [[sessions]] · [[cache and cache_locks]] · [[Queue Tables]] |
 
 Back to [[Home]]

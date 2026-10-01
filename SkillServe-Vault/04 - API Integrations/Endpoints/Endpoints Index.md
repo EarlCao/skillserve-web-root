@@ -1,17 +1,17 @@
 ---
 type: index
 generated: true
-generated_on: 2026-09-22
+generated_on: 2026-10-01
 tags: [api, index, generated]
 ---
 # Endpoints Index
 
-> [!info] Generated on 2026-09-22 from `php artisan route:list` — 221 route entries in 33 groups.
+> [!info] Generated on 2026-10-01 from `php artisan route:list` — 248 route entries in 34 groups.
 
 | Group | Routes | Scope |
 |---|---|---|
 | [[API - Admin Authentication]] | 6 | Admin web sign-in, sign-out, profile and password endpoints (`/api/auth/*`). |
-| [[API - Dashboard]] | 1 | Admin dashboard read model. |
+| [[API - Dashboard]] | 1 | Admin dashboard read model. `commission_summary` is included only for viewers holding `view commissions` or `manage commissions`. |
 | [[API - Administrators, Roles and Permissions]] | 15 | Staff accounts, roles and the permission catalogue. |
 | [[API - Users]] | 10 | Admin User Management (customer and provider accounts). |
 | [[API - Service Categories]] | 11 | Categories and nested subcategories. |
@@ -22,7 +22,7 @@ tags: [api, index, generated]
 | [[API - Reviews]] | 4 | Admin review moderation. |
 | [[API - Reports and Moderation]] | 8 | Admin report queue and moderation actions. |
 | [[API - Notifications and Announcements]] | 4 | Admin announcements and notification history. |
-| [[API - Analytics]] | 2 | Admin reports and CSV export. |
+| [[API - Analytics]] | 3 | Admin reports, per-category CSV export, and the Excel general report. |
 | [[API - Provider Recognition]] | 9 | Badges, featured and top-rated providers. |
 | [[API - Audit Logs]] | 2 | Security and audit log viewer. |
 | [[API - System Settings]] | 2 | Admin system settings. |
@@ -41,7 +41,8 @@ tags: [api, index, generated]
 | [[API - Client Preferences and Platform]] | 3 | Per-user app preferences and public platform info/policies. |
 | [[API - Provider Bookings (Mobile)]] | 8 | The provider's jobs and their lifecycle. |
 | [[API - Provider Services (Mobile)]] | 6 | Provider-managed services (subject to admin approval). |
-| [[API - Provider Account (Mobile)]] | 10 | Provider profile, portfolio, availability, badges and verification upload. |
-| [[API - Platform and Infrastructure]] | 12 | Health checks, broadcasting auth, Swagger docs, storage and framework routes. |
+| [[API - Provider Account (Mobile)]] | 12 | Provider profile, portfolio, availability, badges and verification upload. |
+| [[API - Locations]] | 3 | Public Philippine address-picker data (PSA PSGC) and the National-ID address matcher. |
+| [[API - Platform and Infrastructure]] | 33 | Health checks, broadcasting auth, Swagger docs, storage and framework routes. |
 
 Back to [[API Index]]

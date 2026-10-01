@@ -1,14 +1,14 @@
 ---
 type: api-endpoints
 generated: true
-generated_on: 2026-09-22
+generated_on: 2026-10-01
 source: php artisan route:list --json -v
 tags: [api, endpoints, generated]
 ---
 # API - Users
 
 > [!info] Generated file — do not edit by hand
-> Rebuilt by `99 - Meta/Scripts/generate_endpoint_notes.py` from the live route table on 2026-09-22.
+> Rebuilt by `99 - Meta/Scripts/generate_endpoint_notes.py` from the live route table on 2026-10-01.
 > Authorization is extracted from controller/policy source; request/response shapes live in the
 > generated OpenAPI reference (`api-docs/modules/*.md`, Swagger UI at `/api/documentation`).
 

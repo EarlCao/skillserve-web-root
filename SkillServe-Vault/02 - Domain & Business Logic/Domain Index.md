@@ -17,6 +17,7 @@ business rules — AGENT.md).
 - [[Payments and Refunds]]
 - [[Commission Tiers and Settlement]]
 - [[Identity Verification Lifecycle]]
+- [[Philippine Addresses]]
 - [[Disputes Lifecycle]]
 - [[Provider Verification Lifecycle]]
 - [[Service Approval Lifecycle]]
