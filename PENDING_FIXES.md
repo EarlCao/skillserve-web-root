@@ -57,7 +57,11 @@ skipped because the old key is no longer at hand; regeneration itself invalidate
 same day. Closed. Once the backend is pushed, `php artisan paymongo:status` on Render should report
 "No key is set".
 
-### C7 · Production holds the demo dataset, with guessable passwords **[DEP]** — reopened: wipe again
+### ~~C7 · Production holds the demo dataset, with guessable passwords~~ — **RESOLVED 2026-10-01**
+**Verified 2026-10-01:** after the second wipe with backend `051089a` live, the public catalog reports 0
+services, 0 providers and 0 categories, and the owner signs in as the seeded super-admin.
+
+**History:**
 **Reopened 2026-09-30:** after the seeding fix (`924cf14`) the next deploy seeded the **demo** dataset
 again (18 services, 11 providers, 7 categories), because `SEED_MODE` was not `admin-only` on Render
 and the default was `demo`. Backend `051089a` makes production refuse demo seeding outright.
