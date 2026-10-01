@@ -9,6 +9,16 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-01 — Missing upload files explain themselves
+
+Opening a National ID image in the admin web failed with a vague error. The rows existed but the
+files did not: without a Render persistent disk every deploy deletes `storage/app` (see
+[[Render Persistent Disk]]). The three private downloads (ID images, provider verification
+documents, dispute evidence) now answer 404 with a message saying the file is no longer stored and
+log a warning (`App\Shared\Helpers\StoredFile`, backend `01e2c61`), and the admin web reads error
+messages from blob downloads instead of losing them (frontend `1db2573`). Production also refuses
+demo seeding (`051089a`).
+
 ## 2026-09-30 — A reset database now gets its super-admin
 
 After the production reset nobody could sign in: `users` was empty. `db:seed-if-empty` treated any
