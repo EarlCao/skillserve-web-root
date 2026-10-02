@@ -34,6 +34,13 @@ While the provider types a price, the form shows SkillServe's share and what the
 My Services shows each service's `earnings` the same way. Amounts are displayed exactly as the API
 sends them. See [[Commission Tiers and Settlement]].
 
+## Service area
+
+"Where you offer this service" is the address picker in area mode: a city or municipality is
+required, a barangay optional, no street (`location_details`; the API writes the readable
+`location`, e.g. "Cainta, Rizal"). Editing an older service shows its free-text location as a
+reminder. See [[Philippine Addresses]].
+
 ## Tests
 
 `provider_services_test`, `ProviderServiceTest` (Flutter tests in snake_case, backend tests in PascalCase — [[Mobile Test Suite]], [[Backend Test Suite]]).

@@ -18,7 +18,7 @@ Mobile requirement(s): **M5** ([[Requirements Sources]]).
 
 | ID | Functionality | Implementation | Status |
 |---|---|---|---|
-| M 5.1 | Create Booking | service, schedule (UTC ISO-8601), address, contact phone, notes, payment method; `Idempotency-Key`; refused outside provider hours / overlapping / paused | implemented |
+| M 5.1 | Create Booking | service, schedule (UTC ISO-8601), service address with the Region → Barangay picker (`service_address_details`, starts from the customer's saved address, **Next** disabled until a barangay is chosen — [[Philippine Addresses]]), contact phone, notes, payment method; `Idempotency-Key`; refused outside provider hours / overlapping / paused | implemented |
 | M 5.2 | View Booking Details | service, provider, schedule, status, payment, cancellation policy | implemented |
 | M 5.3 | View My Bookings | `GET /bookings` with status filter | implemented |
 | M 5.4 | Monitor Booking Status | pending → confirmed → active → completed / cancelled / disputed, updated by notifications | implemented |

@@ -19,7 +19,7 @@ Mobile requirement(s): **M2** ([[Requirements Sources]]).
 | ID | Functionality | Implementation | Status |
 |---|---|---|---|
 | M 2.1 | View Profile | `GET /auth/me` | implemented |
-| M 2.2 | Edit Profile | `PATCH /auth/me` | implemented |
+| M 2.2 | Edit Profile | `PATCH /auth/me`; the address is the Region → Province → City → Barangay picker (`address_details`), pre-filled from the saved address; an address saved as free text before is shown as a reminder to pick it ([[Philippine Addresses]]) | implemented |
 | M 2.3 | Profile Photo Management | `POST/DELETE /auth/me/photo` (JPG/PNG/WebP ≤5 MB, `public` disk) | implemented |
 | M 2.4 | View Account Status | account status card in Settings/Profile from `/auth/me` `account` | implemented |
 | M 2.5 | View Activity History | `/activity-history` combines the user's bookings (customer or provider list) and reports (no reviews) | implemented |

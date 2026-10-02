@@ -86,8 +86,10 @@ the admin web read: *"123 Rizal St, Bagong Pag-asa, Quezon City, Metro Manila 11
 
 Phase 1 (2026-10-01): the list, the import and the endpoints. Phase 2 (2026-10-02): structured
 addresses on sign-up, profile, bookings and services. Phase 3 (2026-10-02): the app's ID-scanning
-sign-up and the picker widget ([[Mobile Sign-up with National ID Scan]]). Next: the picker in Edit
-Profile, the booking form and Add/Edit Service (Phase 4) — tracked in `PENDING_FIXES.md` → **F1**.
+sign-up and the picker widget ([[Mobile Sign-up with National ID Scan]]). Phase 4 (2026-10-02): the
+picker in Edit Profile, the booking form and Add/Edit Service — every address the app enters is now
+structured. Remaining: the owner's check on a real card and the release build (`PENDING_FIXES.md` →
+**F1**).
 
 Related: [[ph_locations]] · [[API - Locations]] · [[Identity Verification Lifecycle]] ·
 [[Registration and OTP Flow]] · [[Domain Index]]

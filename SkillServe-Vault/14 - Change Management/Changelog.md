@@ -9,6 +9,15 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-02 — The address picker everywhere (F1 phase 4)
+
+Edit Profile, the booking form's service address and Add/Edit Service's service area use the
+Region → Province → City → Barangay picker instead of a free-text box. The booking starts from the
+customer's saved address; a service area needs a city or municipality (barangay optional).
+Addresses typed before the picker existed are shown as a reminder to pick them. Flutter `7a55b03`.
+
+**Tests:** `address_picker_test` (6); 302 app tests pass.
+
 ## 2026-10-02 — Sign-up starts by scanning the National ID (F1 phase 3)
 
 Email and Google sign-up open on the camera: the front of the PhilSys card or ePhilID, then — by
