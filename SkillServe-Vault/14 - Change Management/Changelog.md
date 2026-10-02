@@ -9,6 +9,17 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-02 — Sign-up starts by scanning the National ID (F1 phase 3)
+
+Email and Google sign-up open on the camera: the front of the PhilSys card or ePhilID, then — by
+itself — the back. Google ML Kit reads both on the phone (text on the front, QR on the back, the QR
+correcting the camera), the printed address is matched to Region → Province → City → Barangay, and
+the form arrives pre-filled for the user to check. After the email code (or Google sign-up) the
+scanned card is submitted for review automatically; the National ID screen opens pre-filled only as
+a fallback. See [[Mobile Sign-up with National ID Scan]]. Flutter `4bd904a`.
+
+**Tests:** 20 new app tests; 296 pass. **Not yet verified:** a release APK build and a real card.
+
 ## 2026-10-02 — Philippine address picker, Phase 2: structured addresses
 
 Sign-up (email, provider and Google), Edit Profile, bookings and services accept a structured

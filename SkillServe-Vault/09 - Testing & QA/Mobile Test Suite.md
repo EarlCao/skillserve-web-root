@@ -6,8 +6,9 @@ sources: [skill-serve-mobile-application/test]
 # Mobile Test Suite
 
 26 test files (+ `flutter_test_config.dart`), ≈203 `test`/`testWidgets` cases (static count, 2026-09-22).
-**Last run 2026-09-30: 275 passed, `flutter analyze` clean** (Flutter 3.44.2), after `identity_test` and
-`commission_split_test` were added. The per-file table below predates those two.
+**Last run 2026-10-02: 296 passed, `flutter analyze` clean** (Flutter 3.44.2), after `identity_test`,
+`commission_split_test`, `national_id_test`, `national_id_scan_flow_test` and
+`sign_up_id_submission_test` were added. The per-file table below predates those.
 
 > [!tip] Running Flutter from WSL
 > The Windows SDK at `C:\src\flutter` cannot run from WSL (CRLF scripts, Windows binaries, and WSL

@@ -18,7 +18,7 @@ Mobile requirement(s): **M1** ([[Requirements Sources]]).
 
 | ID | Functionality | Implementation | Status |
 |---|---|---|---|
-| M 1.1 | User Registration | customer or provider sign-up → 6-digit email OTP → account created on verify; Google sign-in / Google registration; cancel pending sign-up | implemented |
+| M 1.1 | User Registration | starts by scanning the National ID front and back, which fills names, birthday, card number and the Region → Barangay address ([[Mobile Sign-up with National ID Scan]]); customer or provider sign-up → 6-digit email OTP → account created on verify, ID submitted for review; Google sign-in / Google registration (same scan first); cancel pending sign-up | implemented |
 | M 1.2 | User Login | email/password or Google; lands on `/client` or `/provider` by role | implemented |
 | M 1.3 | User Logout | see [[Logout (Mobile)]] | implemented |
 | M 1.4 | Password Management | change password implemented; **forgot password only sends the email — the reset link targets a page that does not exist and the app has no reset screen (KI-02)** | partial |

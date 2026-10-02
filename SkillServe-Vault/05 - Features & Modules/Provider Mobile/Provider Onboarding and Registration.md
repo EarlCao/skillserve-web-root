@@ -18,7 +18,7 @@ Mobile requirement(s): **M9.1** ([[Requirements Sources]]).
 
 | ID | Functionality | Implementation | Status |
 |---|---|---|---|
-| M 9.1 | Become a Service Provider | `POST /auth/register-provider` (business name, specialization, experience, bio) → OTP → provider profile `unverified`; onboarding: 1 profile · 2 upload documents · 3 status seal | implemented |
+| M 9.1 | Become a Service Provider | National ID scan first ([[Mobile Sign-up with National ID Scan]]), then `POST /auth/register-provider` (business name, specialization, experience, bio, birthday, address) → OTP → provider profile `unverified`; onboarding: 1 profile · 2 upload documents · 3 status seal | implemented |
 
 UAT result columns in the mobile `TEST_PLAN.md` are still empty — see [[UAT and Traceability]].
 

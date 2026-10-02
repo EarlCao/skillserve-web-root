@@ -36,12 +36,13 @@ conversation, ticket or service.
 
 ## After registration
 
-Both ways of signing up converge on the same next step, so neither can skip the National ID prompt:
+Both ways of signing up **start by scanning the National ID** (front, then back) and fill the form
+from it — see [[Mobile Sign-up with National ID Scan]]:
 
 | Sign-up | Steps | Lands on |
 |---|---|---|
-| Email + password | `/register` → **no account yet** → `/verify-email` (the OTP is what creates it) | `/identity-verification`, then `/client` — or `/provider-onboarding` for a provider, via `?next=` |
-| Google | `/register` or `/login` → `/google-register` (name and role) → account created with a session, no OTP because Google verifies the address | the same |
+| Email + password | `/register` (ID scan → pre-filled form) → **no account yet** → `/verify-email` (the OTP is what creates it) | the scanned ID is submitted automatically, then `/client` — or `/provider-onboarding` for a provider; `/identity-verification` (pre-filled) only if it could not be sent |
+| Google | `/register` or `/login` → `/google-register` (ID scan → pre-filled form, role) → account created with a session, no OTP because Google verifies the address | the same |
 
 Signing **in** with an existing Google account goes straight to the role home — an established
 account is not interrupted.

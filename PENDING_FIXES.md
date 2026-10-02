@@ -26,8 +26,11 @@ Required for every account; PhilSys card and ePhilID. See vault [[Philippine Add
 - [x] **Phase 1** — PSGC list, `locations:import`, `/api/client/v1/locations/*` (backend).
 - [x] **Phase 2** — structured addresses on sign-up (+ birthday), profile, bookings and services
   (backend, 2026-10-02; migration `2026_10_01_000002`, additive).
-- [ ] **Phase 3** — ID capture front → back, on-device text + QR reading, pre-filled sign-up,
-  ID submitted after the email code (mobile).
+- [x] **Phase 3** — ID capture front → back, on-device text + QR reading, pre-filled sign-up,
+  ID submitted after the email code (mobile, 2026-10-02, Flutter `4bd904a`).
+  **Owner check:** build the release APK on Windows (first build with ML Kit; R8 rules added in
+  `android/app/proguard-rules.pro`) and sign up with a **real** PhilSys card and an ePhilID —
+  the parser was tuned on the printed layout, not on photos of real cards.
 - [ ] **Phase 4** — the picker in Edit Profile, the booking form and Add/Edit Service (mobile).
 - [ ] **Phase 5** — docs, APK, owner test with a real National ID.
 **Server-side enforcement:** turn on System Settings → Identity (**H8**) at launch.

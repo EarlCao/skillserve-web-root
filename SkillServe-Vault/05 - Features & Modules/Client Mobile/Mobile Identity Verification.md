@@ -27,13 +27,12 @@ from [[Provider Account and Verification]], which proves a provider is a legitim
 
 ## Where it appears
 
-- **Straight after registration, by either route.** An email sign-up lands here from the OTP screen;
-  a Google sign-up lands here from "Finish signing up", which is the equivalent moment because
-  Google verifies the address and there is no OTP step. Both replace the old landing on the role
-  home, so an account is asked for its ID up front instead of being stopped at its first booking. A
-  provider carries on to `/provider-onboarding` afterwards, which is what `?next=` carries.
-  Covering both paths matters: otherwise signing up with Google would be the one way to skip the
-  prompt entirely.
+- **Sign-up scans the card first** (since 2026-10-02, [[Mobile Sign-up with National ID Scan]]):
+  the photos and the confirmed details are submitted automatically once the account exists, so this
+  screen is no longer a step of sign-up. It opens straight after sign-up only as the fallback — when
+  the scan was incomplete or the API refused it — and then **pre-filled** from the scan (card number,
+  full name, birthday, both photos). A provider carries on to `/provider-onboarding` afterwards,
+  which is what `?next=` carries.
 - **Profile tab**, for both roles, so it can be revisited or resubmitted at any time.
 - A back arrow appears only when there is somewhere to go back to, so the screen is dismissable when
   opened from Settings and is a deliberate dead end straight after sign-up.
