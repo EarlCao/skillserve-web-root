@@ -9,6 +9,15 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-02 — The National ID is captured automatically, and reading never gets stuck
+
+The first test on a real phone failed with "Your ID could not be read" and no way forward. Fixed:
+R8 keep rules for ML Kit (release builds strip it otherwise); the camera is ML Kit's Document
+Scanner, which detects, auto-captures, crops and cleans the card like KYC apps; a failed read no
+longer blocks; the back scanner opens by itself; QR is read on both sides; misread labels on blurry
+print are still recognised. See [[Mobile Sign-up with National ID Scan]]. Flutter `7fdb2d5`;
+305 app tests pass.
+
 ## 2026-10-02 — The address picker everywhere (F1 phase 4)
 
 Edit Profile, the booking form's service address and Add/Edit Service's service area use the

@@ -17,10 +17,10 @@ Google; the plastic **PhilSys card** and the printed **ePhilID** are both read.
 ```mermaid
 stateDiagram-v2
   [*] --> Front : /register or /google-register
-  Front --> Back : photo taken, text read (moves on by itself)
-  Back --> Form : photo taken, QR read, address matched
-  Back --> Front : nothing readable → "Retake"
-  Back --> Form : nothing readable → "Type them instead"
+  Front --> Back : card auto-captured, read (even if reading failed)
+  Back --> Form : back scanner opens by itself, QR read, address matched
+  Back --> Front : nothing readable at all → "Retake"
+  Back --> Form : nothing readable at all → "Type them instead"
   Form --> OTP : email sign-up (birthday + address sent)
   Form --> Account : Google sign-up (no OTP)
   OTP --> Account : code confirmed
@@ -30,8 +30,9 @@ stateDiagram-v2
 
 | Step | What happens | Where |
 |---|---|---|
-| Front | Camera only. Google ML Kit reads the printed text **on the phone** — the image is not sent anywhere to be read | `NationalIdScanFlow`, `MlKitNationalIdReader` |
-| Back | Camera again, without being asked. ML Kit reads the QR code | same |
+| Front | **ML Kit Document Scanner** (`captureNationalIdPhoto`): finds the card's edges, captures it automatically, straightens, crops and cleans it — the screen KYC apps use. Phones without Google Play services fall back to the plain camera. ML Kit then reads the text and any QR code **on the phone** | `national_id_camera.dart`, `NationalIdScanFlow`, `MlKitNationalIdReader` |
+| Back | The scanner **opens by itself** ~1 s after the front is read. Text and QR are read again | same |
+| A failed read | Never blocks: the image is kept and the flow moves on. Only when *nothing* was read is the user offered a retake or typing, with the technical reason shown ("Details: …") to report | same |
 | Read | `NationalIdParser.parseFront` finds each field by its bilingual label ("Apelyido/Last Name", "Mga Pangalan/Given Names", "Gitnang Apelyido/Middle Name", "Petsa ng Kapanganakan/Date of Birth", "Tirahan/Address") and the 16-digit card number anywhere; `parseQr` reads the QR's JSON leniently (`subject.lName`, `last_name`…). The QR, being machine-written, **overrides** what the camera read; the address only comes from the front | `national_id_parser.dart` |
 | Address | The printed address goes to `GET /locations/match`, which pre-selects Region → Province → City → Barangay; anything undecided is left for the user | [[Philippine Addresses]] |
 | Form | Given name(s), middle name, last name, PhilSys card number, birthday and the address picker, under "Filled in from your National ID. Check every field". **Scan again** restarts | `SignUpIdentityFields` |
@@ -42,6 +43,11 @@ stateDiagram-v2
 
 - "Gitnang Apelyido" (middle name) contains the last-name word and "Lugar ng Kapanganakan" (place of
   birth) the birth-date word, so the more specific label is matched first.
+- QR codes are read on **both** sides — the paper ePhilID prints its QR on the front. The back's
+  printed text ranks below the front's; any QR ranks above both.
+- A label the camera misread on blurry print ("Apelyldo/Lasl Name") is still recognised (one wrong
+  letter, two in long labels). Labels are printed in mixed case and values in capitals, so a value on
+  the label's own line is taken only from its capitalised words.
 - Camera misreads in the card number are corrected (O→0, I/l→1); dates accept `JANUARY 01, 1990`,
   `25 DEC 1990`, `1990-01-31` and month-first `01/31/1990`, and refuse impossible or future dates.
 - Names are printed in capitals and shown in title case ("DELA CRUZ" → "Dela Cruz").
@@ -55,18 +61,21 @@ out clears them and the photos. Nothing is written to device storage.
 
 ## Build notes
 
-- Packages: `google_mlkit_text_recognition` 0.17.1, `google_mlkit_barcode_scanning` 0.16.1
-  (Android 5.0+, already the app's minimum). The app grows by roughly 10–15 MB.
-- `android/app/proguard-rules.pro` tells R8 not to fail on the Chinese/Devanagari/Japanese/Korean
-  recognisers, which are not bundled.
+- Packages: `google_mlkit_text_recognition` 0.17.1, `google_mlkit_barcode_scanning` 0.16.1 (both
+  models bundled, work offline), `google_mlkit_document_scanner` 0.6.1 (Google Play services; the
+  scanner module downloads on first use). Android 5.0+.
+- `android/app/proguard-rules.pro`: `-dontwarn` for the non-Latin recognisers, and **`-keep`** for
+  ML Kit and its Flutter plugins. The first real-phone test (2026-10-02) failed at "Your ID could not
+  be read" in a release build; R8 stripping ML Kit internals is the likely cause, which debug builds
+  never show.
 - **Not yet verified:** a release build on Windows and a scan of a real card — see
   `PENDING_FIXES.md` → **F1**.
 
 ## Tests
 
-`national_id_test` (13: a PhilSys front, an ePhilID with a misread digit, QR JSON in two shapes,
-dates, the address model), `national_id_scan_flow_test` (2: front → back → details with a fake
-camera and reader; the unreadable-card choice), `sign_up_id_submission_test` (5: what is sent after
+`national_id_test` (15: a PhilSys front, an ePhilID with a misread digit, misread labels on blurry
+print, QR JSON in two shapes, dates, the address model), `national_id_scan_flow_test` (3: front →
+back opening by itself → details; a QR on the front; a failed read that does not block), `sign_up_id_submission_test` (5: what is sent after
 sign-up, routing, incomplete and refused scans, sign-out), plus the updated
 `google_registration_screen_test` and `auth_form_locking_test`.
 
