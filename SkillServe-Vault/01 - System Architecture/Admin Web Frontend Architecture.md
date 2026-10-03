@@ -2,7 +2,7 @@
 type: architecture
 tags: [architecture, frontend]
 platform: admin-web
-sources: [frontend/src/main.jsx, frontend/src/routes/index.jsx, frontend/src/providers/AuthProvider.jsx, frontend/src/services, frontend/src/lib/queryClient.js, frontend/vite.config.js, frontend/src/app/config.js]
+sources: [frontend/src/main.jsx, frontend/src/routes/index.jsx, frontend/src/providers/AuthProvider.jsx, frontend/src/services, frontend/src/lib/queryClient.js, frontend/src/lib/queryPersistence.js, frontend/public/sw.js, frontend/vite.config.js, frontend/src/app/config.js]
 ---
 # Admin Web Frontend Architecture
 
@@ -30,6 +30,22 @@ flowchart LR
 - **Query keys** live in `QUERY_KEYS` (`src/constants/index.js`).
 - **Query defaults:** `staleTime` 60 s, `gcTime` 5 min, no refetch on focus, no retry for HTTP
   errors (retry ×3 with backoff only for network errors); mutations never retry.
+
+## Fast reload
+
+A browser refresh paints from cache instead of waiting on the network, then refreshes in the
+background.
+
+| Layer | What it keeps | Where |
+|---|---|---|
+| Query snapshot | The React Query cache (incl. `auth.me`), saved on `pagehide` and restored in `main.jsx` before the first render. Everything restored is marked stale, so mounted queries refetch at once. | `lib/queryPersistence.js` |
+| Service worker | Hashed build files under `/assets/*`, cache-first (newest 150 kept). `index.html` stays network-first so a deploy is picked up. | `public/sw.js` |
+| HTTP cache | `Cache-Control: public, max-age=31536000, immutable` on `/assets/*` | `vercel.json`; Render Headers tab ([[Frontend Hosting]]) |
+
+Snapshot rules: stored in **sessionStorage** under `skillserve:query-cache` (per tab, gone when the
+tab closes); only restored when a token exists and its Sanctum token id matches the one that saved
+it; dropped after 30 minutes; cleared on the next page hide once the token is gone (logout or 401).
+Blobs and mutations are never saved; an over-quota write just skips the snapshot.
 
 ## Authentication in the SPA
 

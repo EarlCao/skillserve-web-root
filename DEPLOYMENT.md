@@ -186,6 +186,15 @@ Things to know:
    | `Referrer-Policy` | `strict-origin-when-cross-origin` |
    | `Permissions-Policy` | `camera=(), microphone=(), geolocation=()` |
 
+   For fast reloads, add one more header for the path `/assets/*` only. Vite
+   puts a content hash in every file name there, so a file never changes and
+   the browser can keep it. Never set this on `/*`: `index.html` must always be
+   re-checked so a deploy is picked up.
+
+   | Header | Value |
+   |--------|-------|
+   | `Cache-Control` | `public, max-age=31536000, immutable` |
+
    Also keep **Admin → Settings → System → Session timeout** short (for
    example 480 minutes, one working day), so a stolen token stops working soon.
 6. Set these on the **Environment** tab. Vite inlines them at build time, so
