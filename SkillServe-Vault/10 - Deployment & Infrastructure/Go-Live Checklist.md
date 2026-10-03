@@ -22,7 +22,7 @@ done.
 | 9 | End-to-end smoke test with two phones: register customer + provider → provider verification upload → admin approves → provider adds service → admin approves → customer books → provider accepts → chat → reschedule → start → complete → payment received → review → report → admin moderates → notifications on both phones incl. app closed; record in both `TEST_PLAN.md` files | Needs Verification |
 
 > [!warning] Known blockers found by this audit
-> Step 9 "notifications with the app closed" can fail after the session timeout (KI-01); the mobile
-> password-reset UAT will fail (KI-02). See [[Known Issues and Gaps]].
+> Step 9 "notifications with the app closed" can fail after the session timeout (KI-01). The mobile
+> password reset (KI-02) was fixed on 2026-10-03. See [[Known Issues and Gaps]].
 
 Related: [[Release Workflow]] · [[Defense Readiness]] · [[Project Status]]

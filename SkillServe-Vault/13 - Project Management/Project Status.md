@@ -8,7 +8,7 @@ audited_on: 2026-09-22
 | Area | Status | Basis |
 |---|---|---|
 | Admin web — 19 modules | **All implemented in code** (backend + UI + tests) | code audit; [[Admin Web Features Index]] |
-| Mobile — 17 modules | **Implemented**, except M 1.4 password *recovery* (KI-02) and M 15.2 deactivation (by design) | code audit; [[Client Mobile Features Index]], [[Provider Mobile Features Index]] |
+| Mobile — 17 modules | **Implemented**, except M 15.2 deactivation (by design); M 1.4 password recovery fixed 2026-10-03 | code audit; [[Client Mobile Features Index]], [[Provider Mobile Features Index]] |
 | Repo-tracked open defects | none (`PENDING_FIXES.md`, root and mobile, audited 2026-09-21) | repo docs |
 | Additional defects found by this audit | 2 HIGH (KI-01, KI-02), 3 MEDIUM, many LOW/doc | [[Known Issues and Gaps]] |
 | Automated tests | ≈449 backend methods, ≈203 Flutter cases; **not run in this audit** | [[Testing Index]] |
@@ -28,7 +28,7 @@ audited_on: 2026-09-22
 ## Next milestones (from repo docs)
 
 1. Owner go-live actions ([[Go-Live Checklist]]).
-2. Fix KI-01 and KI-02 before UAT.
+2. Fix KI-01 before UAT (KI-02 fixed 2026-10-03).
 3. Run UAT on the deployed stack and fill both `TEST_PLAN.md` files ([[UAT and Traceability]]).
 4. Defense material ([[Defense Readiness]]).
 

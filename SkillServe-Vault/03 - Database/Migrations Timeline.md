@@ -162,6 +162,16 @@ images must be removed from the private disk separately.
   (indexed city). Additive; existing addresses stay as text with no backfill. Rollback drops only
   the new columns — the text columns already hold a formatted copy.
 
+## 2026-10-03 — Password after the sign-up code
+
+- **`2026_10_03_000001_add_password_step_to_pending_registrations`** — [[pending_registrations]]
+  `password` becomes nullable (chosen after the code now) and gains `google_sub`,
+  `email_verified_at` and `registration_token_hash`. Additive plus a DROP NOT NULL (metadata-only on
+  PostgreSQL), so it can run before the new code; rows parked by older app versions keep their
+  password and still complete on the code. Rollback deletes in-flight sign-ups that have no password
+  yet (the old code could not finish them) and restores NOT NULL; those users start again. See
+  [[Registration and OTP Flow]].
+
 ## Related
 
 [[Database Overview]] · [[Changelog]] · [[Database Index]]

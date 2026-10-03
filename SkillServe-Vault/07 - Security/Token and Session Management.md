@@ -14,7 +14,7 @@ sources: [backend/config/sanctum.php, backend/config/client-auth.php, backend/ap
 | On 401 | token removed, `skillserve:unauthorized` event → logged out | single-flight refresh; if refresh refused → session cleared, `onSessionRevoked` (with restriction reason) |
 | Logout | revokes current token | revokes **all** tokens + refresh tokens |
 | Password change | other tokens revoked (current kept) | all sessions end |
-| Password reset | all tokens revoked | (reset flow incomplete — KI-02) |
+| Password reset | all tokens revoked | emailed code → reset token → new password ([[Registration and OTP Flow#Forgot password (mobile)]]) |
 | Suspension / ban / deletion | login refused (403) | `revokeAll`; 403 `meta.account` everywhere |
 | `SANCTUM_EXPIRATION` | env default 1440 (framework-level expiry for tokens without `expires_at`) | — |
 

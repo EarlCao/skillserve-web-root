@@ -15,7 +15,7 @@ sources: [skill-serve-mobile-application/README.md, SETUP_CREDENTIALS.md, lib/co
 | Full-screen "under maintenance" | System Settings maintenance mode on | turn it off in admin; app rechecks `/platform` |
 | Signed out with a reason | account suspended/banned (403 `meta.account`) | admin activates/unbans |
 | Signed out unexpectedly on two devices | refresh token reused (family revoked) or password changed | sign in again |
-| Forgot-password link opens a 404 | KI-02 | no workaround in-app; the admin API has no password-reset endpoint for customer/provider accounts (only `PATCH /api/administrators/{id}/password` for staff) |
+| ~~Forgot-password link opens a 404~~ | ~~KI-02~~ | resolved 2026-10-03: reset is now done in the app with an emailed 6-digit code |
 | Release build signed with debug key | `android/key.properties` missing | create keystore + properties ([[Mobile Release Build]]) |
 | App points at production when testing locally | no define file | `--dart-define-from-file=env/local.json` |
 

@@ -35,7 +35,7 @@ Status from the code audit. "UAT" = result recorded in `TEST_PLAN.md` (none yet)
 
 | # | Module | API | App | Tests | UAT | Note |
 |---|---|---|---|---|---|---|
-| 1 | [[Client Authentication and Account]] | ✅ | ⚠️ | ✅ | — | M 1.4 recovery incomplete (KI-02) |
+| 1 | [[Client Authentication and Account]] | ✅ | ✅ | ✅ | — | M 1.4 recovery by emailed code (KI-02 fixed 2026-10-03) |
 | 2 | [[Client Profile]] | ✅ | ✅ | ✅ | — | |
 | 3–4 | [[Service and Provider Discovery]] | ✅ | ✅ | ✅ | — | |
 | 5 | [[Client Booking]] | ✅ | ✅ | ✅ | — | |

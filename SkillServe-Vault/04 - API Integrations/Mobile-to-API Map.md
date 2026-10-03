@@ -34,7 +34,6 @@ Extracted from the Flutter services (paths relative to `/api`). All go through `
 
 | Endpoint | Note |
 |---|---|
-| `POST /client/v1/auth/reset-password` | the app only requests the reset email; completing the reset has no app screen **and** the emailed link points to a non-existent page — KI-02 in [[Known Issues and Gaps]] |
 | `POST /client/v1/auth/verification-notification`, `GET /client/v1/auth/verify-email/{user}/{hash}` | legacy signed-link verification; the app uses OTP |
 | `GET /client/v1/categories/{category}` | the app loads the full category list instead |
 

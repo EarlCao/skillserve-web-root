@@ -28,8 +28,8 @@ defines three deliverables:
 
 ## Risks to address before presenting
 
-KI-01 (closed-app notifications) and KI-02 (password recovery) would surface in a live demo of M 8.2
-/ M 1.4. See [[Known Issues and Gaps]].
+KI-01 (closed-app notifications) would surface in a live demo of M 8.2. KI-02 (password recovery,
+M 1.4) was fixed on 2026-10-03. See [[Known Issues and Gaps]].
 
 > [!warning] Needs Verification
 > Defense date, panel composition and grading rubric are not in the repos.

@@ -1,6 +1,6 @@
 # Pending Fixes — SkillServe (Backend, Admin Web, Mobile, Deployment)
 
-Last updated: **2026-09-30** (M8 threshold built; service-based provider ratings, dashboard commission card and general Excel report added).
+Last updated: **2026-10-03** (F2: password after the sign-up code, Google needs the password, forgot password by code, readable light/dark app).
 Previous full audit: 2026-09-21.
 
 Requirements now live in `SkillServe-Vault/` (Obsidian), which supersedes the two functionality
@@ -36,6 +36,23 @@ Required for every account; PhilSys card and ePhilID. See vault [[Philippine Add
 - [ ] **Phase 5** — docs done; **owner:** build the release APK and sign up with a real PhilSys card
   and ePhilID, book with the picker, add a service with a service area.
 **Server-side enforcement:** turn on System Settings → Identity (**H8**) at launch.
+
+### F2 · Password after the sign-up code; Google needs the password; readable light/dark app **[BE][MB]** — built, owner checks left
+**Asked 2026-10-03.** Built and tested the same day (vault [[Registration and OTP Flow]],
+[[Mobile UI System]]); these steps remain:
+- [ ] **Deploy order:** deploy the backend (migration `2026_10_03_000001`, additive) **before**
+  handing out the new APK. The new app calls `/auth/complete-registration` and
+  `/auth/verify-reset-code`, which older backends do not have.
+- [ ] **Old APKs:** after the backend deploy, an older APK can no longer sign in or sign up with
+  Google (it does not understand `password_required` or the 202 from `/auth/google/register`).
+  Email sign-up, email login and everything else keep working. Ask testers to install the new build.
+- [ ] **Accounts made by Google sign-up before 2026-10-03** have no password their owner knows. They
+  sign in by tapping "Forgot password?" on the password prompt once. Tell your testers.
+- [ ] **Real-phone check with the deployed backend:** sign up by email and by Google (the code
+  arrives by email from Brevo, then the password screen), log in by email and by Google (password
+  prompt), and reset a password by code. Check the spam folder on the first try.
+- [ ] **Look through the app in light and dark mode** on a real phone. The automated contrast test
+  covers 49 screens, but it cannot judge photos, shadows or anything drawn without text.
 
 ---
 

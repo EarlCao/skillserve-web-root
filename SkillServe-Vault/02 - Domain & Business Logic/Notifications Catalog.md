@@ -24,8 +24,7 @@ without a value are always delivered.
 | `AccountStatusNotification` | Users | always | database | user warned/suspended/activated |
 | `ReportOutcomeNotification` | ReportsAndModeration | always | database | report resolved/rejected (to reporter) |
 | `ReviewModerationNotification` | Reviews | always | database | review hidden/removed/restored |
-| `ClientEmailOtpNotification` | ClientAuthentication | — | **mail** | registration OTP |
-| `ClientPasswordResetNotification` | ClientAuthentication | — | mail | mobile forgot-password |
+| `ClientEmailOtpNotification` | ClientAuthentication | — | **mail** | 6-digit code: registration OTP, or mobile forgot-password (`purpose: password_reset`, own subject and wording) |
 | `ClientEmailVerificationNotification` | ClientAuthentication | — | mail | signed verification link |
 | `AdminPasswordResetNotification` | Authentication | — | mail | admin forgot-password (link to `FRONTEND_URL/reset-password`) |
 | `UserBannedMail`, `UserUnbannedMail` | Users | — | mail (Mailable) | ban / unban (gated by email setting) |

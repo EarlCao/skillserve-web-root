@@ -19,6 +19,7 @@ Feature note: [[Client Authentication and Account]] · Conventions: [[API Conven
 | Method | Path | Controller action | Middleware | Authorization |
 |---|---|---|---|---|
 | POST | `/api/client/v1/auth/cancel-registration` | `ClientAuthentication::ClientAuthController@cancelRegistration` | `EnsurePlatformAvailable`, `throttle:client-auth` | Role gate in middleware; ownership/participant check in the client policy or service |
+| POST | `/api/client/v1/auth/complete-registration` | `ClientAuthentication::ClientAuthController@completeRegistration` | `EnsurePlatformAvailable`, `throttle:client-auth` | Public; needs the sign-up's `registration_token` and a confirmed code |
 | POST | `/api/client/v1/auth/change-password` | `ClientAuthentication::ClientAuthController@changePassword` | `EnsurePlatformAvailable`, `auth:sanctum`, `EnsureActiveClient` | Role gate in middleware; ownership/participant check in the client policy or service |
 | POST | `/api/client/v1/auth/forgot-password` | `ClientAuthentication::ClientAuthController@forgotPassword` | `EnsurePlatformAvailable`, `throttle:client-auth` | Role gate in middleware; ownership/participant check in the client policy or service |
 | POST | `/api/client/v1/auth/google` | `ClientAuthentication::ClientAuthController@google` | `EnsurePlatformAvailable`, `throttle:login` | Role gate in middleware; ownership/participant check in the client policy or service |
@@ -37,7 +38,11 @@ Feature note: [[Client Authentication and Account]] · Conventions: [[API Conven
 | POST | `/api/client/v1/auth/resend-otp` | `ClientAuthentication::ClientAuthController@resendOtp` | `EnsurePlatformAvailable`, `throttle:client-auth` | Role gate in middleware; ownership/participant check in the client policy or service |
 | POST | `/api/client/v1/auth/reset-password` | `ClientAuthentication::ClientAuthController@resetPassword` | `EnsurePlatformAvailable`, `throttle:client-auth` | Role gate in middleware; ownership/participant check in the client policy or service |
 | POST | `/api/client/v1/auth/verification-notification` | `ClientAuthentication::ClientAuthController@sendVerificationNotification` | `EnsurePlatformAvailable`, `auth:sanctum`, `EnsureActiveClient` | Role gate in middleware; ownership/participant check in the client policy or service |
+| POST | `/api/client/v1/auth/verify-reset-code` | `ClientAuthentication::ClientAuthController@verifyResetCode` | `EnsurePlatformAvailable`, `throttle:client-auth` | Public; the emailed code proves the address |
 | GET | `/api/client/v1/auth/verify-email/{user}/{hash}` | `ClientAuthentication::ClientAuthController@verifyEmail` | `EnsurePlatformAvailable`, `signed` | Role gate in middleware; ownership/participant check in the client policy or service |
 | POST | `/api/client/v1/auth/verify-otp` | `ClientAuthentication::ClientAuthController@verifyOtp` | `EnsurePlatformAvailable`, `throttle:client-auth` | Role gate in middleware; ownership/participant check in the client policy or service |
+
+Sign-up and password flows (code before password, Google needing the password, the 3-step reset)
+are described in [[Registration and OTP Flow]].
 
 Every `api/*` route also runs the `api` group: `throttle:api` (60/min per user or IP), `SubstituteBindings`, `ForceJsonResponse`, `CacheApiResponse`, `AddRateLimitHeaders`.

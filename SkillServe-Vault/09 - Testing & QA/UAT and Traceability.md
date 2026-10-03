@@ -20,8 +20,8 @@ date (+ defect id). A requirement is done when its automated tests pass **and** 
 
 - All *Result* cells and both "Run date" tables are **empty** → no recorded UAT evidence yet.
 - Rows expected to **fail** today based on this audit:
-  - **M 1.4** "reset link email works" — the link targets `APP_URL/client/reset-password`, which does
-    not exist (KI-02).
+  - ~~**M 1.4** "reset link email works"~~ — KI-02 resolved 2026-10-03; the row should now test the
+    emailed 6-digit code and the new-password screen instead of a link.
   - Closed-app notification rows (M 8.2 with the app closed for longer than the session timeout)
     — KI-01.
 - **M 15.2** is intentionally marked "—" (design decision).

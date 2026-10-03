@@ -24,7 +24,7 @@ here.
 
 | Priority | Items |
 |---|---|
-| Before UAT | KI-01 background token vs session timeout; KI-02 mobile password reset |
+| Before UAT | KI-01 background token vs session timeout (KI-02 mobile password reset fixed 2026-10-03) |
 | Decide | KI-03 rejected-dispute outcome; KI-04 service reports from the app; KI-05 upload size limit |
 | Cleanup | KI-06…KI-14 code/consistency; KI-15…KI-23 stale docs |
 

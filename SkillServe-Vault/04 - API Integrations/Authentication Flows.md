@@ -61,9 +61,11 @@ sequenceDiagram
   `rotate()` locks the row, refuses revoked/expired tokens, revokes the family on reuse, and issues
   a new pair; `revokeAll()` on logout, password change, suspension, deletion.
 - Restricted accounts get 403 + `meta.account` at login, refresh and every protected route.
-- Change password: `POST /client/v1/auth/change-password`. Forgot password:
-  `POST /client/v1/auth/forgot-password` (see KI-02 — the emailed link targets a page that does
-  not exist).
+- Change password: `POST /client/v1/auth/change-password`. Forgot password, all in the app:
+  `POST /client/v1/auth/forgot-password` (emails a 6-digit code) → `POST /client/v1/auth/verify-reset-code`
+  (returns a reset token) → `POST /client/v1/auth/reset-password` (new password; revokes every session).
+- Sign-up asks for the password **after** the emailed code (`POST /client/v1/auth/complete-registration`),
+  and Google sign-in needs the account password too — see [[Registration and OTP Flow]].
 
 ## Background token
 

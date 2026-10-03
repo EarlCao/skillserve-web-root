@@ -9,6 +9,21 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-03 — Password after the code, Google needs the password, readable light and dark mode
+
+- **Sign-up order:** National ID → details → 6-digit code → password + confirmation → account, for
+  email and Google sign-ups alike (`POST /auth/complete-registration`, `registration_token`).
+  Migration `2026_10_03_000001_add_password_step_to_pending_registrations`. Older app versions that
+  send the password up front still complete on the code.
+- **Google sign-in needs the account password** (`password_required`, then `/auth/google` with
+  `password`). Google-created accounts from before this set theirs with Forgot password.
+- **Forgot password by code, in the app** (`/auth/verify-reset-code`): closes KI-02. The link email
+  and `CLIENT_PASSWORD_RESET_URL` were removed.
+- **Mobile readability:** lime is no longer used as text/icon colour on light surfaces, and fixed
+  light-mode colours no longer vanish in dark mode (`app_palette.dart`, theme fixes, 66 files);
+  `contrast_sweep_test` guards 49 screens in both modes. See [[Mobile UI System]].
+- See [[Registration and OTP Flow]]. Backend: 86 client-auth tests, full suite green; app: 407 tests.
+
 ## 2026-10-02 — The National ID is captured automatically, and reading never gets stuck
 
 The first test on a real phone failed with "Your ID could not be read" and no way forward. Fixed:

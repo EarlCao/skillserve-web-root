@@ -2,7 +2,7 @@
 type: guide
 tags: [ui, mobile, design-system]
 platform: client-mobile, provider-mobile
-sources: [skill-serve-mobile-application/lib/core/constants/app_colors.dart, app_text_styles.dart, lib/core/theme/app_theme.dart, lib/core/widgets, README.md]
+sources: [skill-serve-mobile-application/lib/core/constants/app_colors.dart, app_text_styles.dart, lib/core/theme/app_theme.dart, lib/core/theme/app_palette.dart, lib/core/widgets, test/contrast_sweep_test.dart, README.md]
 ---
 # Mobile UI System
 
@@ -17,8 +17,31 @@ sources: [skill-serve-mobile-application/lib/core/constants/app_colors.dart, app
 | `surfaceAlt` | `#EEF3E4` | |
 | `line` | `#E2E7D7` | |
 | dark: `backgroundDark` / `surfaceDark` / `surfaceAltDark` / `lineDark` | `#0F1318` / `#1A2027` / `#242C36` / `#2E3742` | |
-| text: `textPrimary` / `textSecondary` / `textMuted` | `#1C2128` / `#575E6A` / `#8C939E` | |
+| `secondaryInk` | `#4A6B00` | the lime's hue dark enough to read on light surfaces |
+| text: `textPrimary` / `textSecondary` / `textMuted` | `#1C2128` / `#575E6A` / `#626975` | |
+| dark text: `textOnDark` / `textSecondaryDark` / `textMutedDark` | `#F5F7FA` / `#C2C8D0` / `#9DA3AF` | |
 | status: success / warning / error / info | `#12896A` / `#9E6D0F` / `#D1453B` / `#1F5F8B` (+ light backgrounds) | |
+| status on dark: `successOnDark` / `warningOnDark` / `errorOnDark` / `infoOnDark` | `#4FD1A5` / `#E8B84A` / `#F08A82` / `#7DB8E8` | |
+| `star` / `starOnLight` | `#F2B705` / `#B07800` | rating star on dark / light |
+
+## Readability in light and dark mode
+
+**Rule: lime is a fill, never a foreground on a light surface.** `#C7F33C` on white is 1.3:1, so
+lime text, icons, links and focus rings were close to invisible in light mode; in the same way
+charcoal, slate and the status colours were near-invisible on the dark surfaces. Fixed 2026-10-03:
+
+- Foregrounds come from the theme-aware getters in `lib/core/theme/app_palette.dart`
+  (`context.accentInk`, `textPrimaryColor`, `textSecondaryColor`, `textMutedColor`,
+  `surfaceAltColor`, `starColor`, `successColor`/`warningColor`/`errorColor`/`infoColor`). They
+  return the light or dark value for the current theme. `accentInk` is olive `#4A6B00` in light mode
+  and lime in dark mode.
+- Lime stays as a **fill** behind charcoal text (primary buttons, selected chips, send buttons, my
+  chat bubbles, step circles) and as text on the charcoal hero cards, in both modes.
+- The theme uses `accentInk` for text buttons, focus borders, the cursor, spinners, the selected
+  tab and nav item, switches, radios and checkboxes; `ColorScheme.primary` is the readable accent.
+- `test/contrast_sweep_test.dart` renders 49 screens in light **and** dark mode and fails if any
+  text or icon sits on its real background below **3:1**. At the time of the fix, all text was at
+  4.5:1 or better; three icons sit at 3.3–3.6:1.
 
 **Typography:** Google Fonts **Outfit** (`AppTextStyles._outfit`, the theme's font family).
 `assets/fonts/` is empty; the pubspec font block is commented out.

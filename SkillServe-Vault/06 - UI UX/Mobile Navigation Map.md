@@ -13,7 +13,8 @@ Initial location `/splash`. Role access is decided by the first path segment (`r
 | `/onboarding`, `/welcome`, `/login`, `/register` | onboarding, welcome, login, register | signed-out only |
 | `/google-register` | GoogleRegistrationScreen | during Google sign-up |
 | `/forgot-password` | ForgotPasswordScreen | anyone |
-| `/verify-email` | OTP verification | unverified users are held here |
+| `/verify-email` | OTP verification | a sign-up is held here until the code is confirmed |
+| `/create-password` | CreatePasswordScreen | a sign-up is held here after the code until the password is set |
 | `/browse`, `/categories`, `/search`, `/service-details/:id`, `/provider-profile/:id`, `/portfolio-gallery/:id` | marketplace | guests + customers (providers redirected) |
 | `/provider-preview/:id`, `/reviews/:providerId` | public profile preview, reviews | anyone (incl. providers) |
 | `/about`, `/contact`, `/terms`, `/privacy`, `/community-guidelines` | static/policy screens | anyone |
@@ -41,11 +42,12 @@ from it — see [[Mobile Sign-up with National ID Scan]]:
 
 | Sign-up | Steps | Lands on |
 |---|---|---|
-| Email + password | `/register` (ID scan → pre-filled form) → **no account yet** → `/verify-email` (the OTP is what creates it) | the scanned ID is submitted automatically, then `/client` — or `/provider-onboarding` for a provider; `/identity-verification` (pre-filled) only if it could not be sent |
-| Google | `/register` or `/login` → `/google-register` (ID scan → pre-filled form, role) → account created with a session, no OTP because Google verifies the address | the same |
+| Email | `/register` (ID scan → pre-filled form, no password) → **no account yet** → `/verify-email` (code) → `/create-password` (password + confirmation creates it) | the scanned ID is submitted automatically, then `/client` — or `/provider-onboarding` for a provider; `/identity-verification` (pre-filled) only if it could not be sent |
+| Google | `/register` or `/login` → `/google-register` (ID scan → pre-filled form, role) → `/verify-email` (code to the Google address) → `/create-password` | the same |
 
-Signing **in** with an existing Google account goes straight to the role home — an established
-account is not interrupted.
+Signing **in** with an existing Google account asks for the account password (a sheet over the
+login screen) before going to the role home; "Forgot password?" there opens `/forgot-password`
+with the address filled in. `/forgot-password` runs email → 6-digit code → new password.
 
 > [!warning] Needs Verification
 > `/help-center` is not listed in any role set in `app_router.dart` (so it is reachable signed out);
