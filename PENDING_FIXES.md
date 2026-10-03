@@ -40,7 +40,13 @@ Required for every account; PhilSys card and ePhilID. See vault [[Philippine Add
 ### F2 · Password after the sign-up code; Google needs the password; readable light/dark app **[BE][MB]** — built, owner checks left
 **Asked 2026-10-03.** Built and tested the same day (vault [[Registration and OTP Flow]],
 [[Mobile UI System]]); these steps remain:
-- [ ] **Deploy order:** deploy the backend (migration `2026_10_03_000001`, additive) **before**
+- [ ] **Production reset to super-admin only (asked 2026-10-03).** Cannot be done from the dev
+  machine (no Neon credentials). Neon → SQL Editor on the Render database:
+  `DROP SCHEMA public CASCADE; CREATE SCHEMA public;` then Render → `skillserve-web-backend` →
+  Manual Deploy → Restart. Start-up migrates, seeds the super-admin (`ADMIN_EMAIL` /
+  `ADMIN_PASSWORD` from Render) and reloads the locations. **Verify:** admin web sign-in works and
+  the catalog shows 0 services and 0 categories. The local database was reset the same day.
+- [x] **Deploy order:** backend `31069f7` was live before the app commits were pushed (migration `2026_10_03_000001`, additive) **before**
   handing out the new APK. The new app calls `/auth/complete-registration` and
   `/auth/verify-reset-code`, which older backends do not have.
 - [ ] **Old APKs:** after the backend deploy, an older APK can no longer sign in or sign up with
