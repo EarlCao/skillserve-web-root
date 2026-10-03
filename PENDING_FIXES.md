@@ -46,9 +46,8 @@ Required for every account; PhilSys card and ePhilID. See vault [[Philippine Add
   Manual Deploy → Restart. Start-up migrates, seeds the super-admin (`ADMIN_EMAIL` /
   `ADMIN_PASSWORD` from Render) and reloads the locations. **Verify:** admin web sign-in works and
   the catalog shows 0 services and 0 categories. The local database was reset the same day.
-- [x] **Deploy order:** backend `31069f7` was live before the app commits were pushed (migration `2026_10_03_000001`, additive) **before**
-  handing out the new APK. The new app calls `/auth/complete-registration` and
-  `/auth/verify-reset-code`, which older backends do not have.
+- [x] **Deploy order:** done 2026-10-03 — backend `31069f7` (migration `2026_10_03_000001`) is live on
+  Render, so the new APK's `/auth/complete-registration` and `/auth/verify-reset-code` calls work.
 - [ ] **Old APKs:** after the backend deploy, an older APK can no longer sign in or sign up with
   Google (it does not understand `password_required` or the 202 from `/auth/google/register`).
   Email sign-up, email login and everything else keep working. Ask testers to install the new build.
