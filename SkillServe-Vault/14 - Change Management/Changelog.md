@@ -9,6 +9,12 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-03 — A reset database starts with the default setup
+
+`SEED_MODE=starter` (now production's default, and what `scripts/fresh-admin.sh` seeds) gives the
+super-admin plus the service categories, the Standard commission tiers and the provider badges — no
+sample people. Fixed the reset script's container check. See [[Seeding and Demo Data]].
+
 ## 2026-10-03 — Password after the code, Google needs the password, readable light and dark mode
 
 - **Sign-up order:** National ID → details → 6-digit code → password + confirmation → account, for

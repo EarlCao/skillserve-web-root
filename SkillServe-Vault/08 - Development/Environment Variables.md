@@ -35,7 +35,7 @@ Names only; see [[Secrets and Environment]] for where values live.
 | `GOOGLE_CLIENT_ID` | empty | web client id | Google token audience check |
 | `ADMIN_EMAIL`, `ADMIN_PASSWORD` (`SYSTEM_ADMIN_*` retired — no second admin is seeded) | `*@skillserve.test`, `SkillServe#2026` | real, non-default (enforced) | `RolePermissionSeeder` |
 | `DEMO_CUSTOMER_EMAIL`, `DEMO_PROVIDER_EMAIL`, `DEMO_ACCOUNT_PASSWORD` | defaults | skipped in prod unless non-default | `DemoAccountSeeder` |
-| `SEED_MODE` | `demo` | `starter` then `admin-only` | `DatabaseSeeder` |
+| `SEED_MODE` | `demo` | `starter` (production default) | `DatabaseSeeder` |
 | `L5_SWAGGER_GENERATE_ALWAYS` | true | false | l5-swagger |
 | `SWAGGER_UI_ENABLED` | false (always on locally) | off unless demoing | `EnsureSwaggerUiEnabled` |
 | `API_CACHE_MAX_AGE` | 0 | 0 | `CacheApiResponse` |

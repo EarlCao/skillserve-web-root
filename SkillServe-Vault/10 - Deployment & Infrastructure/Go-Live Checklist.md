@@ -15,7 +15,7 @@ done.
 | 2 | Deploy and verify: migrations + seeding in the log; `/api/health` database + storage `up`; `/api/client/v1/platform` answers | Needs Verification |
 | 3 | Frontend static site: `VITE_*` vars (Reverb key = backend key), `/* → /index.html` rewrite, security headers; add its URL to `FRONTEND_URLS` if new | Needs Verification |
 | 4 | Sign in as super-admin: Settings → General (name, support email), Platform policies (terms, privacy, community guidelines), Marketplace/Booking (commission, cancellation window & fees), System (session timeout ≈480, maintenance **off**); review starter categories; create badges; create staff accounts and a support role | Needs Verification |
-| 5 | After first deploy switch `SEED_MODE` to `admin-only` | Needs Verification |
+| 5 | Keep `SEED_MODE=starter` (since 2026-10-03 the default setup: categories, Standard commission tiers, badges); seeding only runs while no super-admin exists | Needs Verification |
 | 6 | Android signing: upload keystore + `android/key.properties` (backed up) | Needs Verification |
 | 7 | Google sign-in: Android OAuth client for `com.skillserve.mobile` with debug + release SHA-1 | Needs Verification |
 | 8 | Release APK built against production and checked on a clean phone | Needs Verification |

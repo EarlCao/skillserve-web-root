@@ -40,12 +40,17 @@ Required for every account; PhilSys card and ePhilID. See vault [[Philippine Add
 ### F2 · Password after the sign-up code; Google needs the password; readable light/dark app **[BE][MB]** — built, owner checks left
 **Asked 2026-10-03.** Built and tested the same day (vault [[Registration and OTP Flow]],
 [[Mobile UI System]]); these steps remain:
-- [ ] **Production reset to super-admin only (asked 2026-10-03).** Cannot be done from the dev
-  machine (no Neon credentials). Neon → SQL Editor on the Render database:
-  `DROP SCHEMA public CASCADE; CREATE SCHEMA public;` then Render → `skillserve-web-backend` →
-  Manual Deploy → Restart. Start-up migrates, seeds the super-admin (`ADMIN_EMAIL` /
-  `ADMIN_PASSWORD` from Render) and reloads the locations. **Verify:** admin web sign-in works and
-  the catalog shows 0 services and 0 categories. The local database was reset the same day.
+- [ ] **Production reset to the super-admin + default setup (asked 2026-10-03).** Cannot be done
+  from the dev machine (no Neon credentials).
+  1. Render → `skillserve-web-backend` → Environment: set `SEED_MODE=starter` (or delete the
+     variable; production now defaults to `starter`). It was set to `admin-only` for C7, which
+     would seed the super-admin alone.
+  2. Neon → SQL Editor on the Render database: `DROP SCHEMA public CASCADE; CREATE SCHEMA public;`
+  3. Render → Manual Deploy → Restart. Start-up migrates, seeds the super-admin (`ADMIN_EMAIL` /
+     `ADMIN_PASSWORD` from Render) with the default setup, and reloads the locations.
+  **Verify:** admin web sign-in works; Service Categories lists 8 categories, Commissions shows
+  the four Standard tiers, Provider Recognition shows four badges, and there are 0 services and
+  0 providers. The local database was reset this way the same day (`scripts/fresh-admin.sh`).
 - [x] **Deploy order:** done 2026-10-03 — backend `31069f7` (migration `2026_10_03_000001`) is live on
   Render, so the new APK's `/auth/complete-registration` and `/auth/verify-reset-code` calls work.
 - [ ] **Old APKs:** after the backend deploy, an older APK can no longer sign in or sign up with

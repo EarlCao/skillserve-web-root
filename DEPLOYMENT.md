@@ -99,11 +99,13 @@ be. Keep it in step with the dashboard when you change either.
    ```
 
    ⚠️ **Seeding.** `SEED_MODE=starter` seeds the roles, permissions, the
-   bootstrap admin accounts and the default service categories, so the site is
-   usable at once (re-running keeps existing categories). `admin-only` skips the
-   categories. `demo` additionally seeds the full demo dataset, which must never
-   run against production — so in production the seeder **refuses it**: an unset
-   `SEED_MODE`, `demo` or any unknown value seeds `admin-only` instead, with a
+   super-admin and the **default setup**: the service categories and
+   subcategories, the Standard commission tiers (5/10/15/20 %) and the provider
+   badges, so the site is usable at once. No sample customers or providers.
+   Re-running keeps existing categories, badges and tiers. `admin-only` seeds the
+   super-admin alone. `demo` additionally seeds the full demo dataset, which must
+   never run against production — so in production the seeder **refuses it**: an
+   unset `SEED_MODE`, `demo` or any unknown value seeds `starter` instead, with a
    warning in the log. Seeding runs on start only while no super-admin exists.
    Production seeding also refuses the built-in default password
    (`SkillServe#2026`), so `ADMIN_PASSWORD` must be set to a real value before the

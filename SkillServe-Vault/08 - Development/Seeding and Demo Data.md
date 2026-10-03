@@ -1,7 +1,7 @@
 ---
 type: guide
 tags: [development, database, seeding]
-sources: [backend/database/seeders, backend/app/Console/Commands/SeedIfEmpty.php, scripts/fresh-demo.sh, scripts/fresh-admin.sh]
+sources: [backend/database/seeders, backend/config/commissions.php, backend/app/Console/Commands/SeedIfEmpty.php, scripts/fresh-demo.sh, scripts/fresh-admin.sh]
 ---
 # Seeding and Demo Data
 
@@ -9,9 +9,9 @@ sources: [backend/database/seeders, backend/app/Console/Commands/SeedIfEmpty.php
 
 | Mode | Seeders | Use |
 |---|---|---|
-| `admin-only` | `RolePermissionSeeder` | minimal; production after first deploy |
-| `starter` | + `ServiceCategorySeeder` (8 categories, 25 subcategories; keeps existing) | first production deploy |
-| `demo` (default outside production; **refused in production**, which falls back to `admin-only`) | + `UsersSeeder`, `ProviderSeeder`, `DemoAccountSeeder`, `ProviderRecognitionSeeder`, `ServiceSeeder`, `BookingSeeder`, `ReportSeeder`, `NotificationSeeder` | local demos only — **never production** |
+| `admin-only` | `RolePermissionSeeder` | the super-admin alone, nothing else |
+| `starter` — **the default setup** (default in production) | + `ServiceCategorySeeder` (8 categories, 25 subcategories), `DefaultCommissionTierSeeder` (the Standard preset from `config/commissions.php`: 5/10/15/20 % by booking amount, only if no tier ever existed), `ProviderBadgeSeeder` (Top Rated, Trusted Provider, Fast Responder, Experienced). No sample people; keeps existing rows | production, and every reset (`scripts/fresh-admin.sh`) |
+| `demo` (default outside production; **refused in production**, which falls back to `starter`) | + `UsersSeeder`, `ProviderSeeder`, `DemoAccountSeeder`, `ProviderRecognitionSeeder`, `ServiceSeeder`, `BookingSeeder`, `ReportSeeder`, `NotificationSeeder` | local demos only — **never production** |
 
 `DatabaseSeeder` uses `WithoutModelEvents`.
 
@@ -25,7 +25,7 @@ sources: [backend/database/seeders, backend/app/Console/Commands/SeedIfEmpty.php
 | `ServiceSeeder` | 40 services |
 | `BookingSeeder` | 50 bookings |
 | `ReportSeeder` | 30 reports (skips pairs that would violate the one-open-report index) |
-| `ProviderRecognitionSeeder`, `NotificationSeeder` | badges; notifications/announcements |
+| `ProviderRecognitionSeeder`, `NotificationSeeder` | the default badges (via `ProviderBadgeSeeder`) awarded to two featured providers; notifications/announcements |
 
 All seeders are idempotent top-ups ("re-running only tops up what's missing").
 
@@ -40,7 +40,8 @@ All seeders are idempotent top-ups ("re-running only tops up what's missing").
   database never got its super-admin
   (`--fresh` forces).
 - `scripts/fresh-demo.sh` / `scripts/fresh-admin.sh` run `migrate:fresh --seed` inside the backend
-  container → **wipe the database**. Only for disposable local databases; never run without asking
+  container → **wipe the database**. `fresh-admin.sh` seeds `starter` (super-admin + default setup)
+  and reloads the Philippine locations. Only for disposable local databases; never run without asking
   (CLAUDE.md).
 
 Related: [[User Types and Roles]] · [[Go-Live Checklist]]

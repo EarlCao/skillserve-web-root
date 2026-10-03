@@ -11,7 +11,7 @@ here.
 ## A. Owner actions before go-live (from PENDING_FIXES)
 
 1. Render: paid backend instance + persistent disk; environment per DEPLOYMENT.md;
-   `SEED_MODE=starter` on first deploy, then `admin-only`; follow the Go-live checklist.
+   `SEED_MODE=starter` (the default setup) and keep it; follow the Go-live checklist.
 2. Android signing: upload keystore + `android/key.properties`; back them up.
 3. Google sign-in: Android OAuth client for `com.skillserve.mobile` with debug and release SHA-1.
 4. Admin content: Terms, Privacy, Community Guidelines; review booking rules; add categories,
