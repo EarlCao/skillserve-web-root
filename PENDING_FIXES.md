@@ -58,6 +58,14 @@ Required for every account; PhilSys card and ePhilID. See vault [[Philippine Add
   Email sign-up, email login and everything else keep working. Ask testers to install the new build.
 - [ ] **Accounts made by Google sign-up before 2026-10-03** have no password their owner knows. They
   sign in by tapping "Forgot password?" on the password prompt once. Tell your testers.
+- [ ] **OTP email: move to a new Brevo account (found 2026-10-04).** The old Brevo account
+  (IcingCrumsCompany) accepts the API calls but its log says *"Email not sent: Your sending platform
+  is currently disabled"* since about 2026-10-02 — Brevo suspended it, with no self-service switch,
+  so no code reached anyone. The owner is creating a new account: verified sender, new `xkeysib-`
+  API key, *Security → Authorized IPs* blocking off (Render free has no fixed IP), then on Render
+  `MAIL_MAILER=brevo-api`, `BREVO_API_KEY`, `MAIL_FROM_ADDRESS`. Delete the old account's API key
+  (it was pasted into a chat). **Verify:** a sign-up with a real Gmail shows *Delivered* in the new
+  account's Transactional → Logs. Test only with real addresses — bounces get accounts suspended.
 - [ ] **Real-phone check with the deployed backend:** sign up by email and by Google (the code
   arrives by email from Brevo, then the password screen), log in by email and by Google (password
   prompt), and reset a password by code. Check the spam folder on the first try.
