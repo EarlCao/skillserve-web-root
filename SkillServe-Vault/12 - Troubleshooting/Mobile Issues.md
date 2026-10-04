@@ -9,7 +9,8 @@ sources: [skill-serve-mobile-application/README.md, SETUP_CREDENTIALS.md, lib/co
 |---|---|---|
 | `flutter` fails from WSL | Windows SDK entry script has CRLF line endings | use `tool/wsl-flutter.sh <args>` |
 | First request after idle times out | Render free-tier cold start (~60–75 s) | app already uses 120 s receive / 90 s connect timeouts and a wake-up ping at start; keep-alive or paid instance |
-| Google sign-in fails | Android OAuth client/SHA-1 not registered, or `GOOGLE_CLIENT_ID` ≠ `GOOGLE_WEB_CLIENT_ID` | `SETUP_CREDENTIALS.md` §2; backend checks token `aud` |
+| Google sign-in fails (`ApiException: 10`, "not set up for this version") | Android OAuth client/SHA-1 not registered, or `GOOGLE_CLIENT_ID` ≠ `GOOGLE_WEB_CLIENT_ID` | `SETUP_CREDENTIALS.md` §2; backend checks token `aud` |
+| Google sign-in fails (`network_error` / `ApiException: 7`, "Google could not be reached") | the phone's Google Play services cannot reach Google: offline, wrong date/time, VPN or Private DNS (ad-blocking DNS), outdated Play services, or an emulator without Play Store. Nothing reaches the backend, so no code is emailed | app retries once; then fix the phone's connection/settings and try again. Email sign-up is unaffected |
 | No OTP email | mail not configured on Render | `SETUP_CREDENTIALS.md` §1/§3 (Brevo) |
 | "Too many attempts…" | `client-auth`/`login` limiter or OTP limits | wait a minute; OTP: 5 tries, 60 s resend cooldown |
 | Full-screen "under maintenance" | System Settings maintenance mode on | turn it off in admin; app rechecks `/platform` |
