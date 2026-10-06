@@ -1,6 +1,6 @@
 # Pending Fixes — SkillServe (Backend, Admin Web, Mobile, Deployment)
 
-Last updated: **2026-10-06** (F3: sign-up survives the app being closed at the ID camera; 18+ only, experience ≤ age − 16).
+Last updated: **2026-10-06** (F3; audit gaps KI-01, 03–08 fixed; KI-09 partly).
 Previous full audit: 2026-09-21.
 
 Requirements now live in `SkillServe-Vault/` (Obsidian), which supersedes the two functionality
@@ -48,6 +48,20 @@ See vault [[Mobile Sign-up with National ID Scan]].
   (refused; 2 accepted).
 - [ ] **Old APKs** without the ID scan send no birthday and can no longer sign up — ask testers
   to install the new build.
+
+### F4 · Audit gaps from the vault's Known Issues **[BE][AW][MB][DEP]** — 2026-10-06
+Fixed: **KI-01** closed-app notifications stopped after a day · **KI-03** rejected disputes stuck
+"disputed" · **KI-04** services could not be reported · **KI-05** uploads over 2 MB refused ·
+**KI-06** realtime key defaults · **KI-07** health check leaked DB errors · **KI-08** raw axios.
+- [ ] **Deploy:** push the backend (migration `2026_10_06_000001` is data only: it corrects dispute
+  statuses; nothing to roll back), then rebuild the admin web. Build a new APK for the service
+  report and the background-token fix. On Render, `SANCTUM_EXPIRATION` is no longer read and can be
+  deleted.
+- [ ] **KI-09:** remove the unused backend packages (dompdf, laravel-backup, medialibrary,
+  laravel-settings, nwidart modules — verified unused) with `composer remove …` and delete their
+  `config/*.php`. Not done: the owner has to approve it. `intervention/image` is unused too.
+- [ ] **KI-10 to KI-23** (permission drift, OpenAPI gaps, test workflow branch, a missing test,
+  package name, stale docs) are still open in the vault note.
 
 ### F2 · Password after the sign-up code; Google needs the password; readable light/dark app **[BE][MB]** — built, owner checks left
 **Asked 2026-10-03.** Built and tested the same day (vault [[Registration and OTP Flow]],

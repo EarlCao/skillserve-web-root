@@ -142,9 +142,9 @@ REVERB_HOST=127.0.0.1
 REVERB_PORT=8080
 REVERB_SCHEME=http
 REVERB_APP_ID=group6
-REVERB_APP_KEY=skillserve-local-key
+REVERB_APP_KEY=skillserve
 REVERB_APP_SECRET=skillserve-local-secret
-VITE_REVERB_APP_KEY=skillserve-local-key
+VITE_REVERB_APP_KEY=skillserve
 VITE_REVERB_HOST=localhost
 VITE_REVERB_PORT=8080
 VITE_REVERB_SCHEME=http
@@ -169,7 +169,6 @@ VITE_APP_NAME="${APP_NAME}"
 
 # Auth
 FRONTEND_URL=http://localhost:5173
-SANCTUM_EXPIRATION=1440
 LOGIN_RATE_LIMIT=5
 # Optional: only needed for Google sign-in from the mobile app.
 GOOGLE_CLIENT_ID=
@@ -190,7 +189,7 @@ SWAGGER_UI_ENABLED=false
 
 ```dotenv
 VITE_API_BASE_URL=http://localhost:8000/api
-VITE_REVERB_APP_KEY=skillserve-local-key
+VITE_REVERB_APP_KEY=skillserve
 VITE_REVERB_HOST=localhost
 VITE_REVERB_PORT=8080
 VITE_REVERB_SCHEME=http
@@ -316,8 +315,8 @@ and `frontend/src/modules/authentication`.
 | POST   | `/api/auth/change-password` | bearer | Verify + update password      |
 
 All responses use the standard envelope `{ success, message, data, errors, meta }`.
-Tokens expire after `SANCTUM_EXPIRATION` minutes (default 1440 = 1 day) and
-are revoked on logout. Login/logout/password changes are recorded in the
+Admin tokens expire after System Settings → session timeout and are revoked
+on logout (each token carries its own expiry; there is no global Sanctum cap). Login/logout/password changes are recorded in the
 Spatie activity log.
 
 ### First login
@@ -493,8 +492,8 @@ attributes) and served by l5-swagger:
 6. **Try the protected endpoints** — e.g. expand **GET `/api/auth/me`**
    and click **Execute** to see the current user (with roles and
    permissions), or **POST `/api/auth/change-password`** to update the
-   password. Tokens expire after `SANCTUM_EXPIRATION` minutes (default
-   1440 = 1 day); expired/revoked tokens return a `401` envelope.
+   password. Tokens expire after System Settings → session timeout;
+   expired/revoked tokens return a `401` envelope.
 
 ### Keeping the docs up to date
 

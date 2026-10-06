@@ -86,10 +86,9 @@ be. Keep it in step with the dashboard when you change either.
    SESSION_DRIVER=database
    CACHE_STORE=database
    QUEUE_CONNECTION=database
-   SANCTUM_EXPIRATION=1440
    LOGIN_RATE_LIMIT=5
    REVERB_APP_ID=skillserve
-   REVERB_APP_KEY=generate-a-random-key
+   REVERB_APP_KEY=skillserve            # public; the mobile app and web admin default to it
    REVERB_APP_SECRET=generate-a-random-secret
    SEED_MODE=starter
    APP_TIMEZONE=UTC

@@ -25,7 +25,7 @@ Names only; see [[Secrets and Environment]] for where values live.
 | `REVERB_APP_ID`, `REVERB_APP_KEY`, `REVERB_APP_SECRET` | `group6`, `skillserve-local-key`, local secret | real values | Reverb |
 | `REVERB_HOST`, `REVERB_PORT`, `REVERB_SCHEME`, `REVERB_SERVER_HOST`, `REVERB_SERVER_PORT` | 127.0.0.1, 8080, http, 0.0.0.0, 8080 | forced to 127.0.0.1:8080 by `start.sh` | Reverb / publisher |
 | `MAIL_MAILER`, `MAIL_*`, `BREVO_API_KEY` | `log` | `brevo-api` or smtp | mail |
-| `SANCTUM_EXPIRATION` | 1440 | 1440 | Sanctum default expiry |
+| ~~`SANCTUM_EXPIRATION`~~ | — | — | No longer read (2026-10-06): tokens carry their own expiry; see [[Token and Session Management]] |
 | `LOGIN_RATE_LIMIT` | 5 | 5 | `login` limiter |
 | `CLIENT_AUTH_RATE_LIMIT` | 20 | 20 | `client-auth` limiter |
 | `CLIENT_ACCESS_TOKEN_EXPIRATION` | 60 | — | `config/client-auth.php` |

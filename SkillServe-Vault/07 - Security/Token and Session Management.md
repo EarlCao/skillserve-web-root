@@ -16,7 +16,7 @@ sources: [backend/config/sanctum.php, backend/config/client-auth.php, backend/ap
 | Password change | other tokens revoked (current kept) | all sessions end |
 | Password reset | all tokens revoked | emailed code → reset token → new password ([[Registration and OTP Flow#Forgot password (mobile)]]) |
 | Suspension / ban / deletion | login refused (403) | `revokeAll`; 403 `meta.account` everywhere |
-| `SANCTUM_EXPIRATION` | env default 1440 (framework-level expiry for tokens without `expires_at`) | — |
+| ~~`SANCTUM_EXPIRATION`~~ | **not read since 2026-10-06** — `config/sanctum.php` sets `expiration => null`; every token carries its own `expires_at`. A global cap cut the year-long `client-background` token off after a day (KI-01) | — |
 
 ## Refresh token rotation (`ClientSessionService`)
 
