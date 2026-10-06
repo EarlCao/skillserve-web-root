@@ -9,6 +9,14 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-06 — Codes by Twilio Verify; mail by SendGrid
+
+Brevo is replaced. With `OTP_DRIVER=twilio`, Twilio Verify emails and checks the sign-up,
+resend and forgot-password codes (`TwilioVerifyClient`); SkillServe keeps the expiry, attempt
+limit and resend window. Every other email goes through SendGrid's API
+(`MAIL_MAILER=sendgrid-api`, `SendGridApiTransport`). `GET /api/health` reports `services.otp`.
+See [[Registration and OTP Flow]], [[External Integrations]].
+
 ## 2026-10-06 — Sign-up survives the camera, adults only, Philippine phone numbers, audit gaps closed
 
 - **Sign-up after the ID photo** no longer restarts the app on low-memory phones: ML Kit is released

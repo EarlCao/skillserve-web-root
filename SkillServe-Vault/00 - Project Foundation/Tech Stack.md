@@ -23,7 +23,8 @@ Versions are the **installed** ones from lock files at audit time.
 | Other | laravel/tinker, ramsey/uuid | | |
 | Dev | phpunit 12, laravel/pint, mockery, faker, collision, pail, pao | | |
 | Database | PostgreSQL 17 (`postgres:17-alpine`) locally; NeonDB in production | | tests: in-memory SQLite |
-| Mail | log mailer locally; Brevo HTTP API transport (`brevo-api`) or SMTP in production | | `app/Shared/Services/BrevoApiTransport.php` |
+| Codes (OTP) | Twilio Verify (`OTP_DRIVER=twilio`) emails and checks the 6-digit codes; `mail` driver for local/tests | | `app/Shared/Services/TwilioVerifyClient.php` |
+| Mail | log mailer locally; SendGrid HTTP API (`sendgrid-api`) in production; the Brevo transport remains but Brevo is no longer used | | `app/Shared/Services/SendGridApiTransport.php` |
 
 > [!note] Unused packages removed (2026-10-06)
 > DomPDF, laravel-backup, laravel-medialibrary, intervention/image, laravel-settings and
@@ -73,5 +74,5 @@ Versions are the **installed** ones from lock files at audit time.
 ## Infrastructure
 
 Docker Compose (local), Render (backend Docker web service + frontend static site), NeonDB
-(PostgreSQL), Render persistent disk for uploads, Brevo (mail), Google Cloud OAuth (sign-in).
+(PostgreSQL), Render persistent disk for uploads, Twilio Verify + SendGrid (codes and mail), Google Cloud OAuth (sign-in).
 See [[Deployment Index]] and [[External Integrations]].

@@ -18,7 +18,7 @@ The mobile Flutter package is `skillserve_mobile` (renamed from the earlier "Ski
 
 | App | Code | Users | Talks to |
 |---|---|---|---|
-| **Backend API** | `backend/` — Laravel 13, PHP 8.3 | — | PostgreSQL, storage disk, Reverb, Brevo, Google |
+| **Backend API** | `backend/` — Laravel 13, PHP 8.3 | — | PostgreSQL, storage disk, Reverb, Twilio Verify + SendGrid, Google |
 | **Admin Web** | `frontend/` — React 19 + Vite | super-admin, admin, custom staff roles | `/api/*` + Reverb |
 | **Mobile App** | `skill-serve-mobile-application/` — Flutter | guests, customers, providers | `/api/client/v1/*` + Reverb |
 

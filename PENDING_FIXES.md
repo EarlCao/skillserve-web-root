@@ -82,14 +82,16 @@ advisories have no non-breaking fix yet).
   Email sign-up, email login and everything else keep working. Ask testers to install the new build.
 - [ ] **Accounts made by Google sign-up before 2026-10-03** have no password their owner knows. They
   sign in by tapping "Forgot password?" on the password prompt once. Tell your testers.
-- [ ] **OTP email: move to a new Brevo account (found 2026-10-04).** The old Brevo account
-  (IcingCrumsCompany) accepts the API calls but its log says *"Email not sent: Your sending platform
-  is currently disabled"* since about 2026-10-02 — Brevo suspended it, with no self-service switch,
-  so no code reached anyone. The owner is creating a new account: verified sender, new `xkeysib-`
-  API key, *Security → Authorized IPs* blocking off (Render free has no fixed IP), then on Render
-  `MAIL_MAILER=brevo-api`, `BREVO_API_KEY`, `MAIL_FROM_ADDRESS`. Delete the old account's API key
-  (it was pasted into a chat). **Verify:** a sign-up with a real Gmail shows *Delivered* in the new
-  account's Transactional → Logs. Test only with real addresses — bounces get accounts suspended.
+- [ ] **OTP email: Twilio Verify + SendGrid (decided 2026-10-06, replaces Brevo).** Brevo suspended
+  the old account (its log said *"Your sending platform is currently disabled"*) and gave no useful
+  error. The code is built and tested (`OTP_DRIVER=twilio`, `TwilioVerifyClient`; other mail via
+  `MAIL_MAILER=sendgrid-api`). **Owner:** create the SendGrid account (verified sender, API key,
+  dynamic template with `{{twilio_code}}`) and the Twilio Verify service (code length 6, Email
+  Integration linked to SendGrid), then set the Render variables — every step is in DEPLOYMENT.md →
+  "Email codes". Delete `BREVO_API_KEY` from Render and the old Brevo API key (it was pasted into a
+  chat). **Verify:** `GET /api/health` → `"otp": {"status": "up", "driver": "twilio"}`; a sign-up
+  and a forgot password with a real Gmail each arrive (check Spam first), and show in Twilio →
+  Monitor → Logs → Verify and SendGrid → Activity. Test with real addresses only.
 - [ ] **Real-phone check with the deployed backend:** sign up by email and by Google (the code
   arrives by email from Brevo, then the password screen), log in by email and by Google (password
   prompt), and reset a password by code. Check the spam folder on the first try.

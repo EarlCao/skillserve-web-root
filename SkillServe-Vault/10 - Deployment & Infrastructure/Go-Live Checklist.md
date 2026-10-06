@@ -11,7 +11,7 @@ done.
 
 | # | Step | Status |
 |---|---|---|
-| 1 | Backend service on a **paid** Render instance with the persistent disk at `/var/www/html/storage/app`; full environment incl. `APP_KEY`, `APP_URL`, `FRONTEND_URL`, Neon `DB_*`, `REVERB_*`, `BUSINESS_TIMEZONE`, Brevo mail, `GOOGLE_CLIENT_ID`, `SEED_MODE=starter`, strong admin passwords; Swagger off | Needs Verification |
+| 1 | Backend service on a **paid** Render instance with the persistent disk at `/var/www/html/storage/app`; full environment incl. `APP_KEY`, `APP_URL`, `FRONTEND_URL`, Neon `DB_*`, `REVERB_*`, `BUSINESS_TIMEZONE`, Twilio Verify + SendGrid (codes and mail), `GOOGLE_CLIENT_ID`, `SEED_MODE=starter`, strong admin passwords; Swagger off | Needs Verification |
 | 2 | Deploy and verify: migrations + seeding in the log; `/api/health` database + storage `up`; `/api/client/v1/platform` answers | Needs Verification |
 | 3 | Frontend static site: `VITE_*` vars (Reverb key = backend key), `/* → /index.html` rewrite, security headers; add its URL to `FRONTEND_URLS` if new | Needs Verification |
 | 4 | Sign in as super-admin: Settings → General (name, support email), Platform policies (terms, privacy, community guidelines), Marketplace/Booking (commission, cancellation window & fees), System (session timeout ≈480, maintenance **off**); review starter categories; create badges; create staff accounts and a support role | Needs Verification |

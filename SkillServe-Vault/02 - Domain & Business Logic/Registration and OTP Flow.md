@@ -1,7 +1,7 @@
 ---
 type: domain
 tags: [domain, auth, mobile]
-sources: [backend/app/Modules/ClientAuthentication/Services/PendingRegistrationService.php, ClientEmailOtpService.php, ClientGoogleAuthService.php, ClientAuthenticationService.php, ProviderSignups.php, backend/app/Modules/ClientAuthentication/Models/PendingRegistration.php, backend/database/migrations/2026_10_03_000001_add_password_step_to_pending_registrations.php]
+sources: [backend/app/Modules/ClientAuthentication/Services/PendingRegistrationService.php, ClientEmailOtpService.php, backend/app/Shared/Services/TwilioVerifyClient.php, ClientGoogleAuthService.php, ClientAuthenticationService.php, ProviderSignups.php, backend/app/Modules/ClientAuthentication/Models/PendingRegistration.php, backend/database/migrations/2026_10_03_000001_add_password_step_to_pending_registrations.php]
 ---
 # Registration and OTP Flow
 
@@ -10,13 +10,23 @@ and Google sign-ups take the same steps, in this order:
 
 **National ID scan → details (+ email, or the Google account) → 6-digit code → password + confirmation → account**
 
+> [!info] Who sends the code (2026-10-06)
+> `OTP_DRIVER=twilio` in production: **Twilio Verify** generates, emails (through the linked
+> SendGrid account) and checks the 6-digit codes for sign-up, resend and forgot password. The
+> account row stores the marker `twilio-verify` instead of a hash, so a code is always checked
+> where it was made. SkillServe itself still enforces the 10-minute expiry, the 5 attempts and the
+> 60-second resend window; Twilio adds its own limit of about 5 sends per address per 10 minutes
+> ("Too many codes were sent to this address"). `OTP_DRIVER=mail` (local and tests) generates the
+> code here and sends `ClientEmailOtpNotification`. `GET /api/health` → `services.otp` shows whether
+> sending is configured. Setup: DEPLOYMENT.md → "Email codes".
+
 ```mermaid
 sequenceDiagram
   autonumber
   participant App
   participant API
   participant DB
-  participant Mail as Brevo / mailer
+  participant Mail as Twilio Verify (SendGrid)
   App->>API: POST /auth/register | /auth/register-provider | /auth/google/register (details, no password)
   API->>DB: upsert pending_registrations (password NULL, registration_token_hash, google_sub for Google)
   API->>Mail: 6-digit OTP email

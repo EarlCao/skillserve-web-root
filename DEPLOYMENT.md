@@ -166,6 +166,62 @@ Things to know:
 - Only `storage/app` is on the disk. Logs, caches and compiled views stay in
   the container and are rebuilt on every start.
 
+### Email codes — Twilio Verify + SendGrid
+
+The mobile sign-up code, its resend and the forgot-password code are sent by **Twilio Verify**
+(`OTP_DRIVER=twilio`): Twilio generates each 6-digit code, emails it and checks it, and every send
+and check is listed in Twilio → **Monitor → Logs → Verify**. Twilio Verify emails through a
+**SendGrid** account linked to it, so both are needed. The same SendGrid account sends every other
+email (admin password reset, notifications) with `MAIL_MAILER=sendgrid-api`, listed in SendGrid →
+**Activity**. Both talk to HTTPS APIs, which Render's free tier allows (it blocks SMTP).
+
+1. **SendGrid** (sendgrid.com, free plan):
+   - *Settings → Sender Authentication → Verify a Single Sender* with the address the emails come
+     from (open the confirmation email). A domain you own (*Authenticate a Domain*) lands in inboxes
+     more reliably than a `@gmail.com` sender, which may go to Spam.
+   - *Settings → API Keys → Create API Key* (Full Access, or Restricted with **Mail Send**). Copy
+     the `SG.…` key — it is shown once.
+   - *Email API → Dynamic Templates → Create* "SkillServe code" → *Add Version → Blank → Code
+     Editor*, subject `Your SkillServe code: {{twilio_code}}`, body:
+     ```html
+     <p>Hi {{first_name}},</p>
+     <p>Use this code to {{purpose}}:</p>
+     <p style="font-size:28px;font-weight:bold;letter-spacing:4px">{{twilio_code}}</p>
+     <p>It expires in {{minutes}} minutes and can be used once. If you did not ask for it,
+     ignore this email.</p>
+     ```
+     Save, make it *Active*, and copy the template ID (`d-…`).
+2. **Twilio** (twilio.com):
+   - *Verify → Services → Create new*: name "SkillServe", **code length 6**. Copy the Service SID
+     (`VA…`).
+   - *Verify → Email Integration → Create*: paste the SendGrid key and the template ID, the
+     verified sender as *From email*, "SkillServe" as *From name*. Then open the Verify service →
+     *Email* tab → select this integration and save.
+   - Console home: copy the **Account SID** (`AC…`) and **Auth Token**.
+3. **Render → backend → Environment**:
+   ```
+   OTP_DRIVER=twilio
+   TWILIO_ACCOUNT_SID=AC…
+   TWILIO_AUTH_TOKEN=…
+   TWILIO_VERIFY_SERVICE_SID=VA…
+   MAIL_MAILER=sendgrid-api
+   SENDGRID_API_KEY=SG.…
+   MAIL_FROM_ADDRESS=<the verified sender>
+   MAIL_FROM_NAME=SkillServe
+   ```
+   Delete `BREVO_API_KEY`. Optional: `TWILIO_VERIFY_RESET_TEMPLATE_ID=d-…` for a separate
+   password-reset template.
+4. **Verify:** `GET /api/health` shows `"otp": {"status": "up", "driver": "twilio"}`. Sign up in the
+   app with a real Gmail: the code arrives (check Spam the first time), Twilio's Verify log shows
+   the send and the approved check, SendGrid's Activity shows *Delivered*. Then try *Forgot
+   password*. A failed send is logged on Render as `Failed to send registration OTP` with Twilio's
+   own error code and message.
+
+Limits: a code can be re-sent once a minute (SkillServe), and Twilio allows about 5 sends per
+address per 10 minutes before answering "Too many codes were sent to this address" (the app shows
+that message). Twilio Verify is billed per verification; check the current price on the Twilio
+pricing page — trial credit covers testing.
+
 ### Frontend — static site
 
 1. [Render Dashboard](https://dashboard.render.com) → **New** → **Static Site**.
@@ -319,7 +375,7 @@ Do these in order on the real services and note the date and result of each — 
 1. **Backend service** (Render, paid instance with the persistent disk at
    `/var/www/html/storage/app`, see "Uploaded files"). Environment as in Step 2, including
    `APP_KEY`, `APP_URL`, `FRONTEND_URL`, the Neon `DB_*`, `REVERB_APP_ID/KEY/SECRET`,
-   `BUSINESS_TIMEZONE=Asia/Manila`, mail (Brevo) for OTP and password-reset mail,
+   `BUSINESS_TIMEZONE=Asia/Manila`, Twilio Verify + SendGrid for the codes and email (see "Email codes"),
    `GOOGLE_CLIENT_ID`, `SEED_MODE=starter` and strong `ADMIN_PASSWORD` /
    Leave `SWAGGER_UI_ENABLED` off unless you will demo the API docs.
 2. **Deploy and verify** — the log shows migrations and seeding; `GET /api/health` returns
