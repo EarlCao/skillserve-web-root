@@ -35,7 +35,7 @@ Professional profile of a provider account; the id used by services, bookings an
 | `is_featured` | bool default false, indexed |  |
 | `is_accepting_bookings` | bool default true |  |
 | `created_at, updated_at` |  |  |
-| `gcash_number` | string(20) null | where customers send payment; stored normalised as `09XXXXXXXXX` |
+| `gcash_number` | string(20) null | where customers send payment; stored normalised as `09XXXXXXXXX` (`PhilippineMobileNumber`, same rule as every phone field) |
 | `gcash_name` | string(120) null | registered GCash account name, for the customer to check before sending |
 
 ## Indexes & constraints

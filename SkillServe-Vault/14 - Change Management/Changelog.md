@@ -9,6 +9,24 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-06 — Sign-up survives the camera, adults only, Philippine phone numbers, audit gaps closed
+
+- **Sign-up after the ID photo** no longer restarts the app on low-memory phones: ML Kit is released
+  before the camera opens, and the photos taken are kept for an hour so a restart resumes the scan
+  ([[Mobile Sign-up with National ID Scan]]).
+- **18+ only; experience ≤ age − 16** at sign-up, profile edit and ID review
+  (`App\Shared\Helpers\AgeRequirement`).
+- **Approving a provider's National ID verifies the provider** in Provider Management
+  ([[Identity Verification]]).
+- **Phone numbers are Philippine mobile numbers, 11 digits starting with 09** — the profile phone,
+  booking contact phone, GCash number and the admin's user edit. `+63 912 345 6789`, `639…` and
+  `9…` are accepted and stored as `09123456789` (`App\Shared\Helpers\PhilippineMobileNumber`;
+  the app's `PhMobileNumber` formatter stops the field at 11 digits). The GCash screen explains the
+  account name: the name registered on the GCash account, which GCash shows partly hidden to the
+  sender.
+- **Audit gaps KI-01, 03–23 closed** ([[Known Issues and Gaps]]): closed-app notifications, rejected
+  disputes, service reports, upload limits, unused packages, permission drift, API docs, CI, docs.
+
 ## 2026-10-03 — A reset database starts with the default setup
 
 `SEED_MODE=starter` (now production's default, and what `scripts/fresh-admin.sh` seeds) gives the
