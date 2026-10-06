@@ -166,44 +166,62 @@ Things to know:
 - Only `storage/app` is on the disk. Logs, caches and compiled views stay in
   the container and are rebuilt on every start.
 
-### Email codes — Mailjet
+### Email codes — Gmail API
 
 The mobile sign-up code, its resend and the forgot-password code — and every other email (admin
-password reset, notifications) — go out through **Mailjet's Send API** over HTTPS
-(`MAIL_MAILER=mailjet-api`), which Render's free tier allows (it blocks SMTP). The free plan
-sends 200 emails a day, 6,000 a month, and needs no domain: only a validated sender address.
-If Mailjet refuses an email, Render's log shows Mailjet's error code and reason.
+password reset, notifications) — are sent **as your Gmail account through the Gmail API**
+(`MAIL_MAILER=gmail-api`). It is free (about 500 emails a day), needs no domain and no email
+company to approve the account, and uses HTTPS, which Render's free tier allows (it blocks SMTP,
+so Gmail's SMTP server cannot be used). If Google refuses, Render's log shows Google's reason.
 
-1. **Mailjet** (app.mailjet.com, free plan): sign up and confirm your email. If Mailjet asks for
-   account details or says the account is under review, complete that first — nothing sends
-   until the account is active.
-2. *Account settings → Senders & Domains → Add a sender address*: the address the emails come
-   from (e.g. a Gmail you own). Open the confirmation email Mailjet sends there and click the link.
-3. *Account settings → REST API → API Key Management*: copy the **API Key** and the
-   **Secret Key**.
-4. **Render → backend → Environment**:
+One-time setup, in the **same Google Cloud project as Google sign-in**
+(console.cloud.google.com, project picker at the top):
+
+1. **Enable the Gmail API:** *APIs & Services → Library* → search "Gmail API" → **Enable**.
+2. **Keep tokens from expiring:** *Google Auth Platform → Audience* (older console: *OAuth consent
+   screen*). If *Publishing status* is **Testing**, click **Publish app** → Confirm. In Testing,
+   Google expires the refresh token after 7 days. You do **not** need Google's verification for
+   this — only your own account signs in to it.
+3. **Create the sending client:** *Google Auth Platform → Clients* (older: *APIs & Services →
+   Credentials*) → **Create client** → type **Web application**, name "SkillServe Gmail sender".
+   Under *Authorized redirect URIs* add exactly `https://developers.google.com/oauthplayground`.
+   Create, then copy the **Client ID** and **Client secret**. (Leave the Android sign-in clients
+   alone.)
+4. **Get the refresh token** at https://developers.google.com/oauthplayground:
+   - Gear icon (top right) → tick **Use your own OAuth credentials** → paste the Client ID and
+     secret → Close.
+   - *Step 1*: in the box at the bottom ("Input your own scopes") type
+     `https://www.googleapis.com/auth/gmail.send` → **Authorize APIs**.
+   - Sign in with the Gmail that will send (e.g. `earlcao12345.ec@gmail.com`). Google warns
+     "Google hasn't verified this app": click **Advanced → Go to … (unsafe)** — it is your own
+     app — then **Continue / Allow**.
+   - *Step 2*: **Exchange authorization code for tokens** → copy the **Refresh token**
+     (starts with `1//`).
+5. **Render → backend → Environment**:
    ```
    OTP_DRIVER=mail
-   MAIL_MAILER=mailjet-api
-   MAILJET_API_KEY=…
-   MAILJET_SECRET_KEY=…
-   MAIL_FROM_ADDRESS=<the sender validated in Mailjet>
+   MAIL_MAILER=gmail-api
+   GMAIL_CLIENT_ID=…apps.googleusercontent.com
+   GMAIL_CLIENT_SECRET=…
+   GMAIL_REFRESH_TOKEN=1//…
+   MAIL_FROM_ADDRESS=<the same Gmail you signed in with>
    MAIL_FROM_NAME=SkillServe
    ```
-   Delete `BREVO_API_KEY` (and any `TWILIO_*` / `SENDGRID_API_KEY`).
-5. **Verify:** `GET /api/health` shows `"otp": {"status": "up", "driver": "mail", "mailer":
-   "mailjet-api"}`. Sign up in the app with a real Gmail, then try *Forgot password*. The first
-   emails from a new sender may land in **Spam** — open it and mark *Not spam*. Each email is
-   listed in Mailjet → *Statistics* (sent, delivered, bounced, blocked). A failed send is logged on
-   Render as `Failed to send registration OTP` / `Failed to send password reset code` with
-   Mailjet's error (e.g. `send-0003` = the sender is not validated).
+   The Mailjet / Brevo / Twilio variables can be deleted.
+6. **Verify:** `GET /api/health` shows `"otp": {"status": "up", "driver": "mail", "mailer":
+   "gmail-api"}`. Sign up in the app with a real email, then try *Forgot password*; the emails also
+   appear in that Gmail's **Sent** folder. A failure is logged on Render as
+   `Failed to send registration OTP` with Google's reason; `invalid_grant` means the refresh token
+   was revoked (password change, access removed in the Google account, or the app left in
+   Testing) — repeat step 4 and replace `GMAIL_REFRESH_TOKEN`.
 
-A code can be re-sent once a minute, as often as needed; each send is one email from the daily 200.
+A code can be re-sent once a minute, as often as needed; each send is one email from Gmail's daily
+allowance.
 
-> **Alternative (paid): Twilio Verify.** `OTP_DRIVER=twilio` with `TWILIO_ACCOUNT_SID`,
-> `TWILIO_AUTH_TOKEN` and `TWILIO_VERIFY_SERVICE_SID` has Twilio generate, email and check the codes
-> (`TwilioVerifyClient`). Twilio has no free trial in the Philippines, and its email channel needs a
-> linked SendGrid account, which has no free plan since May 2025 — so it is kept only as an option.
+> **Alternatives, built and tested:** `MAIL_MAILER=mailjet-api` (`MAILJET_API_KEY`,
+> `MAILJET_SECRET_KEY`; Mailjet blocked the new account on 2026-10-06), and `OTP_DRIVER=twilio`
+> (Twilio Verify; no free trial in the Philippines and needs a paid SendGrid plan). A domain of your
+> own makes Mailjet and similar services far more reliable.
 
 ### Frontend — static site
 
@@ -358,7 +376,7 @@ Do these in order on the real services and note the date and result of each — 
 1. **Backend service** (Render, paid instance with the persistent disk at
    `/var/www/html/storage/app`, see "Uploaded files"). Environment as in Step 2, including
    `APP_KEY`, `APP_URL`, `FRONTEND_URL`, the Neon `DB_*`, `REVERB_APP_ID/KEY/SECRET`,
-   `BUSINESS_TIMEZONE=Asia/Manila`, Mailjet for the codes and email (see "Email codes"),
+   `BUSINESS_TIMEZONE=Asia/Manila`, the Gmail API for the codes and email (see "Email codes"),
    `GOOGLE_CLIENT_ID`, `SEED_MODE=starter` and strong `ADMIN_PASSWORD` /
    Leave `SWAGGER_UI_ENABLED` off unless you will demo the API docs.
 2. **Deploy and verify** — the log shows migrations and seeding; `GET /api/health` returns

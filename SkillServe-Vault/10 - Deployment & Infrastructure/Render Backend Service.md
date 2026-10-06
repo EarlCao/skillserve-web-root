@@ -56,7 +56,7 @@ everything else to PHP, returns a JSON 503 on 502/504, and allows 20 MB bodies.
 QUEUE_CONNECTION=database`, `LOGIN_RATE_LIMIT`, `REVERB_APP_ID/KEY/SECRET`,
 `SEED_MODE=starter` (keep it: a reset database then comes back with the default setup), `APP_TIMEZONE=UTC`,
 `BUSINESS_TIMEZONE=Asia/Manila`, `ADMIN_EMAIL/PASSWORD` (non-default; `SYSTEM_ADMIN_*` retired),
-Mailjet (`MAIL_MAILER=mailjet-api`, `MAILJET_API_KEY`, `MAILJET_SECRET_KEY`), `GOOGLE_CLIENT_ID`; `SWAGGER_UI_ENABLED` off unless demoing.
+the Gmail API (`MAIL_MAILER=gmail-api`, `GMAIL_CLIENT_ID`, `GMAIL_CLIENT_SECRET`, `GMAIL_REFRESH_TOKEN`), `GOOGLE_CLIENT_ID`; `SWAGGER_UI_ENABLED` off unless demoing.
 
 Verify after deploy: logs show migrations/seeding; `GET /api/health` → database and storage `up`;
 `GET /api/client/v1/platform` answers.

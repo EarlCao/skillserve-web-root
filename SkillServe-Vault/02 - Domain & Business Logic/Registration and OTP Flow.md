@@ -1,7 +1,7 @@
 ---
 type: domain
 tags: [domain, auth, mobile]
-sources: [backend/app/Modules/ClientAuthentication/Services/PendingRegistrationService.php, ClientEmailOtpService.php, backend/app/Shared/Services/MailjetApiTransport.php, backend/app/Shared/Services/TwilioVerifyClient.php, ClientGoogleAuthService.php, ClientAuthenticationService.php, ProviderSignups.php, backend/app/Modules/ClientAuthentication/Models/PendingRegistration.php, backend/database/migrations/2026_10_03_000001_add_password_step_to_pending_registrations.php]
+sources: [backend/app/Modules/ClientAuthentication/Services/PendingRegistrationService.php, ClientEmailOtpService.php, backend/app/Shared/Services/GmailApiTransport.php, backend/app/Shared/Services/MailjetApiTransport.php, backend/app/Shared/Services/TwilioVerifyClient.php, ClientGoogleAuthService.php, ClientAuthenticationService.php, ProviderSignups.php, backend/app/Modules/ClientAuthentication/Models/PendingRegistration.php, backend/database/migrations/2026_10_03_000001_add_password_step_to_pending_registrations.php]
 ---
 # Registration and OTP Flow
 
@@ -11,8 +11,10 @@ and Google sign-ups take the same steps, in this order:
 **National ID scan → details (+ email, or the Google account) → 6-digit code → password + confirmation → account**
 
 > [!info] Who sends the code (2026-10-06)
-> Production: `OTP_DRIVER=mail` with `MAIL_MAILER=mailjet-api` — SkillServe generates the code,
-> stores its hash, and `ClientEmailOtpNotification` goes out through **Mailjet**. The 10-minute
+> Production: `OTP_DRIVER=mail` with `MAIL_MAILER=gmail-api` — SkillServe generates the code,
+> stores its hash, and `ClientEmailOtpNotification` goes out **as the owner's Gmail through the
+> Gmail API** (Brevo suspended the account and Mailjet blocked its new one, both on a Gmail
+> sender; Twilio has no free trial in the Philippines). The 10-minute
 > expiry, 5 attempts and 60-second resend window are enforced here. `GET /api/health` →
 > `services.otp` shows whether sending is configured. Setup: DEPLOYMENT.md → "Email codes".
 > Also built: `OTP_DRIVER=twilio` (Twilio Verify generates, emails and checks the code; the row
@@ -24,7 +26,7 @@ sequenceDiagram
   participant App
   participant API
   participant DB
-  participant Mail as Mailjet
+  participant Mail as Gmail API
   App->>API: POST /auth/register | /auth/register-provider | /auth/google/register (details, no password)
   API->>DB: upsert pending_registrations (password NULL, registration_token_hash, google_sub for Google)
   API->>Mail: 6-digit OTP email

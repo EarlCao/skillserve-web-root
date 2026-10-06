@@ -68,7 +68,7 @@ Services module's `CreateServiceAction`/`UpdateServiceAction`). See [[Module Rel
 | Admin module routes | `routes/api.php` includes each `app/Modules/<X>/Routes/api.php` (auth under `/api/auth`) |
 | Client routes | `ClientMarketplaceServiceProvider` mounts ClientAuthentication (`/auth`), ClientMarketplace, ClientCommunication, ClientPreferences under `api/client/v1` with `EnsurePlatformAvailable`; `/platform` is mounted **outside** it so the app can poll during maintenance |
 | Service providers | `bootstrap/providers.php`: `AppServiceProvider`, `ClientMarketplaceServiceProvider` |
-| Policies, gates, listeners, rate limiters, Sanctum token check, Mailjet / SendGrid / Brevo mail transports | `AppServiceProvider::boot()` |
+| Policies, gates, listeners, rate limiters, Sanctum token check, Gmail / Mailjet / SendGrid / Brevo mail transports | `AppServiceProvider::boot()` |
 | Broadcast channels | `routes/channels.php` (prefix `api`, middleware `api, auth:sanctum`) |
 | Schedule | `routes/console.php` |
 
@@ -87,7 +87,8 @@ Services module's `CreateServiceAction`/`UpdateServiceAction`). See [[Module Rel
 | `Realtime/RealtimeChangeTracker`, `AdminDataChanged` | collect model changes per request/job; broadcast once on `admin.data` |
 | `Helpers/BusinessTime` | UTC storage ↔ Asia/Manila wall clock |
 | `Helpers/PageSize` | `per_page` or System Settings default, clamped 1–100 |
-| `Services/MailjetApiTransport` | mail over Mailjet's Send API (`MAIL_MAILER=mailjet-api`) — production |
+| `Services/GmailApiTransport` | mail as the owner's Gmail over the Gmail API (`MAIL_MAILER=gmail-api`) — production |
+| `Services/MailjetApiTransport` | mail over Mailjet's Send API (`MAIL_MAILER=mailjet-api`); account blocked, unused |
 | `Services/TwilioVerifyClient` | Twilio Verify: sends and checks the 6-digit codes (`OTP_DRIVER=twilio`); built, unused (paid) |
 | `Services/SendGridApiTransport` | mail over SendGrid's HTTPS API (`MAIL_MAILER=sendgrid-api`) |
 | `Services/BrevoApiTransport` | mail over Brevo's HTTPS API (`MAIL_MAILER=brevo-api`); no longer used |

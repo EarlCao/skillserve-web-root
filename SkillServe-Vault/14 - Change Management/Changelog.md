@@ -9,6 +9,15 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-06 — Codes and mail sent as Gmail (Gmail API)
+
+Mailjet blocked the new account ("Your account has been temporarily blocked"), the second email
+service after Brevo to refuse a new free account sending from a Gmail address. Mail now goes out
+**as the owner's Gmail through the Gmail API** (`MAIL_MAILER=gmail-api`, `GmailApiTransport`):
+free, no third party to approve the account, about 500 emails a day. Also fixed: Render never
+showed these failures because `start.sh` discarded every background process's stderr; errors now
+reach the log, without the PHP server's per-request lines.
+
 ## 2026-10-06 — Codes and mail by Mailjet
 
 Brevo is replaced by **Mailjet** (`MAIL_MAILER=mailjet-api`, `MailjetApiTransport`, free 200/day):
