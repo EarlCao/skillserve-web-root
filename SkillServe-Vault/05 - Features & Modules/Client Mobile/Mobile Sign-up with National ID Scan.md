@@ -3,7 +3,7 @@ type: feature
 platform: mobile
 status: implemented
 tags: [feature, mobile, identity, sign-up, addresses]
-sources: [skill-serve-mobile-application/lib/features/identity/views/national_id_scan_flow.dart, skill-serve-mobile-application/lib/features/identity/services/national_id_parser.dart, skill-serve-mobile-application/lib/features/identity/services/national_id_reader.dart, skill-serve-mobile-application/lib/features/identity/views/sign_up_identity_fields.dart, skill-serve-mobile-application/lib/features/locations, skill-serve-mobile-application/lib/features/auth/views/register_screen.dart, skill-serve-mobile-application/lib/features/auth/views/google_registration_screen.dart]
+sources: [skill-serve-mobile-application/lib/features/identity/views/national_id_scan_flow.dart, skill-serve-mobile-application/lib/features/identity/services/national_id_parser.dart, skill-serve-mobile-application/lib/features/identity/services/national_id_reader.dart, skill-serve-mobile-application/lib/features/identity/views/sign_up_identity_fields.dart, skill-serve-mobile-application/lib/features/locations, skill-serve-mobile-application/lib/features/auth/views/register_screen.dart, skill-serve-mobile-application/lib/features/auth/views/google_registration_screen.dart, skill-serve-mobile-application/lib/features/identity/services/sign_up_scan_store.dart, skill-serve-mobile-application/lib/core/utils/age_requirement.dart, backend/app/Shared/Helpers/AgeRequirement.php]
 ---
 # Mobile Sign-up with National ID Scan
 
@@ -54,10 +54,45 @@ stateDiagram-v2
 - Nothing read is trusted blindly: every field is editable, and the photos still go to an
   administrator, who decides.
 
+## Adults only (2026-10-06)
+
+Owner rule: SkillServe is **18+ only**, and a provider's years of experience are counted from age
+16 — at most **2 years at 18, 3 at 19, 4 at 20**, and so on (age − 16).
+
+| Where | Rule |
+|---|---|
+| `POST /auth/register`, `/auth/register-provider`, `/auth/google/register` | `birthday` is **required** and must be 18 or more years ago; `experience_years` ≤ age − 16 |
+| `PATCH /provider/profile` | `experience_years` ≤ age − 16 from the birthday on the account (80 when none is on file — accounts older than birthdays) |
+| `POST /identity-verification` | `birthdate` must be 18 or more years ago |
+| App | the date picker stops at 18 years ago; the experience field and the onboarding stepper stop at the cap |
+
+One authoritative place on each side: `App\Shared\Helpers\AgeRequirement` (API) and
+`lib/core/utils/age_requirement.dart` (app, mirrors it). An APK older than the National ID scan
+sends no birthday and can no longer sign up.
+
+## If Android closes the app while the camera is open (2026-10-06)
+
+Low-memory phones close a backgrounded app to make room for the camera. Before the fix that
+restarted SkillServe from the splash screen with the sign-up gone — the owner saw it as "after the
+ID photo it goes to the login page".
+
+- **Less likely now:** ML Kit's text and QR models are loaded only for each read and released
+  straight after, instead of staying loaded while the back scanner was open.
+- **Survived when it happens:** `SignUpScanStore` keeps the **paths** of the photos taken so far
+  (SharedPreferences, ignored after an hour). The splash screen sees it and opens `/register`;
+  `NationalIdScanFlow` re-reads the kept photos and asks only for the missing side ("Your front
+  photo was kept. Now scan the back."). A photo the plain-camera fallback took while closed is
+  recovered with `ImagePicker.retrieveLostData`. The document scanner's own result cannot be
+  recovered, so that side is simply taken again.
+- Cleared when the account is created, when the user leaves sign-up, or on "Scan again".
+- A Google sign-up resumes on `/register` (Google's draft is memory-only); tapping Continue with
+  Google there reuses the scan.
+
 ## Privacy
 
 The card number, name and birthdate live only in memory until submitted, then are dropped; signing
-out clears them and the photos. Nothing is written to device storage.
+out clears them and the photos. Only the photos' file paths are written to device storage, for at
+most an hour, so a restart can resume the scan — never what was read off the card.
 
 ## Build notes
 

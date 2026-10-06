@@ -1,6 +1,6 @@
 # Pending Fixes — SkillServe (Backend, Admin Web, Mobile, Deployment)
 
-Last updated: **2026-10-03** (F2: password after the sign-up code, Google needs the password, forgot password by code, readable light/dark app).
+Last updated: **2026-10-06** (F3: sign-up survives the app being closed at the ID camera; 18+ only, experience ≤ age − 16).
 Previous full audit: 2026-09-21.
 
 Requirements now live in `SkillServe-Vault/` (Obsidian), which supersedes the two functionality
@@ -36,6 +36,18 @@ Required for every account; PhilSys card and ePhilID. See vault [[Philippine Add
 - [ ] **Phase 5** — docs done; **owner:** build the release APK and sign up with a real PhilSys card
   and ePhilID, book with the picker, add a service with a service area.
 **Server-side enforcement:** turn on System Settings → Identity (**H8**) at launch.
+
+### F3 · Sign-up survives Android closing the app at the ID camera; adults only **[BE][MB]** — built 2026-10-06
+**Asked 2026-10-06:** after the National ID photo the app went back to the start (Android closed it
+while the camera was open), and SkillServe must be 18+ with experience capped at age − 16.
+See vault [[Mobile Sign-up with National ID Scan]].
+- [ ] **Owner:** build the new APK and sign up on the low-memory phone that showed the problem:
+  scan the front, let the back open — the sign-up must continue, and after a forced restart it
+  must reopen on Create your account with the front kept.
+- [ ] **Owner:** try a birthday under 18 (refused) and, as a provider aged 18, 3 years of experience
+  (refused; 2 accepted).
+- [ ] **Old APKs** without the ID scan send no birthday and can no longer sign up — ask testers
+  to install the new build.
 
 ### F2 · Password after the sign-up code; Google needs the password; readable light/dark app **[BE][MB]** — built, owner checks left
 **Asked 2026-10-03.** Built and tested the same day (vault [[Registration and OTP Flow]],
