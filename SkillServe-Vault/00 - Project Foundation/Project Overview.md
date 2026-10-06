@@ -11,8 +11,8 @@ platform. The mobile app's README gives the project title as *"Bridging Service 
 Talent Visibility Through an Integrated Skills Marketplace and Service Management Platform."*
 
 The root repo describes itself as **"Group 6 — Web Project"** (folder `web-project-bsit3blk3group6`).
-The mobile Flutter package is still named `skilllink_mobile` in `pubspec.yaml` (an earlier
-"SkillLink" name — see [[Known Issues and Gaps]]).
+The mobile Flutter package is `skillserve_mobile` (renamed from the earlier "SkillLink"
+`skilllink_mobile` on 2026-10-06).
 
 ## The three applications
 

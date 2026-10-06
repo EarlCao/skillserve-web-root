@@ -6,7 +6,7 @@ soft_deletes: false
 ---
 # media
 
-spatie/laravel-medialibrary table. Migrated, but no model in `app/` uses media library (Needs Verification).
+Created for spatie/laravel-medialibrary, which was never used and was removed on 2026-10-06. The table stays (empty, harmless); dropping it would be a separate schema change.
 
 - **Model:** `—`
 - **Soft deletes:** no

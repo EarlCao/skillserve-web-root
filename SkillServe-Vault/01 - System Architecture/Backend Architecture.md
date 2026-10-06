@@ -11,7 +11,7 @@ Laravel 13 API in `backend/`. No Blade UI beyond the default `welcome` view on `
 ## Layers inside a module
 
 Modules are **plain PSR-4 namespaces** under `App\Modules\<Name>` (`composer.json` maps
-`App\Modules\` → `app/Modules/`). `nwidart/laravel-modules` is installed but not used for layout
+`App\Modules\` → `app/Modules/`). `nwidart/laravel-modules` was installed but never used for layout, and was removed on 2026-10-06
 ([[ADR-002 Modules as Plain Namespaces]]).
 
 ```mermaid

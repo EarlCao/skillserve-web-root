@@ -425,9 +425,11 @@ For production, consider upgrading to a paid plan for better performance.
   restarting each if it exits.
 - On the free tier they sleep with the service, so a scheduled announcement
   whose time passes while the service is idle is sent on the next wake-up.
-- The mobile app has no WebSocket connection; it checks
-  `GET /api/client/v1/notifications/unread-count` every 30 seconds while open
-  and signed in, so new notifications appear within about 30 seconds.
+- The mobile app listens on Reverb while it is open (its private user channel,
+  and the booking chat's presence channel), and falls back to polling
+  `GET /api/client/v1/notifications/unread-count` while the socket is down.
+  While the app is closed, an Android background task polls
+  `GET /api/client/v1/notifications/background` about every 15 minutes.
 
 ### Migrations fail on deploy
 - Check Render logs: **Logs** tab → filter by service.

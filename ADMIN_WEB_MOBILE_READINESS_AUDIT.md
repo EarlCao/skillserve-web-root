@@ -1,5 +1,9 @@
 # SkillServe Admin Web and Mobile Readiness Audit
 
+> **Superseded — kept as history.** This audit describes the system on 2026-09-08; most of its
+> gaps have since been closed. For the current state see `PENDING_FIXES.md` and the vault's
+> `12 - Troubleshooting/Known Issues and Gaps.md`.
+
 **Audit date:** 2026-09-08  
 **Scope:** Laravel backend, PostgreSQL schema/migrations, React Admin Web, API routes, authentication, authorization, Swagger/OpenAPI, tests, and mobile readiness  
 **Audit mode:** Read-only; no application code was modified during the audit

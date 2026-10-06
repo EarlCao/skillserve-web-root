@@ -18,7 +18,7 @@ source named in *How to verify*, then edit the linked note and move the row to *
 | NV-04 | Effective permissions of the `admin` role in production (migrations vs seeder `syncPermissions`) | [[User Types and Roles]], [[Permission Catalog]] | `select p.name from role_has_permissions rp join permissions p on p.id = rp.permission_id where rp.role_id = 2` |
 | NV-05 | Is a rejected dispute meant to leave the booking `disputed` and un-closable? (KI-03) | [[Disputes Lifecycle]], [[Dispute Management]] | product owner decision |
 | NV-06 | Does the app send all verification documents in one request (5 × 10 MB > nginx 20 MB)? (KI-05) | [[File Upload Security]] | inspect `verification_service.dart` request building; try a 5-file upload in production |
-| NV-07 | Are DomPDF, laravel-backup, medialibrary (`media` table), spatie settings classes and nwidart modules used anywhere? | [[Tech Stack]], [[media]] | search for usages; remove or document |
+| ~~NV-07~~ | **Answered 2026-10-06: no.** None was used; all were removed (KI-09). | [[Tech Stack]], [[media]] | done |
 | NV-08 | Can anything generate signed temporary URLs for the `local` disk that shares `storage/app/private` with verification documents? (SF-4) | [[File Storage Architecture]] | search for `temporaryUrl` / `Storage::disk('local')` |
 | NV-09 | Do any clients use the signed-link email verification routes (`verify-email/{user}/{hash}`, `verification-notification`)? | [[Registration and OTP Flow]] | app + admin code search (none found), server logs |
 | NV-10 | Is GitHub Actions enabled for the backend repo and does the daily `tests.yml` run pass? | [[Quality Gates]] | GitHub → Actions |

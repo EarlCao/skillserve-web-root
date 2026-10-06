@@ -1,6 +1,6 @@
 # Pending Fixes — SkillServe (Backend, Admin Web, Mobile, Deployment)
 
-Last updated: **2026-10-06** (F3; audit gaps KI-01, 03–08 fixed; KI-09 partly).
+Last updated: **2026-10-06** (F3; F4 — every code/doc gap from the Known Issues audit fixed).
 Previous full audit: 2026-09-21.
 
 Requirements now live in `SkillServe-Vault/` (Obsidian), which supersedes the two functionality
@@ -49,19 +49,17 @@ See vault [[Mobile Sign-up with National ID Scan]].
 - [ ] **Old APKs** without the ID scan send no birthday and can no longer sign up — ask testers
   to install the new build.
 
-### F4 · Audit gaps from the vault's Known Issues **[BE][AW][MB][DEP]** — 2026-10-06
-Fixed: **KI-01** closed-app notifications stopped after a day · **KI-03** rejected disputes stuck
-"disputed" · **KI-04** services could not be reported · **KI-05** uploads over 2 MB refused ·
-**KI-06** realtime key defaults · **KI-07** health check leaked DB errors · **KI-08** raw axios.
-- [ ] **Deploy:** push the backend (migration `2026_10_06_000001` is data only: it corrects dispute
-  statuses; nothing to roll back), then rebuild the admin web. Build a new APK for the service
-  report and the background-token fix. On Render, `SANCTUM_EXPIRATION` is no longer read and can be
-  deleted.
-- [ ] **KI-09:** remove the unused backend packages (dompdf, laravel-backup, medialibrary,
-  laravel-settings, nwidart modules — verified unused) with `composer remove …` and delete their
-  `config/*.php`. Not done: the owner has to approve it. `intervention/image` is unused too.
-- [ ] **KI-10 to KI-23** (permission drift, OpenAPI gaps, test workflow branch, a missing test,
-  package name, stale docs) are still open in the vault note.
+### F4 · Audit gaps from the vault's Known Issues **[BE][AW][MB][DEP]** — fixed 2026-10-06
+Every code and documentation gap in the vault's Known Issues (**KI-01, 03–23**) is fixed; only the
+process items KI-24/KI-25 (test evidence, go-live actions) remain, and those are owner actions below.
+Also: the backend's `composer audit` is clean again (laravel/framework 13.34, commonmark 2.10.3,
+flysystem 3.36) and the admin web's axios is 1.20 (production dependencies clean; three build-tool
+advisories have no non-breaking fix yet).
+- [ ] **Deploy:** push the backend first. Migrations `2026_10_06_000001` (dispute statuses) and
+  `2026_10_06_000002` (super-admin gets every permission) are data only, add nothing to the schema
+  and need no rollback. Then rebuild the admin web, and build a new APK (package renamed to
+  `skillserve_mobile`; same app ID `com.skillserve.mobile`, so it installs over the old one).
+- [ ] **Render:** delete `SANCTUM_EXPIRATION` (no longer read).
 
 ### F2 · Password after the sign-up code; Google needs the password; readable light/dark app **[BE][MB]** — built, owner checks left
 **Asked 2026-10-03.** Built and tested the same day (vault [[Registration and OTP Flow]],

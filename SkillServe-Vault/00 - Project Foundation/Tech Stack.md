@@ -19,20 +19,15 @@ Versions are the **installed** ones from lock files at audit time.
 | Audit log | spatie/laravel-activitylog | 4.12.3 | `activity_log` table |
 | API docs | darkaonline/l5-swagger | 11.1.0 | PHP 8 attributes only ([[API Documentation Pipeline]]) |
 | Excel/CSV | maatwebsite/excel | 3.1.70 | |
-| PDF | barryvdh/laravel-dompdf | 3.1.2 | installed |
-| Media | spatie/laravel-medialibrary 11.23.3, intervention/image 4.2.0 | | `media` table migrated |
-| Backups | spatie/laravel-backup | 10.3.1 | installed |
-| Settings pkg | spatie/laravel-settings | 3.9.0 | `settings` table; values read by `SettingsService` |
-| Modules pkg | nwidart/laravel-modules | 13.0.0 | installed but **not** used for layout ([[ADR-002 Modules as Plain Namespaces]]) |
+| Removed 2026-10-06 | dompdf, laravel-backup, laravel-medialibrary, intervention/image, laravel-settings, nwidart/laravel-modules | | none was used. The `media` and `settings` tables stay: `settings` holds System Settings (own `Setting` model); `media` is empty |
 | Other | laravel/tinker, ramsey/uuid | | |
 | Dev | phpunit 12, laravel/pint, mockery, faker, collision, pail, pao | | |
 | Database | PostgreSQL 17 (`postgres:17-alpine`) locally; NeonDB in production | | tests: in-memory SQLite |
 | Mail | log mailer locally; Brevo HTTP API transport (`brevo-api`) or SMTP in production | | `app/Shared/Services/BrevoApiTransport.php` |
 
-> [!warning] Needs Verification — unused packages
-> No application code was found using DomPDF, laravel-backup, laravel-medialibrary models or the
-> spatie settings classes (`app/Settings/` is empty). They are installed and configured, but
-> whether they are used anywhere indirectly is unconfirmed.
+> [!note] Unused packages removed (2026-10-06)
+> DomPDF, laravel-backup, laravel-medialibrary, intervention/image, laravel-settings and
+> nwidart/laravel-modules were confirmed unused and removed with their `config/*.php` (KI-09).
 
 ## Admin Web — `frontend/`
 
@@ -71,10 +66,9 @@ Versions are the **installed** ones from lock files at audit time.
 | Other | connectivity_plus, intl |
 | Lint | flutter_lints 4 |
 
-> [!bug] Stale package metadata
-> `pubspec.yaml` still says *"Frontend only — ready for future REST API integration"* and
-> *"Media (UI only — no upload logic)"*; the app is fully API-integrated and uploads files. The
-> package name is `skilllink_mobile`. See [[Known Issues and Gaps]].
+> [!note] Package metadata fixed (2026-10-06)
+> The Flutter package is `skillserve_mobile` and `pubspec.yaml` describes the API-integrated app
+> (KI-14).
 
 ## Infrastructure
 

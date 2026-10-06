@@ -27,26 +27,26 @@ Severity uses the `AGENT_REVIEW.md` scale. Open questions without a confirmed de
 | ID | Sev. | Issue | Evidence |
 |---|---|---|---|
 | ~~KI-08~~ | **Resolved 2026-10-06.** Both downloads go through `services/api.js`. Was: LOW — Feature code imports raw axios (rule says use `services/api.js`) |
-| KI-09 | LOW | Unused files/packages — **frontend files removed 2026-10-06; the five backend packages are still installed (removal awaits the owner's go-ahead)** | `frontend/src/components/feedback/OfflineBanner.jsx` (only `common/OfflineBanner` imported), `frontend/src/assets/hero.png`; backend packages with config but no app usage: dompdf, laravel-backup, medialibrary (`media` table), spatie settings classes (`app/Settings/` empty), nwidart modules; `s3` disk |
-| KI-10 | LOW | Seeder vs migrations permission drift | seeder omits the 7 granular service permissions (created by migration) and re-syncs `admin` to a short list while later migrations grant more ([[Permission Catalog]]) |
-| KI-11 | LOW | OpenAPI spec omits `PATCH` aliases, `/api/health`, `/api/broadcasting/auth` | [[API Documentation Pipeline]] |
-| KI-12 | LOW | Backend `tests.yml` workflow (Laravel skeleton) triggers on `master`, not `main` | `backend/.github/workflows/tests.yml` |
-| KI-13 | LOW | No test for `PATCH /api/providers/{id}/verification/remove`; several admin modules have ≤4 tests | [[Backend Test Suite]] |
-| KI-14 | LOW | Flutter package still named `skilllink_mobile`; pubspec description says "Frontend only — ready for future REST API integration" and "Media (UI only — no upload logic)" | `pubspec.yaml` |
+| ~~KI-09~~ | **Resolved 2026-10-06.** Unused frontend files deleted; dompdf, laravel-backup, medialibrary, intervention/image, laravel-settings and nwidart removed with their configs. The `media` table stays (empty). Was: LOW — Unused files/packages — **frontend files removed 2026-10-06; the five backend packages are still installed (removal awaits the owner's go-ahead)** — `frontend/src/components/feedback/OfflineBanner.jsx` (only `common/OfflineBanner` imported), `frontend/src/assets/hero.png`; backend packages with config but no app usage: dompdf, laravel-backup, medialibrary (`media` table), spatie settings classes (`app/Settings/` empty), nwidart modules; `s3` disk |
+| ~~KI-10~~ | **Resolved 2026-10-06.** Real drift: the seeder missed the 7 granular service permissions, so a seeded super-admin lacked them. Seeder fixed, migration `2026_10_06_000002` grants them, and `RolePermissionSeederTest` keeps the two in step. Was: LOW — Seeder vs migrations permission drift — seeder omits the 7 granular service permissions (created by migration) and re-syncs `admin` to a short list while later migrations grant more ([[Permission Catalog]]) |
+| ~~KI-11~~ | **Resolved 2026-10-06.** The 9 PATCH aliases are documented, plus `/api/health` and `/api/broadcasting/auth` (`app/Shared/Swagger/SystemEndpoints.php`). Only the Swagger UI's own routes are undocumented. Was: LOW — OpenAPI spec omits `PATCH` aliases, `/api/health`, `/api/broadcasting/auth` — [[API Documentation Pipeline]] |
+| ~~KI-12~~ | **Resolved 2026-10-06.** `tests.yml` runs on `main` and pull requests with PHP 8.3 and Pint; the three Laravel-repo workflows were removed. Was: LOW — Backend `tests.yml` workflow (Laravel skeleton) triggers on `master`, not `main` — `backend/.github/workflows/tests.yml` |
+| ~~KI-13~~ | **Resolved 2026-10-06.** `RemoveProviderVerificationTest` (success, wrong state, permission). Was: LOW — No test for `PATCH /api/providers/{id}/verification/remove`; several admin modules have ≤4 tests — [[Backend Test Suite]] |
+| ~~KI-14~~ | **Resolved 2026-10-06.** Package renamed `skillserve_mobile`; description corrected. Was: LOW — Flutter package still named `skilllink_mobile`; pubspec description says "Frontend only — ready for future REST API integration" and "Media (UI only — no upload logic)" — `pubspec.yaml` |
 
 ## Stale documentation
 
 | ID | Document | What is outdated |
 |---|---|---|
-| KI-15 | mobile `AGENT.md` | "Deferred Scope" lists as missing: review reporting, message reporting, dispute evidence upload, provider support tickets, presence/typing, closed-app notifications, admin announcements, info-request response; "API Integration Status" says profile update throws `UnsupportedError` — all now implemented |
-| KI-16 | mobile `README.md` → Design system | claims Ink Navy/Brass/Warm Slate and Space Grotesk/Inter/IBM Plex Mono; code uses charcoal/lime and Outfit ([[Mobile UI System]]) |
-| KI-17 | `api-docs/README.md` → "What is NOT yet implemented" | says Reverb is web-only and recommends FCM |
-| KI-18 | `DEPLOYMENT.md` → Troubleshooting | "The mobile app has no WebSocket connection; it checks unread-count every 30 seconds" |
-| KI-19 | `AdminDataChanged` docblock | "production runs no queue worker" — `start.sh` runs one |
-| KI-20 | `primary_button.dart` doc comment | describes a brass gradient; button renders lime |
-| KI-21 | `ADMIN_WEB_MOBILE_READINESS_AUDIT.md` | dated 2026-09-08 (62% estimate, Support missing, etc.) — superseded; keep as history |
-| KI-22 | `backend/README.md`, `frontend/README.md` | framework boilerplate (Laravel / React+Vite), not project docs |
-| KI-23 | Root `README.md` | Swagger table's first row shows a stray "user`" instead of the `/api/documentation` URL; says `nwidart/laravel-modules` gives the "modular structure under `Modules/`" (it doesn't) |
+| ~~KI-15~~ | **Resolved 2026-10-06.** Deferred Scope and API Integration Status rewritten. Was: mobile `AGENT.md` — "Deferred Scope" lists as missing: review reporting, message reporting, dispute evidence upload, provider support tickets, presence/typing, closed-app notifications, admin announcements, info-request response; "API Integration Status" says profile update throws `UnsupportedError` — all now implemented |
+| ~~KI-16~~ | **Resolved 2026-10-06.** README describes charcoal/lime and Outfit. Was: mobile `README.md` → Design system — claims Ink Navy/Brass/Warm Slate and Space Grotesk/Inter/IBM Plex Mono; code uses charcoal/lime and Outfit ([[Mobile UI System]]) |
+| ~~KI-17~~ | **Resolved 2026-10-06.** Section replaced with the actual realtime, closed-app and password-reset behaviour. Was: `api-docs/README.md` → "What is NOT yet implemented" — says Reverb is web-only and recommends FCM |
+| ~~KI-18~~ | **Resolved 2026-10-06.** Describes Reverb plus the polling fallback and the closed-app task. Was: `DEPLOYMENT.md` → Troubleshooting — "The mobile app has no WebSocket connection; it checks unread-count every 30 seconds" |
+| ~~KI-19~~ | **Resolved 2026-10-06.** Docblock gives the real reason (not queued behind mail). Was: `AdminDataChanged` docblock — "production runs no queue worker" — `start.sh` runs one |
+| ~~KI-20~~ | **Resolved 2026-10-06.** Comment describes the lime gradient. Was: `primary_button.dart` doc comment — describes a brass gradient; button renders lime |
+| ~~KI-21~~ | **Resolved 2026-10-06.** Marked superseded at the top; kept as history. Was: `ADMIN_WEB_MOBILE_READINESS_AUDIT.md` — dated 2026-09-08 (62% estimate, Support missing, etc.) — superseded; keep as history |
+| ~~KI-22~~ | **Resolved 2026-10-06.** Replaced with short project READMEs. Was: `backend/README.md`, `frontend/README.md` — framework boilerplate (Laravel / React+Vite), not project docs |
+| ~~KI-23~~ | **Resolved 2026-10-06.** Swagger URL fixed; the package paragraph lists what is installed. Was: Root `README.md` — Swagger table's first row shows a stray "user`" instead of the `/api/documentation` URL; says `nwidart/laravel-modules` gives the "modular structure under `Modules/`" (it doesn't) |
 
 ## Process
 

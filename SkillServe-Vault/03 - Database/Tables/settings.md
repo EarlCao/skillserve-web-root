@@ -6,7 +6,7 @@ soft_deletes: false
 ---
 # settings
 
-System Settings values (spatie/laravel-settings table layout).
+System Settings values, read and written by `App\Modules\Settings\Models\Setting` / `SettingsService` (the table layout came from spatie/laravel-settings, removed 2026-10-06).
 
 - **Model:** `backend/app/Modules/Settings/Models/Setting.php`
 - **Soft deletes:** no

@@ -279,12 +279,11 @@ Always build with `docker compose build`, not `docker build ./backend`.
 The Laravel backend ships with these packages:
 `laravel/sanctum` (API tokens), `spatie/laravel-permission` (roles & permissions),
 `darkaonline/l5-swagger` (API docs at `/api/documentation` — annotated with
-PHP 8 attributes), `spatie/laravel-activitylog`,
-`spatie/laravel-medialibrary` + `intervention/image` (file/media uploads),
-`maatwebsite/excel` (Excel import/export), `barryvdh/laravel-dompdf` (PDF),
-`spatie/laravel-backup`, `spatie/laravel-settings`, `ramsey/uuid`,
-`nwidart/laravel-modules` (modular structure under `Modules/`), and
-`laravel/reverb` (broadcasting, served on port 8080).
+PHP 8 attributes), `spatie/laravel-activitylog` (audit log),
+`maatwebsite/excel` (CSV/Excel exports), `ramsey/uuid`, and
+`laravel/reverb` (broadcasting, served on port 8080). Modules are plain
+namespaces under `app/Modules/<Name>`, wired by hand in `routes/api.php` and
+`AppServiceProvider`; uploads use Laravel's own filesystem disks.
 
 Realtime notifications use Laravel Reverb over authenticated private channels.
 The frontend reads `frontend/.env` for `VITE_REVERB_APP_KEY`,
@@ -456,7 +455,7 @@ attributes) and served by l5-swagger:
 
 | URL | What it is |
 |-----|------------|
-| user` | Swagger UI — interactive docs |
+| `http://localhost:8000/api/documentation` | Swagger UI — interactive docs |
 | `http://localhost:8000/docs` | Raw OpenAPI JSON spec (`storage/api-docs/api-docs.json`) |
 
 ### How to use Swagger

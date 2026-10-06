@@ -23,7 +23,7 @@ Feature modules are plain PSR-4 namespaces in `app/Modules/<Name>`; routes, poli
 
 - Explicit, greppable wiring; no module auto-discovery.
 - Every new module needs manual registration — easy to forget listeners/policies.
-- `nwidart/laravel-modules` and `config/modules.php` remain installed but unused for layout.
+- `nwidart/laravel-modules` and `config/modules.php` were removed on 2026-10-06 (never used for layout).
 
 ## Evidence
 
