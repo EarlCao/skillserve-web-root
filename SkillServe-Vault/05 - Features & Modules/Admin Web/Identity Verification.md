@@ -24,6 +24,13 @@ The review queue for Philippine National ID submissions from **customers and pro
 Distinct from [[Provider Verification Lifecycle]], which proves a provider is a legitimate
 tradesperson. See [[Identity Verification Lifecycle]] for the rules.
 
+**Approving a provider's ID also verifies the provider** (owner rule, 2026-10-06): if the provider
+is not yet verified in Provider Management, they become `verified` (`verified_by` = the reviewer)
+and any open business-verification request is closed as approved, with the note "Verified with the
+approved National ID." Already-verified providers are untouched; rejecting an ID changes nothing
+there. `ProviderService::verifyFromIdentity`, run by the `VerifyProviderOnIdentityApproval`
+listener on `IdentityVerificationApproved`; the provider gets the usual "verified" notification.
+
 Filter by status (defaults to *Pending review*), account type and the account's name or email.
 Opening a row loads the submission's documents and decision history; the list itself stays a summary.
 

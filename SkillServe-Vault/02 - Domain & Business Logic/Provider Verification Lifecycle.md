@@ -1,7 +1,7 @@
 ---
 type: domain
 tags: [domain, providers, verification, state-machine]
-sources: [backend/app/Modules/ClientMarketplace/Services/ProviderVerificationService.php, backend/app/Modules/Providers/Actions, backend/app/Modules/Providers/Listeners/NotifyProviderOfAccountDecision.php]
+sources: [backend/app/Modules/ClientMarketplace/Services/ProviderVerificationService.php, backend/app/Modules/Providers/Actions, backend/app/Modules/Providers/Listeners/NotifyProviderOfAccountDecision.php, backend/app/Modules/Providers/Listeners/VerifyProviderOnIdentityApproval.php, backend/app/Modules/Providers/Services/ProviderService.php]
 ---
 # Provider Verification Lifecycle
 
@@ -24,7 +24,15 @@ stateDiagram-v2
   pending --> rejected : admin reject (reason)
   pending --> additional_info_required : admin request info (message)
   verified --> unverified : admin remove verification
+  unverified --> verified : National ID approved
+  pending --> verified : National ID approved
+  rejected --> verified : National ID approved
+  additional_info_required --> verified : National ID approved
 ```
+
+Approving the provider's National ID in [[Identity Verification]] verifies a provider who is not
+yet verified and closes any open request as approved (2026-10-06). New providers start as
+`pending` from sign-up (`ClientAccountCreator`).
 
 ## Provider side (mobile)
 
