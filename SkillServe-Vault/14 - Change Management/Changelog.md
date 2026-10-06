@@ -9,12 +9,13 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
-## 2026-10-06 — Codes by Twilio Verify; mail by SendGrid
+## 2026-10-06 — Codes and mail by Mailjet
 
-Brevo is replaced. With `OTP_DRIVER=twilio`, Twilio Verify emails and checks the sign-up,
-resend and forgot-password codes (`TwilioVerifyClient`); SkillServe keeps the expiry, attempt
-limit and resend window. Every other email goes through SendGrid's API
-(`MAIL_MAILER=sendgrid-api`, `SendGridApiTransport`). `GET /api/health` reports `services.otp`.
+Brevo is replaced by **Mailjet** (`MAIL_MAILER=mailjet-api`, `MailjetApiTransport`, free 200/day):
+the sign-up, resend and forgot-password codes and every other email. A refused email raises
+Mailjet's error code into the server log. `GET /api/health` reports `services.otp` (driver, mailer,
+keys present). Twilio Verify (`OTP_DRIVER=twilio`) and a SendGrid transport were built the same day
+and kept, but Twilio has no free trial in the Philippines and SendGrid has no free plan.
 See [[Registration and OTP Flow]], [[External Integrations]].
 
 ## 2026-10-06 — Sign-up survives the camera, adults only, Philippine phone numbers, audit gaps closed

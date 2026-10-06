@@ -23,8 +23,7 @@ Versions are the **installed** ones from lock files at audit time.
 | Other | laravel/tinker, ramsey/uuid | | |
 | Dev | phpunit 12, laravel/pint, mockery, faker, collision, pail, pao | | |
 | Database | PostgreSQL 17 (`postgres:17-alpine`) locally; NeonDB in production | | tests: in-memory SQLite |
-| Codes (OTP) | Twilio Verify (`OTP_DRIVER=twilio`) emails and checks the 6-digit codes; `mail` driver for local/tests | | `app/Shared/Services/TwilioVerifyClient.php` |
-| Mail | log mailer locally; SendGrid HTTP API (`sendgrid-api`) in production; the Brevo transport remains but Brevo is no longer used | | `app/Shared/Services/SendGridApiTransport.php` |
+| Mail and codes | log mailer locally; **Mailjet** Send API (`mailjet-api`) in production carries the 6-digit codes and every email. Also built, unused: Twilio Verify (`OTP_DRIVER=twilio`, paid), SendGrid and Brevo transports | | `app/Shared/Services/MailjetApiTransport.php` |
 
 > [!note] Unused packages removed (2026-10-06)
 > DomPDF, laravel-backup, laravel-medialibrary, intervention/image, laravel-settings and
@@ -74,5 +73,5 @@ Versions are the **installed** ones from lock files at audit time.
 ## Infrastructure
 
 Docker Compose (local), Render (backend Docker web service + frontend static site), NeonDB
-(PostgreSQL), Render persistent disk for uploads, Twilio Verify + SendGrid (codes and mail), Google Cloud OAuth (sign-in).
+(PostgreSQL), Render persistent disk for uploads, Mailjet (codes and mail), Google Cloud OAuth (sign-in).
 See [[Deployment Index]] and [[External Integrations]].

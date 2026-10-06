@@ -82,16 +82,17 @@ advisories have no non-breaking fix yet).
   Email sign-up, email login and everything else keep working. Ask testers to install the new build.
 - [ ] **Accounts made by Google sign-up before 2026-10-03** have no password their owner knows. They
   sign in by tapping "Forgot password?" on the password prompt once. Tell your testers.
-- [ ] **OTP email: Twilio Verify + SendGrid (decided 2026-10-06, replaces Brevo).** Brevo suspended
-  the old account (its log said *"Your sending platform is currently disabled"*) and gave no useful
-  error. The code is built and tested (`OTP_DRIVER=twilio`, `TwilioVerifyClient`; other mail via
-  `MAIL_MAILER=sendgrid-api`). **Owner:** create the SendGrid account (verified sender, API key,
-  dynamic template with `{{twilio_code}}`) and the Twilio Verify service (code length 6, Email
-  Integration linked to SendGrid), then set the Render variables — every step is in DEPLOYMENT.md →
-  "Email codes". Delete `BREVO_API_KEY` from Render and the old Brevo API key (it was pasted into a
-  chat). **Verify:** `GET /api/health` → `"otp": {"status": "up", "driver": "twilio"}`; a sign-up
-  and a forgot password with a real Gmail each arrive (check Spam first), and show in Twilio →
-  Monitor → Logs → Verify and SendGrid → Activity. Test with real addresses only.
+- [ ] **OTP email: Mailjet (decided 2026-10-06, replaces Brevo).** Brevo suspended the old account
+  and gave no useful error; Twilio Verify was built too but has no free trial in the Philippines
+  and needs a paid SendGrid plan. The Mailjet mailer is built and tested (sign-up for both roles,
+  repeated resends, repeated forgot-password, refusals). **Owner:** create the free Mailjet
+  account, validate the sender address, copy the API key and secret, and set on Render
+  `OTP_DRIVER=mail`, `MAIL_MAILER=mailjet-api`, `MAILJET_API_KEY`, `MAILJET_SECRET_KEY`,
+  `MAIL_FROM_ADDRESS`, `MAIL_FROM_NAME=SkillServe` (DEPLOYMENT.md → "Email codes"). Delete
+  `BREVO_API_KEY` from Render, and the old Brevo API key (it was pasted into a chat).
+  **Verify:** `GET /api/health` → `"otp": {"status": "up", "driver": "mail", "mailer":
+  "mailjet-api"}`; a sign-up and a forgot password with a real Gmail each arrive (check Spam
+  first) and are listed in Mailjet → Statistics. Test with real addresses only.
 - [ ] **Real-phone check with the deployed backend:** sign up by email and by Google (the code
   arrives by email from Brevo, then the password screen), log in by email and by Google (password
   prompt), and reset a password by code. Check the spam folder on the first try.
