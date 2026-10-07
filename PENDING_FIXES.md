@@ -82,20 +82,22 @@ advisories have no non-breaking fix yet).
   Email sign-up, email login and everything else keep working. Ask testers to install the new build.
 - [ ] **Accounts made by Google sign-up before 2026-10-03** have no password their owner knows. They
   sign in by tapping "Forgot password?" on the password prompt once. Tell your testers.
-- [ ] **OTP email: Resend (decided 2026-10-07).** Brevo suspended the old account, Twilio has no
-  free trial in the Philippines, and Mailjet blocked the new account. Resend's free plan
-  (3,000/month, 100/day) is built and tested (`MAIL_MAILER=resend-api`), but Resend delivers to
-  other people only from a **verified domain**. **Owner:** (1) deploy the backend first; (2) get a
-  free DigitalPlat domain (e.g. `skillserve.dpdns.org`) and move its DNS to Cloudflare's free
-  plan; (3) create the Resend account, add and verify the domain, create a *Sending access* API
-  key; (4) set on Render `MAIL_MAILER=resend-api`, `RESEND_API_KEY`,
-  `MAIL_FROM_ADDRESS=no-reply@<domain>`, `MAIL_FROM_NAME=SkillServe` (DEPLOYMENT.md → "Email
-  codes"). If the domain cannot be had, use the Gmail API instead (same section, no domain).
+- [ ] **OTP email: back to Brevo, new account (decided 2026-10-07).** The old Brevo account was
+  suspended by Brevo ("sending platform is currently disabled"), which is why codes worked at first
+  and then stopped — Brevo kept answering *accepted*, so the app saw no error. Built and tested:
+  repeated resends and forgot-password requests through `brevo-api`, an immediate retry after a
+  failed send (resend now answers 503, not 500), and sign-up refusing email domains that cannot
+  receive mail (fewer bounces). **Owner:** (1) deploy the backend; (2) free DigitalPlat domain with
+  DNS on Cloudflare; (3) new Brevo account with a different email, profile filled in truthfully;
+  (4) authenticate the domain in Brevo, add sender `no-reply@<domain>`; (5) Security → Authorized
+  IPs → blocking off; (6) new API key; (7) on Render `MAIL_MAILER=brevo-api`, `BREVO_API_KEY`,
+  `MAIL_FROM_ADDRESS=no-reply@<domain>`, `MAIL_FROM_NAME=SkillServe` (DEPLOYMENT.md → "Email codes").
+  Test only with real inboxes. Delete the old account's API key if it still exists.
   **Verify:** `GET /api/health` → `"otp": {"status": "up", "driver": "mail", "mailer":
-  "resend-api"}`; a sign-up and a forgot password each arrive (check Spam first) and are listed in
-  Resend → *Emails*. Test with real addresses only.
+  "brevo-api"}`; sign-up, several resends and several forgot-password codes all show *Delivered*
+  in Brevo → Transactional → Logs. Re-check those logs after a few days of testing.
 - [ ] **Real-phone check with the deployed backend:** sign up by email and by Google (the code
-  arrives by email from Resend, then the password screen), log in by email and by Google (password
+  arrives by email from Brevo, then the password screen), log in by email and by Google (password
   prompt), and reset a password by code. Check the spam folder on the first try.
 - [ ] **Look through the app in light and dark mode** on a real phone. The automated contrast test
   covers 49 screens, but it cannot judge photos, shadows or anything drawn without text.

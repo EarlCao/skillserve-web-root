@@ -10,7 +10,7 @@ tags: [index, api]
 - [[API Documentation Pipeline]] — Swagger attributes → OpenAPI → `api-docs/` → mobile copy
 - [[Frontend-to-API Map]] — which admin page calls which endpoint
 - [[Mobile-to-API Map]] — which mobile feature calls which endpoint
-- [[External Integrations]] — NeonDB, Render, Resend, Google, Reverb
+- [[External Integrations]] — NeonDB, Render, Brevo, Google, Reverb
 
 ## Endpoint reference (generated)
 

@@ -56,7 +56,7 @@ everything else to PHP, returns a JSON 503 on 502/504, and allows 20 MB bodies.
 QUEUE_CONNECTION=database`, `LOGIN_RATE_LIMIT`, `REVERB_APP_ID/KEY/SECRET`,
 `SEED_MODE=starter` (keep it: a reset database then comes back with the default setup), `APP_TIMEZONE=UTC`,
 `BUSINESS_TIMEZONE=Asia/Manila`, `ADMIN_EMAIL/PASSWORD` (non-default; `SYSTEM_ADMIN_*` retired),
-Resend (`MAIL_MAILER=resend-api`, `RESEND_API_KEY`, `MAIL_FROM_ADDRESS` on the verified domain), `GOOGLE_CLIENT_ID`; `SWAGGER_UI_ENABLED` off unless demoing.
+Brevo (`MAIL_MAILER=brevo-api`, `BREVO_API_KEY`, `MAIL_FROM_ADDRESS` on the domain authenticated in Brevo), `GOOGLE_CLIENT_ID`; `SWAGGER_UI_ENABLED` off unless demoing.
 
 Verify after deploy: logs show migrations/seeding; `GET /api/health` → database and storage `up`;
 `GET /api/client/v1/platform` answers.

@@ -9,6 +9,17 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-07 — Back to Brevo, on a new account
+
+The owner chose **Brevo** again (`MAIL_MAILER=brevo-api`), on a new account sending from a domain
+authenticated in Brevo. The first account had been suspended by Brevo, which kept answering
+*accepted* — so codes worked at first, then silently stopped. Changes: sign-up refuses an email
+whose domain cannot receive mail (`client-auth.check_email_domain`, fewer bounces); a failed
+resend answers 503 with a retry message instead of a 500, and starts no cooldown; Brevo's refusal
+reason (`code`, `message`) and message id reach the log. Tests prove repeated resends and
+forgot-password codes all go out through Brevo. Setup and the suspension checklist:
+DEPLOYMENT.md → "Email codes". See [[Registration and OTP Flow]], [[External Integrations]].
+
 ## 2026-10-07 — Codes and mail by Resend
 
 The codes and every email now go out through **Resend** (`MAIL_MAILER=resend-api`,

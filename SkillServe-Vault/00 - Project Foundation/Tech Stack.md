@@ -23,7 +23,7 @@ Versions are the **installed** ones from lock files at audit time.
 | Other | laravel/tinker, ramsey/uuid | | |
 | Dev | phpunit 12, laravel/pint, mockery, faker, collision, pail, pao | | |
 | Database | PostgreSQL 17 (`postgres:17-alpine`) locally; NeonDB in production | | tests: in-memory SQLite |
-| Mail and codes | log mailer locally; **Resend** (`resend-api`, free plan, from a verified domain) in production carries the 6-digit codes and every email. Also built: the Gmail API (`gmail-api`, no domain needed), Mailjet (account blocked), Twilio Verify (paid), SendGrid and Brevo transports | | `app/Shared/Services/ResendApiTransport.php` |
+| Mail and codes | log mailer locally; **Brevo** (`brevo-api`, free 300/day, new account from an authenticated domain) in production carries the 6-digit codes and every email. Also built: Resend (`resend-api`), the Gmail API (`gmail-api`, no domain needed), Mailjet (account blocked), Twilio Verify (paid) and SendGrid transports | | `app/Shared/Services/BrevoApiTransport.php` |
 
 > [!note] Unused packages removed (2026-10-06)
 > DomPDF, laravel-backup, laravel-medialibrary, intervention/image, laravel-settings and
@@ -73,5 +73,5 @@ Versions are the **installed** ones from lock files at audit time.
 ## Infrastructure
 
 Docker Compose (local), Render (backend Docker web service + frontend static site), NeonDB
-(PostgreSQL), Render persistent disk for uploads, Resend (codes and mail), Google Cloud OAuth (sign-in).
+(PostgreSQL), Render persistent disk for uploads, Brevo (codes and mail), Google Cloud OAuth (sign-in).
 See [[Deployment Index]] and [[External Integrations]].

@@ -166,59 +166,84 @@ Things to know:
 - Only `storage/app` is on the disk. Logs, caches and compiled views stay in
   the container and are rebuilt on every start.
 
-### Email codes — Resend
+### Email codes — Brevo
 
 The mobile sign-up code, its resend and the forgot-password code — and every other email (admin
-password reset, notifications) — go out through **Resend's email API** over HTTPS
-(`MAIL_MAILER=resend-api`), which Render's free tier allows (it blocks SMTP). Everything below is
-free: Resend's free plan sends **3,000 emails a month, at most 100 a day**, from one domain. If
-Resend refuses an email, Render's log shows Resend's reason.
+password reset, notifications) — go out through **Brevo's transactional API** over HTTPS
+(`MAIL_MAILER=brevo-api`), which Render's free tier allows (it blocks SMTP). Brevo's free plan sends
+**300 emails a day**, with no monthly cap. A code can be asked for again once a minute, as many
+times as the user wants; each one is a new email, and a send that fails can be retried at once.
 
-**Resend needs a domain you control.** Until a domain is verified, Resend delivers only to the
-address you signed up to Resend with — testers and users get nothing. A free domain works:
+**Why the last account stopped working.** The app kept sending; Brevo **suspended the account**
+("Your sending platform is currently disabled"). Brevo still answers *accepted* to a suspended
+account, so nothing failed in the app — the emails just never left Brevo. Brevo does not reactivate
+an account twice, so the new one must not trip the same alarms. Brevo's usual triggers, and what
+SkillServe does about each:
 
-1. **Get a free domain** — DigitalPlat FreeDomain (sign-up link in
-   [github.com/DigitalPlatDev/FreeDomain](https://github.com/DigitalPlatDev/FreeDomain)) gives
-   names such as `skillserve.dpdns.org` or `skillserve.us.kg`. Register one. (Any domain you
-   already own works the same; skip to step 2.)
-2. **Put its DNS on Cloudflare (free)** — [dash.cloudflare.com](https://dash.cloudflare.com) →
-   sign up → **Add a domain** → type the domain → choose the **Free** plan. Cloudflare shows two
-   nameservers (e.g. `ada.ns.cloudflare.com`, `bob.ns.cloudflare.com`). In DigitalPlat, open the
-   domain → **Nameservers** → replace them with Cloudflare's two → save. Wait until Cloudflare
-   says the domain is **Active** (usually minutes, sometimes a few hours; Cloudflare emails you).
-3. **Resend account** — [resend.com/signup](https://resend.com/signup), free plan, confirm your
-   email.
-4. **Add the domain in Resend** — *Domains → Add domain* → type the domain (region: the default is
-   fine) → **Add**. Resend lists the DNS records it needs (a `TXT` for `resend._domainkey`, and an
-   `MX` plus a `TXT` for `send`). Click **Sign in to Cloudflare** / *Auto configure* and approve —
-   Resend writes the records for you. (Manual alternative: Cloudflare → the domain → **DNS →
-   Records → Add record**, copy each one exactly, and for any `CNAME` set *Proxy status* to
-   **DNS only**.) Back in Resend click **Verify DNS records**; wait for **Verified** (minutes, up
-   to a day).
-5. **API key** — Resend → *API Keys → Create API key* → name "SkillServe Render", permission
-   **Sending access**, domain = yours → **Add**. Copy the key now (starts with `re_`); Resend shows
-   it once.
-6. **Render → backend → Environment** (only after the Resend code is deployed — an unknown
-   `MAIL_MAILER` breaks every email):
+| Trigger | What prevents it |
+|---|---|
+| Bounces — codes sent to addresses that do not exist (typos, made-up test emails) | Sign-up now refuses an email whose domain cannot receive mail. **Test only with real inboxes.** |
+| A free Gmail/Yahoo address as the sender (fails DMARC; Brevo treats it as risky) | Send from **your own domain**, authenticated in Brevo (step 1 below; free) |
+| An unfinished profile, or an account that looks fake | Fill in the profile truthfully (step 3) |
+| API calls from a "new" IP — Render's IP changes on deploys | Turn off *unknown-IP blocking* (step 6), or every email fails with `unauthorized` |
+| Many accounts for one person, marketing/bulk mail | One account, used only for SkillServe's own emails |
+
+Setup:
+
+1. **Free domain** (skip if you own one) — register a free name such as `skillserve.dpdns.org` with
+   DigitalPlat FreeDomain (sign-up link in
+   [github.com/DigitalPlatDev/FreeDomain](https://github.com/DigitalPlatDev/FreeDomain)).
+2. **Its DNS on Cloudflare (free)** — [dash.cloudflare.com](https://dash.cloudflare.com) → **Add a
+   domain** → your domain → **Free** plan. Copy Cloudflare's two nameservers into DigitalPlat →
+   your domain → **Nameservers**, save, and wait until Cloudflare shows the domain **Active**.
+3. **New Brevo account** — [brevo.com](https://www.brevo.com) → *Sign up free*. Use a **different
+   email from the suspended account**. Confirm the email, then complete every onboarding question
+   honestly: your name, company "SkillServe", website (your domain or the Render URL), address and
+   mobile number (Brevo texts a code). If Brevo shows a banner asking to activate or validate the
+   account, finish it before going on.
+4. **Authenticate the domain** — gear icon → **Senders, Domains & Dedicated IPs → Domains → Add a
+   domain** → your domain. If Brevo offers automatic setup for Cloudflare, use it; otherwise add each
+   record it lists (Brevo code `TXT`, DKIM, DMARC) in Cloudflare → **DNS → Records**, with *Proxy
+   status* **DNS only** for any `CNAME`. Back in Brevo click **Authenticate this email domain** and
+   wait until it shows **Authenticated**.
+5. **Sender** — **Senders → Add a sender**: name `SkillServe`, email `no-reply@<your domain>`.
+   An authenticated domain's sender needs no confirmation email.
+6. **Allow Render's changing IP** — gear icon → **Security → Authorized IPs** → turn **off** the
+   blocking of unknown IP addresses (*Deactivate blocking*). Render's free tier has no fixed IP.
+7. **API key** — gear icon → **SMTP & API → API keys → Generate a new API key**, name
+   "SkillServe Render". Copy it (starts with `xkeysib-`); Brevo shows it once. Never paste it in a
+   chat or commit it.
+8. **Render → backend → Environment** (after the latest backend is deployed):
    ```
    OTP_DRIVER=mail
-   MAIL_MAILER=resend-api
-   RESEND_API_KEY=re_…
+   MAIL_MAILER=brevo-api
+   BREVO_API_KEY=xkeysib-…
    MAIL_FROM_ADDRESS=no-reply@<your domain>
    MAIL_FROM_NAME=SkillServe
    ```
-   `MAIL_FROM_ADDRESS` must end in the verified domain; the mailbox itself need not exist. The
-   Gmail / Mailjet / Brevo / Twilio variables can stay or be deleted.
-7. **Verify:** `GET /api/health` shows `"otp": {"status": "up", "driver": "mail", "mailer":
-   "resend-api"}`. Sign up in the app with a real email, then try *Forgot password*. Each email is
-   listed in Resend → **Emails** (delivered, bounced). The first emails from a new domain may land
-   in **Spam** — open one and mark *Not spam*. A failure is logged on Render as
-   `Failed to send registration OTP` / `Failed to send password reset code` with Resend's reason:
-   `validation_error … domain is not verified` (step 4 unfinished, or `MAIL_FROM_ADDRESS` on
-   another domain), `You can only send testing emails to your own email address` (same cause),
-   `daily_quota_exceeded` (100 emails today), or a 401 (wrong `RESEND_API_KEY`).
+   Save; Render redeploys. The Gmail / Resend / Mailjet / Twilio variables can stay or be deleted.
+9. **Verify:** `GET /api/health` shows `"otp": {"status": "up", "driver": "mail", "mailer":
+   "brevo-api"}`. On a phone, sign up with a real email, tap *Resend* a few times (a minute apart),
+   then try *Forgot password* a few times. In Brevo → **Transactional → Email → Logs** every email
+   should read **Delivered**. Check Spam on the first one and mark it *Not spam*.
 
-A code can be re-sent once a minute, as often as needed; each send is one of the day's 100 emails.
+**Keep checking it.** A suspension does not show as an error in the app or on Render — only in
+Brevo. If codes stop arriving: Brevo → Transactional → Logs. *Sent* but never *Delivered*, or a
+"sending platform disabled" note, means Brevo suspended the account → open a ticket from Brevo's help
+menu (*Support and Tickets*). A failure the app *can* see is logged on Render as
+`Failed to send registration OTP` / `OTP send failed.` / `Failed to send password reset code` with
+Brevo's reason: `unauthorized … unrecognised IP address` (step 6), `unauthorized Key not found`
+(wrong `BREVO_API_KEY`), `invalid_parameter … sender` (step 5). One address that stops receiving
+while others work is usually on Brevo's block list (it bounced or was marked spam): Brevo →
+**Transactional → Contacts → Blocked** → unblock it.
+
+#### Alternative: Resend (needs a domain)
+
+`MAIL_MAILER=resend-api` with `RESEND_API_KEY` (Resend → *API Keys*, *Sending access*) and
+`MAIL_FROM_ADDRESS` on a domain verified in Resend (*Domains → Add domain*, same free domain and
+Cloudflare as steps 1–2). Free: 3,000 a month, 100 a day. Without a verified domain Resend delivers
+only to the address the Resend account was made with.
+
 
 #### Alternative: Gmail API (no domain needed)
 
@@ -256,7 +281,7 @@ no domain. One-time setup, in the **same Google Cloud project as Google sign-in*
    MAIL_FROM_ADDRESS=<the same Gmail you signed in with>
    MAIL_FROM_NAME=SkillServe
    ```
-   (`RESEND_API_KEY` can stay.)
+   (`BREVO_API_KEY` can stay.)
 6. **Verify:** `GET /api/health` shows `"otp": {"status": "up", "driver": "mail", "mailer":
    "gmail-api"}`. Sign up in the app with a real email, then try *Forgot password*; the emails also
    appear in that Gmail's **Sent** folder. A failure is logged on Render as
@@ -424,7 +449,7 @@ Do these in order on the real services and note the date and result of each — 
 1. **Backend service** (Render, paid instance with the persistent disk at
    `/var/www/html/storage/app`, see "Uploaded files"). Environment as in Step 2, including
    `APP_KEY`, `APP_URL`, `FRONTEND_URL`, the Neon `DB_*`, `REVERB_APP_ID/KEY/SECRET`,
-   `BUSINESS_TIMEZONE=Asia/Manila`, Resend for the codes and email (see "Email codes"),
+   `BUSINESS_TIMEZONE=Asia/Manila`, Brevo for the codes and email (see "Email codes"),
    `GOOGLE_CLIENT_ID`, `SEED_MODE=starter` and strong `ADMIN_PASSWORD` /
    Leave `SWAGGER_UI_ENABLED` off unless you will demo the API docs.
 2. **Deploy and verify** — the log shows migrations and seeding; `GET /api/health` returns

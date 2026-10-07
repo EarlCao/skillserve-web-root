@@ -1,7 +1,7 @@
 ---
 type: domain
 tags: [domain, auth, mobile]
-sources: [backend/app/Modules/ClientAuthentication/Services/PendingRegistrationService.php, ClientEmailOtpService.php, backend/app/Shared/Services/ResendApiTransport.php, backend/app/Shared/Services/GmailApiTransport.php, backend/app/Shared/Services/MailjetApiTransport.php, backend/app/Shared/Services/TwilioVerifyClient.php, ClientGoogleAuthService.php, ClientAuthenticationService.php, ProviderSignups.php, backend/app/Modules/ClientAuthentication/Models/PendingRegistration.php, backend/database/migrations/2026_10_03_000001_add_password_step_to_pending_registrations.php]
+sources: [backend/app/Modules/ClientAuthentication/Services/PendingRegistrationService.php, ClientEmailOtpService.php, backend/app/Shared/Services/BrevoApiTransport.php, backend/app/Shared/Services/ResendApiTransport.php, backend/app/Shared/Services/GmailApiTransport.php, backend/app/Shared/Services/MailjetApiTransport.php, backend/app/Shared/Services/TwilioVerifyClient.php, ClientGoogleAuthService.php, ClientAuthenticationService.php, ProviderSignups.php, backend/app/Modules/ClientAuthentication/Models/PendingRegistration.php, backend/database/migrations/2026_10_03_000001_add_password_step_to_pending_registrations.php]
 ---
 # Registration and OTP Flow
 
@@ -11,11 +11,13 @@ and Google sign-ups take the same steps, in this order:
 **National ID scan → details (+ email, or the Google account) → 6-digit code → password + confirmation → account**
 
 > [!info] Who sends the code (2026-10-07)
-> Production: `OTP_DRIVER=mail` with `MAIL_MAILER=resend-api` — SkillServe generates the code,
-> stores its hash, and `ClientEmailOtpNotification` goes out **through Resend** from a domain
-> verified in Resend (free plan: 3,000/month, 100/day). Brevo suspended the account and Mailjet
-> blocked its new one; Twilio has no free trial in the Philippines. The Gmail API
-> (`gmail-api`, no domain needed) stays as the alternative. The 10-minute
+> Production: `OTP_DRIVER=mail` with `MAIL_MAILER=brevo-api` — SkillServe generates the code,
+> stores its hash, and `ClientEmailOtpNotification` goes out **through a new Brevo account**
+> from a domain authenticated in Brevo (free: 300/day). The first account was suspended by Brevo,
+> which still answered *accepted*, so codes stopped without any error in the app. Sign-up refuses
+> email domains that cannot receive mail (`client-auth.check_email_domain`), to keep bounces —
+> Brevo's main suspension trigger — down. A failed send starts no cooldown and can be retried at
+> once (resend answers 503). Resend and the Gmail API stay as alternatives. The 10-minute
 > expiry, 5 attempts and 60-second resend window are enforced here. `GET /api/health` →
 > `services.otp` shows whether sending is configured. Setup: DEPLOYMENT.md → "Email codes".
 > Also built: `OTP_DRIVER=twilio` (Twilio Verify generates, emails and checks the code; the row
@@ -27,7 +29,7 @@ sequenceDiagram
   participant App
   participant API
   participant DB
-  participant Mail as Resend
+  participant Mail as Brevo
   App->>API: POST /auth/register | /auth/register-provider | /auth/google/register (details, no password)
   API->>DB: upsert pending_registrations (password NULL, registration_token_hash, google_sub for Google)
   API->>Mail: 6-digit OTP email
@@ -50,6 +52,8 @@ sequenceDiagram
 | OTP lifetime | 10 min (`CODE_TTL_MINUTES`) | same |
 | Max wrong attempts | 5 (`MAX_ATTEMPTS`) → 429 | same |
 | Resend cooldown | 60 s → 429 (`resend-otp`; a repeat sign-up in that window answers 429 with `meta.verification_required`) | same |
+| Failed send | sign-up and `resend-otp` → 503 "We could not send your verification code…"; no cooldown starts, so the user can retry at once; the reason goes to Render's log | `PendingRegistrationService`, `ClientAuthController` |
+| Email domain | sign-up needs a domain that can receive mail (`email:rfc,dns`), else 422; off in tests (`CLIENT_AUTH_CHECK_EMAIL_DOMAIN=false`) | `RegisterClientRequest`, `RegisterProviderClientRequest` |
 | Password | min 8, confirmed; chosen **after** the code | `CompleteClientRegistrationRequest` |
 | Registration token | 64 random chars, stored as SHA-256; required to set the password and to cancel, so knowing the email is not enough | `PendingRegistrationService` |
 | Pending registration lifetime | 24 h (`PendingRegistration::LIFETIME_HOURS`), pruned on next attempt | model |
