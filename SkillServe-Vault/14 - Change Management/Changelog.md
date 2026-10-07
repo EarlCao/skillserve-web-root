@@ -9,6 +9,15 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-07 — Codes and mail by Resend
+
+The codes and every email now go out through **Resend** (`MAIL_MAILER=resend-api`,
+`ResendApiTransport`, free 3,000/month and 100/day). Resend sends to other people only from a
+verified domain, so the setup adds a free DigitalPlat domain with its DNS on Cloudflare's free plan
+(DEPLOYMENT.md → "Email codes"). A refusal raises Resend's reason into the server log;
+`GET /api/health` → `services.otp` checks `RESEND_API_KEY`. The Gmail API mailer stays as the
+no-domain alternative. See [[Registration and OTP Flow]], [[External Integrations]].
+
 ## 2026-10-06 — Codes and mail sent as Gmail (Gmail API)
 
 Mailjet blocked the new account ("Your account has been temporarily blocked"), the second email

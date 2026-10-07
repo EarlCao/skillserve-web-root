@@ -23,7 +23,7 @@ Versions are the **installed** ones from lock files at audit time.
 | Other | laravel/tinker, ramsey/uuid | | |
 | Dev | phpunit 12, laravel/pint, mockery, faker, collision, pail, pao | | |
 | Database | PostgreSQL 17 (`postgres:17-alpine`) locally; NeonDB in production | | tests: in-memory SQLite |
-| Mail and codes | log mailer locally; the **Gmail API** (`gmail-api`, sends as the owner's Gmail) in production carries the 6-digit codes and every email. Also built, unused: Mailjet (account blocked), Twilio Verify (paid), SendGrid and Brevo transports | | `app/Shared/Services/GmailApiTransport.php` |
+| Mail and codes | log mailer locally; **Resend** (`resend-api`, free plan, from a verified domain) in production carries the 6-digit codes and every email. Also built: the Gmail API (`gmail-api`, no domain needed), Mailjet (account blocked), Twilio Verify (paid), SendGrid and Brevo transports | | `app/Shared/Services/ResendApiTransport.php` |
 
 > [!note] Unused packages removed (2026-10-06)
 > DomPDF, laravel-backup, laravel-medialibrary, intervention/image, laravel-settings and
@@ -73,5 +73,5 @@ Versions are the **installed** ones from lock files at audit time.
 ## Infrastructure
 
 Docker Compose (local), Render (backend Docker web service + frontend static site), NeonDB
-(PostgreSQL), Render persistent disk for uploads, Gmail API (codes and mail), Google Cloud OAuth (sign-in).
+(PostgreSQL), Render persistent disk for uploads, Resend (codes and mail), Google Cloud OAuth (sign-in).
 See [[Deployment Index]] and [[External Integrations]].

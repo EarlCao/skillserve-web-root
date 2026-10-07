@@ -82,20 +82,20 @@ advisories have no non-breaking fix yet).
   Email sign-up, email login and everything else keep working. Ask testers to install the new build.
 - [ ] **Accounts made by Google sign-up before 2026-10-03** have no password their owner knows. They
   sign in by tapping "Forgot password?" on the password prompt once. Tell your testers.
-- [ ] **OTP email: Gmail API (decided 2026-10-06).** Brevo suspended the old account, Twilio has no
-  free trial in the Philippines, and Mailjet blocked the new account (*"Your account has been
-  temporarily blocked"* — now visible in Render's log since the `start.sh` fix). Mail is sent as
-  the owner's Gmail through the Gmail API (`MAIL_MAILER=gmail-api`), built and tested.
-  **Owner:** in the Google sign-in Cloud project, enable the Gmail API, publish the OAuth consent
-  screen (so the token does not expire after 7 days), create a *Web application* client with the
-  OAuth Playground redirect URI, get a refresh token for `earlcao12345.ec@gmail.com` with the
-  `gmail.send` scope, and set on Render `MAIL_MAILER=gmail-api`, `GMAIL_CLIENT_ID`,
-  `GMAIL_CLIENT_SECRET`, `GMAIL_REFRESH_TOKEN`, `MAIL_FROM_ADDRESS` = that Gmail
-  (DEPLOYMENT.md → "Email codes"). The Mailjet support request can stay open as a fallback.
+- [ ] **OTP email: Resend (decided 2026-10-07).** Brevo suspended the old account, Twilio has no
+  free trial in the Philippines, and Mailjet blocked the new account. Resend's free plan
+  (3,000/month, 100/day) is built and tested (`MAIL_MAILER=resend-api`), but Resend delivers to
+  other people only from a **verified domain**. **Owner:** (1) deploy the backend first; (2) get a
+  free DigitalPlat domain (e.g. `skillserve.dpdns.org`) and move its DNS to Cloudflare's free
+  plan; (3) create the Resend account, add and verify the domain, create a *Sending access* API
+  key; (4) set on Render `MAIL_MAILER=resend-api`, `RESEND_API_KEY`,
+  `MAIL_FROM_ADDRESS=no-reply@<domain>`, `MAIL_FROM_NAME=SkillServe` (DEPLOYMENT.md → "Email
+  codes"). If the domain cannot be had, use the Gmail API instead (same section, no domain).
   **Verify:** `GET /api/health` → `"otp": {"status": "up", "driver": "mail", "mailer":
-  "gmail-api"}`; a sign-up and a forgot password each arrive and show in that Gmail's *Sent*.
+  "resend-api"}`; a sign-up and a forgot password each arrive (check Spam first) and are listed in
+  Resend → *Emails*. Test with real addresses only.
 - [ ] **Real-phone check with the deployed backend:** sign up by email and by Google (the code
-  arrives by email from Brevo, then the password screen), log in by email and by Google (password
+  arrives by email from Resend, then the password screen), log in by email and by Google (password
   prompt), and reset a password by code. Check the spam folder on the first try.
 - [ ] **Look through the app in light and dark mode** on a real phone. The automated contrast test
   covers 49 screens, but it cannot judge photos, shadows or anything drawn without text.

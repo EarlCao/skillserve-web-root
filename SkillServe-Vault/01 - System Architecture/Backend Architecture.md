@@ -87,7 +87,8 @@ Services module's `CreateServiceAction`/`UpdateServiceAction`). See [[Module Rel
 | `Realtime/RealtimeChangeTracker`, `AdminDataChanged` | collect model changes per request/job; broadcast once on `admin.data` |
 | `Helpers/BusinessTime` | UTC storage ↔ Asia/Manila wall clock |
 | `Helpers/PageSize` | `per_page` or System Settings default, clamped 1–100 |
-| `Services/GmailApiTransport` | mail as the owner's Gmail over the Gmail API (`MAIL_MAILER=gmail-api`) — production |
+| `Services/ResendApiTransport` | mail over Resend's email API (`MAIL_MAILER=resend-api`) from a verified domain — production |
+| `Services/GmailApiTransport` | mail as the owner's Gmail over the Gmail API (`MAIL_MAILER=gmail-api`) — no-domain alternative |
 | `Services/MailjetApiTransport` | mail over Mailjet's Send API (`MAIL_MAILER=mailjet-api`); account blocked, unused |
 | `Services/TwilioVerifyClient` | Twilio Verify: sends and checks the 6-digit codes (`OTP_DRIVER=twilio`); built, unused (paid) |
 | `Services/SendGridApiTransport` | mail over SendGrid's HTTPS API (`MAIL_MAILER=sendgrid-api`) |
