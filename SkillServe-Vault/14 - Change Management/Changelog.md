@@ -9,6 +9,15 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-10 — Forgot password checks the account; sidebar count badges
+
+- **Forgot password** now answers 404 "There is no SkillServe account with this email" for an
+  unknown address (owner decision), so the app opens the code step only for a real account,
+  Google-created ones included; suspended/banned accounts get the 403 `meta.account` refusal.
+- **Admin sidebar badges:** Support Management and Reports and Moderation show the number of new
+  tickets / pending reports, live (`GET /api/dashboard/attention`).
+- **GCash number field** shows its 11-digit counter and says a +63 number becomes 09.
+
 ## 2026-10-10 — Mobile: OTP keyboard, realtime verification, dark mode follows the phone
 
 - **OTP keyboard:** the hidden code field now lies over the six boxes, so one tap opens the keyboard

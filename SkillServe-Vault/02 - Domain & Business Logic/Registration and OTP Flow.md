@@ -89,7 +89,7 @@ Google identifies the person; **the account password signs in**. Google alone ne
 
 | Step | Endpoint | Notes |
 |---|---|---|
-| 1 | `POST /auth/forgot-password {email}` | Emails a code (`ClientEmailOtpNotification`, purpose `password_reset`). Always 202: unknown, inactive or admin addresses, and an address sent a code in the last 60 s, get no email but the same answer. |
+| 1 | `POST /auth/forgot-password {email}` | Emails a code (`ClientEmailOtpNotification`, purpose `password_reset`) to any mobile account, Google-created ones included → 202, and the app opens the code step. An address with no mobile account → 404 (`errors.email`, owner decision 2026-10-10; sign-up already reveals taken addresses and `client-auth` limits the rate); a suspended or banned account → 403 with `meta.account`; an address sent a code in the last 60 s → 202 with no new email. |
 | 2 | `POST /auth/verify-reset-code {email, code}` | Same OTP rules (10 min, 5 attempts). Returns a single-use `reset_token` from the `clients` password broker (60 min). |
 | 3 | `POST /auth/reset-password {email, token, password, password_confirmation}` | Sets the password and revokes every session. |
 

@@ -109,6 +109,9 @@ advisories have no non-breaking fix yet).
   phone's light/dark setting. **GCash test:** provider saves GCash details (Profile → GCash
   details), customer books with GCash and sees "How to pay" with that number, provider records the
   payment, the customer's open booking turns *Paid* by itself, and the commission shows outstanding.
+  **Forgot password:** an unknown email stays on the email step with "There is no SkillServe
+  account with this email"; a real one (also a Google one) opens the code step. **Admin web:**
+  file a support ticket and a report from the app — the sidebar badges go up without a refresh.
 - [ ] **Look through the app in light and dark mode** on a real phone. The automated contrast test
   covers 49 screens, but it cannot judge photos, shadows or anything drawn without text.
 

@@ -45,3 +45,10 @@ still empty (not yet executed on the deployed system) — see [[UAT and Traceabi
 ## Related
 
 [[Reports and Moderation Lifecycle]] · [[reports]] · [[Admin Web Features Index]]
+
+## Sidebar count badge
+
+The sidebar shows how many reports still `pending` (nobody has picked them up) next to this page, from `GET /api/dashboard/attention`
+(null when the viewer may not open the list). It lives under the `dashboard` query key, so every
+realtime change refetches it: a ticket or report filed in the app shows up at once. A closed
+sidebar group shows the total of its items; the collapsed icon rail shows a dot.
