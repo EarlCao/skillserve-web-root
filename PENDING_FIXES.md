@@ -93,6 +93,9 @@ advisories have no non-breaking fix yet).
   IPs → blocking off; (6) new API key; (7) on Render `MAIL_MAILER=brevo-api`, `BREVO_API_KEY`,
   `MAIL_FROM_ADDRESS=no-reply@<domain>`, `MAIL_FROM_NAME=SkillServe` (DEPLOYMENT.md → "Email codes").
   Test only with real inboxes. Delete the old account's API key if it still exists.
+  **Built 2026-10-10:** `GET /api/health` now asks Brevo itself and reports `down` with an
+  `error` when Brevo refuses the key/IP, the daily allowance is used up, or emails were accepted
+  but none delivered (a suspension) — the failure that went unseen last time.
   **Verify:** `GET /api/health` → `"otp": {"status": "up", "driver": "mail", "mailer":
   "brevo-api"}`; sign-up, several resends and several forgot-password codes all show *Delivered*
   in Brevo → Transactional → Logs. Re-check those logs after a few days of testing.

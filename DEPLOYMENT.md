@@ -223,12 +223,17 @@ Setup:
    ```
    Save; Render redeploys. The Gmail / Resend / Mailjet / Twilio variables can stay or be deleted.
 9. **Verify:** `GET /api/health` shows `"otp": {"status": "up", "driver": "mail", "mailer":
-   "brevo-api"}`. On a phone, sign up with a real email, tap *Resend* a few times (a minute apart),
+   "brevo-api"}`. With Brevo the health check asks Brevo itself (answer cached 5 minutes), so
+   `"status": "down"` comes with an `error` saying why. On a phone, sign up with a real email, tap *Resend* a few times (a minute apart),
    then try *Forgot password* a few times. In Brevo → **Transactional → Email → Logs** every email
    should read **Delivered**. Check Spam on the first one and mark it *Not spam*.
 
-**Keep checking it.** A suspension does not show as an error in the app or on Render — only in
-Brevo. If codes stop arriving: Brevo → Transactional → Logs. *Sent* but never *Delivered*, or a
+**Keep checking it.** A suspension does not show as an error in the app — Brevo still answers
+*accepted*. Open `GET /api/health` now and then (and first whenever codes stop arriving): its
+`services.otp.error` reads *Brevo refused the API key or this server's IP address* (steps 6–7),
+*The Brevo sending allowance is used up* (300 a day on the free plan; it renews), or *Brevo
+accepted N emails in the last two days and delivered none* (suspended — see below). Then: Brevo →
+Transactional → Logs. *Sent* but never *Delivered*, or a
 "sending platform disabled" note, means Brevo suspended the account → open a ticket from Brevo's help
 menu (*Support and Tickets*). A failure the app *can* see is logged on Render as
 `Failed to send registration OTP` / `OTP send failed.` / `Failed to send password reset code` with

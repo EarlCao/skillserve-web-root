@@ -1,7 +1,7 @@
 ---
 type: domain
 tags: [domain, auth, mobile]
-sources: [backend/app/Modules/ClientAuthentication/Services/PendingRegistrationService.php, ClientEmailOtpService.php, backend/app/Shared/Services/BrevoApiTransport.php, backend/app/Shared/Services/ResendApiTransport.php, backend/app/Shared/Services/GmailApiTransport.php, backend/app/Shared/Services/MailjetApiTransport.php, backend/app/Shared/Services/TwilioVerifyClient.php, ClientGoogleAuthService.php, ClientAuthenticationService.php, ProviderSignups.php, backend/app/Modules/ClientAuthentication/Models/PendingRegistration.php, backend/database/migrations/2026_10_03_000001_add_password_step_to_pending_registrations.php]
+sources: [backend/app/Modules/ClientAuthentication/Services/PendingRegistrationService.php, ClientEmailOtpService.php, backend/app/Shared/Services/BrevoApiTransport.php, backend/app/Shared/Services/BrevoAccountCheck.php, backend/app/Shared/Services/ResendApiTransport.php, backend/app/Shared/Services/GmailApiTransport.php, backend/app/Shared/Services/MailjetApiTransport.php, backend/app/Shared/Services/TwilioVerifyClient.php, ClientGoogleAuthService.php, ClientAuthenticationService.php, ProviderSignups.php, backend/app/Modules/ClientAuthentication/Models/PendingRegistration.php, backend/database/migrations/2026_10_03_000001_add_password_step_to_pending_registrations.php]
 ---
 # Registration and OTP Flow
 
@@ -19,7 +19,9 @@ and Google sign-ups take the same steps, in this order:
 > Brevo's main suspension trigger — down. A failed send starts no cooldown and can be retried at
 > once (resend answers 503). Resend and the Gmail API stay as alternatives. The 10-minute
 > expiry, 5 attempts and 60-second resend window are enforced here. `GET /api/health` →
-> `services.otp` shows whether sending is configured. Setup: DEPLOYMENT.md → "Email codes".
+> `services.otp` shows whether sending is configured and, with Brevo, asks Brevo
+> (`BrevoAccountCheck`, cached 5 min) whether it would really deliver: `down` + `error` for a
+> refused key/IP, a used-up allowance, or accepted-but-undelivered mail (suspension). Setup: DEPLOYMENT.md → "Email codes".
 > Also built: `OTP_DRIVER=twilio` (Twilio Verify generates, emails and checks the code; the row
 > stores the marker `twilio-verify`), unused because it is paid.
 

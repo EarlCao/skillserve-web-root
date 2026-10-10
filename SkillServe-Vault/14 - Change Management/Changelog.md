@@ -9,6 +9,16 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-10 — The health check asks Brevo whether codes are delivered
+
+Brevo answers *accepted* even from an account it will not deliver for, which is how the first
+account's suspension went unnoticed. `GET /api/health` → `services.otp` now asks Brevo
+(`BrevoAccountCheck`: `GET /v3/account` and the last two days' transactional statistics, cached 5
+minutes) and reports `down` with a plain `error` when Brevo refuses the key or the server's IP, the
+sending allowance is used up, or emails were accepted but none delivered. Brevo's own messages go
+to the log only. Sign-up, resend and forgot-password codes are unchanged; their tests (repeated
+sends, retry after a failure) still pass. See [[Registration and OTP Flow]].
+
 ## 2026-10-07 — Back to Brevo, on a new account
 
 The owner chose **Brevo** again (`MAIL_MAILER=brevo-api`), on a new account sending from a domain
