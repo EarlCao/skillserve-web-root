@@ -37,6 +37,11 @@ Opening a row loads the submission's documents and decision history; the list it
 Approving takes an optional internal note, never shown to the holder. Rejecting requires a reason,
 which **is** shown to them so they can correct the problem and resubmit.
 
+Both decisions notify the holder (`NotifyHolderOfIdentityDecision` → `IdentityDecisionNotification`,
+type `identity_verification`, action `approved`/`rejected`, not mutable). The realtime push makes the
+app refresh the account, its eligibility and the identity screen at once; a tap opens
+`/identity-verification`. A provider whose approval also verifies them gets the "verified" notice too.
+
 ## What the reviewer deliberately cannot see or do
 
 - **The card number is never sent to the browser** — only its last four digits. The reviewer

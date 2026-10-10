@@ -9,6 +9,22 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-10 — Mobile: OTP keyboard, realtime verification, dark mode follows the phone
+
+- **OTP keyboard:** the hidden code field now lies over the six boxes, so one tap opens the keyboard
+  — before, a tap on a box only re-requested focus, which does nothing once the field is focused and
+  the keyboard was closed. Test: `otp_code_field_test.dart`.
+- **Realtime verification:** the provider Home card and Profile badge read the signed-in account's
+  `provider.verification_status`, which every verification notification refreshes; before, each
+  screen kept a copy loaded once. National ID approvals and rejections now notify the holder
+  (`identity_verification`), and the app refreshes eligibility and the ID screen on it.
+- **Open booking follows updates:** an open booking screen reloads when its booking's status or
+  payment status changes in the lists a booking notification reloads (e.g. the provider confirms a
+  GCash payment).
+- **Dark mode:** the Profile switch showed only an explicit *Dark* choice, so a phone in dark mode
+  made the app dark with the switch off, and flipping it pinned a theme for good. It now shows the
+  theme on screen, and matching the phone returns to *system*.
+
 ## 2026-10-10 — The health check asks Brevo whether codes are delivered
 
 Brevo answers *accepted* even from an account it will not deliver for, which is how the first

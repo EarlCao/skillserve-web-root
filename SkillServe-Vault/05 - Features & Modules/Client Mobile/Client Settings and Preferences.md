@@ -20,7 +20,7 @@ Mobile requirement(s): **M14** ([[Requirements Sources]]).
 |---|---|---|---|
 | M 14.1 | Notification Preferences | booking / service / message / announcement toggles (server-side; muted categories are not stored) | implemented |
 | M 14.2 | Privacy Settings | private profile (hides provider from discovery), activity personalization | implemented |
-| M 14.3 | Application Preferences | theme light/dark/system, reduce motion | implemented |
+| M 14.3 | Application Preferences | theme light/dark/system (default: system, follows the phone), reduce motion. The Profile "Dark mode" switch shows the theme on screen; setting it to match the phone goes back to *system*, setting it against the phone pins light or dark | implemented |
 | M 14.4 | View Platform Policies | terms, privacy, community guidelines from `/platform`; bundled fallback offline | implemented |
 
 UAT result columns in the mobile `TEST_PLAN.md` are still empty — see [[UAT and Traceability]].

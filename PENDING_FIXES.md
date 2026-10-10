@@ -102,6 +102,13 @@ advisories have no non-breaking fix yet).
 - [ ] **Real-phone check with the deployed backend:** sign up by email and by Google (the code
   arrives by email from Brevo, then the password screen), log in by email and by Google (password
   prompt), and reset a password by code. Check the spam folder on the first try.
+- [ ] **Phone check of the 2026-10-10 mobile fixes** (needs a new APK and the backend deployed):
+  tap a code box after closing the keyboard — it opens at once; approve a provider (or a National
+  ID) on the admin web while the app is open on Home and on Profile — the card and badge turn
+  *Verified* without reopening; with the Profile "Dark mode" switch untouched, the app follows the
+  phone's light/dark setting. **GCash test:** provider saves GCash details (Profile → GCash
+  details), customer books with GCash and sees "How to pay" with that number, provider records the
+  payment, the customer's open booking turns *Paid* by itself, and the commission shows outstanding.
 - [ ] **Look through the app in light and dark mode** on a real phone. The automated contrast test
   covers 49 screens, but it cannot judge photos, shadows or anything drawn without text.
 
