@@ -9,6 +9,12 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-11 — Administrators can set a profile photo
+
+Account menu (top right, beside the light/dark toggle) → *Add profile photo* / *Remove photo*. The
+header shows the photo instead of the initials. `POST`/`DELETE /api/auth/me/photo`;
+`profile_photo_url` on `GET /api/auth/me`. Stored like mobile profile photos.
+
 ## 2026-10-11 — Fix: clearing a setting failed with "A database error occurred"
 
 `settings.payload` is NOT NULL, but the API turns an empty field into null, so clearing any optional

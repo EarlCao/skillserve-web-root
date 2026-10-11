@@ -6,11 +6,11 @@ tags: [api, index, generated]
 ---
 # Endpoints Index
 
-> [!info] Generated on 2026-10-11 from `php artisan route:list` — 258 route entries in 34 groups.
+> [!info] Generated on 2026-10-11 from `php artisan route:list` — 260 route entries in 34 groups.
 
 | Group | Routes | Scope |
 |---|---|---|
-| [[API - Admin Authentication]] | 4 | Admin web sign-in, sign-out, profile and password endpoints (`/api/auth/*`). |
+| [[API - Admin Authentication]] | 6 | Admin web sign-in, sign-out, profile and password endpoints (`/api/auth/*`). |
 | [[API - Dashboard]] | 2 | Admin dashboard read model. `commission_summary` is included only for viewers holding `view commissions` or `manage commissions`. |
 | [[API - Administrators, Roles and Permissions]] | 15 | Staff accounts, roles and the permission catalogue. |
 | [[API - Users]] | 10 | Admin User Management (customer and provider accounts). |

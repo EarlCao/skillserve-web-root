@@ -22,5 +22,7 @@ Feature note: [[Admin Authentication]] · Conventions: [[API Conventions]] · In
 | POST | `/api/auth/login` | `Authentication::AuthController@login` | `throttle:login` | No controller check found (see middleware / service) |
 | POST | `/api/auth/logout` | `Authentication::AuthController@logout` | `auth:sanctum`, `abilities:admin:auth` | No controller check found (see middleware / service) |
 | GET | `/api/auth/me` | `Authentication::AuthController@me` | `auth:sanctum`, `abilities:admin:auth` | No controller check found (see middleware / service) |
+| DELETE | `/api/auth/me/photo` | `Authentication::AuthController@deleteProfilePhoto` | `auth:sanctum`, `abilities:admin:auth` | No controller check found (see middleware / service) |
+| POST | `/api/auth/me/photo` | `Authentication::AuthController@updateProfilePhoto` | `auth:sanctum`, `abilities:admin:auth` | No controller check found (see middleware / service) |
 
 Every `api/*` route also runs the `api` group: `throttle:api` (60/min per user or IP), `SubstituteBindings`, `ForceJsonResponse`, `CacheApiResponse`, `AddRateLimitHeaders`.

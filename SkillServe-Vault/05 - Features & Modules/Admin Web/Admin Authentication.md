@@ -25,6 +25,7 @@ Admin requirement module **1** ([[Requirements Sources]]).
 | A 1.2 | Admin Logout | `POST /api/auth/logout` revokes the current token; SPA clears `localStorage` |
 | A 1.3 | Role-Based Access Control | Spatie permissions checked per action (policies/gates); SPA hides menu items and wraps routes in `RequirePermission` |
 | A 1.4 | Password Management | change password (other sessions revoked). A forgotten admin password is reset by another administrator in Administrator Management; there is no self-service reset (removed 2026-10-11). |
+| — | Profile photo | account menu (top right, beside the light/dark toggle) → *Add / Change profile photo* (JPG, PNG or WebP, ≤ 5 MB) or *Remove photo*; `POST`/`DELETE /api/auth/me/photo`, same storage as mobile photos (`ClientProfileService`); `GET /api/auth/me` returns `profile_photo_url`, shown in the header instead of the initials |
 | A 1.5 | Session Management | token lifetime = System Settings → session timeout; any 401 logs the SPA out |
 
 **Status:** code present for every functionality above. UAT result columns in `TEST_PLAN.md` are
