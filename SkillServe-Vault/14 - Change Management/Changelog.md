@@ -9,6 +9,12 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-11 — Fix: clearing a setting failed with "A database error occurred"
+
+`settings.payload` is NOT NULL, but the API turns an empty field into null, so clearing any optional
+setting (the theme colour back to SkillServe green, the support email, a policy text) failed.
+`SettingsService::update` now stores a cleared value as `''`. Test: `SettingsTest`.
+
 ## 2026-10-11 — SkillServe green, Appearance settings, official logo; admin forgot-password removed
 
 - **Admin web is green**: daisyUI's blue primary is replaced with SkillServe green (`#03833E` light,
