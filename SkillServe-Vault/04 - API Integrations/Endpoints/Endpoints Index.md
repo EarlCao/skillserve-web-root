@@ -1,17 +1,17 @@
 ---
 type: index
 generated: true
-generated_on: 2026-10-01
+generated_on: 2026-10-11
 tags: [api, index, generated]
 ---
 # Endpoints Index
 
-> [!info] Generated on 2026-10-01 from `php artisan route:list` — 248 route entries in 34 groups.
+> [!info] Generated on 2026-10-11 from `php artisan route:list` — 257 route entries in 34 groups.
 
 | Group | Routes | Scope |
 |---|---|---|
 | [[API - Admin Authentication]] | 6 | Admin web sign-in, sign-out, profile and password endpoints (`/api/auth/*`). |
-| [[API - Dashboard]] | 1 | Admin dashboard read model. `commission_summary` is included only for viewers holding `view commissions` or `manage commissions`. |
+| [[API - Dashboard]] | 2 | Admin dashboard read model. `commission_summary` is included only for viewers holding `view commissions` or `manage commissions`. |
 | [[API - Administrators, Roles and Permissions]] | 15 | Staff accounts, roles and the permission catalogue. |
 | [[API - Users]] | 10 | Admin User Management (customer and provider accounts). |
 | [[API - Service Categories]] | 11 | Categories and nested subcategories. |
@@ -28,7 +28,7 @@ tags: [api, index, generated]
 | [[API - System Settings]] | 2 | Admin system settings. |
 | [[API - Data Management]] | 7 | Exports, archives and deleted-record management. |
 | [[API - Support Tickets (Admin)]] | 6 | Admin support ticket desk. |
-| [[API - Client Authentication]] | 21 | Mobile registration, OTP, login, Google sign-in, refresh, profile and account deletion. |
+| [[API - Client Authentication]] | 23 | Mobile registration, OTP, login, Google sign-in, refresh, profile and account deletion. |
 | [[API - Client Catalog]] | 6 | Public marketplace discovery (no token required). |
 | [[API - Client Bookings]] | 5 | Customer booking lifecycle. |
 | [[API - Client Disputes]] | 3 | Either party raises a dispute and uploads evidence. |
@@ -41,8 +41,8 @@ tags: [api, index, generated]
 | [[API - Client Preferences and Platform]] | 3 | Per-user app preferences and public platform info/policies. |
 | [[API - Provider Bookings (Mobile)]] | 8 | The provider's jobs and their lifecycle. |
 | [[API - Provider Services (Mobile)]] | 6 | Provider-managed services (subject to admin approval). |
-| [[API - Provider Account (Mobile)]] | 12 | Provider profile, portfolio, availability, badges and verification upload. |
+| [[API - Provider Account (Mobile)]] | 14 | Provider profile, portfolio, availability, badges and verification upload. |
 | [[API - Locations]] | 3 | Public Philippine address-picker data (PSA PSGC) and the National-ID address matcher. |
-| [[API - Platform and Infrastructure]] | 33 | Health checks, broadcasting auth, Swagger docs, storage and framework routes. |
+| [[API - Platform and Infrastructure]] | 37 | Health checks, broadcasting auth, Swagger docs, storage and framework routes. |
 
 Back to [[API Index]]

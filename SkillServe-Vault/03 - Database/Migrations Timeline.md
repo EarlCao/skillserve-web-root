@@ -172,6 +172,16 @@ images must be removed from the private disk separately.
   yet (the old code could not finish them) and restores NOT NULL; those users start again. See
   [[Registration and OTP Flow]].
 
+## 2026-10-11 — GCash commission payments
+
+- **`2026_10_11_000001_create_commission_remittances_table`** — new tables [[commission_remittances]]
+  and `commission_remittance_bookings`, plus a nullable `commission_settlements.commission_remittance_id`
+  (metadata-only; existing settlements keep null). Raw SQL adds two partial unique indexes (one
+  pending claim per provider; a reference is confirmed once), unguarded because
+  PostgreSQL and SQLite both support them. Additive, so it may run before the code. Rollback drops
+  the column and both tables, losing only claims made since; receipt screenshots on the
+  `commission_remittances` disk must be removed separately.
+
 ## Related
 
 [[Database Overview]] · [[Changelog]] · [[Database Index]]

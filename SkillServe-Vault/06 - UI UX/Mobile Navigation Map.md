@@ -26,6 +26,7 @@ Initial location `/splash`. Role access is decided by the first path segment (`r
 | `/booking-requests`, `/active-jobs`, `/completed-jobs`, `/calendar`, `/earnings`, `/statistics` | jobs & stats | provider |
 | `/my-services`, `/add-service`, `/edit-service/:id`, `/availability`, `/portfolio`, `/upload-portfolio` | business management | provider |
 | `/commissions`, `/gcash-details` | outstanding commission, where customers send GCash | provider |
+| `/commissions/pay` | "I've paid": SkillServe's GCash, then the reference number for confirmation | provider |
 | `/identity-verification` | National ID capture and status (optional `?next=`) | signed in (either role) |
 | `/notifications`, `/chat-conversation/:bookingId`, `/booking-details/:id`, `/file-report`, `/my-reports` | shared | signed in (either role) |
 | `/support/tickets`, `/support/new`, `/support/tickets/:ticketId`, `/help-center` | support | signed in (`support` segment shared); help center public |

@@ -23,6 +23,7 @@ Admin requirement module **17** ([[Requirements Sources]]).
 |---|---|---|
 | A 17.1 | General Settings | platform name, description, support email; timezone read-only |
 | A 17.2 | Marketplace Settings | provider registration, service approval, featured services, commission — all enforced |
+| — | Commission payments | SkillServe's GCash name and number and payment instructions, shown to providers paying their commission ([[Commission Tiers and Settlement#Paying it by GCash]]) |
 | A 17.3 | Booking Settings | booking pause, cancellation window, client/provider fee % |
 | (extra) | Identity Settings | the National ID requirement, its cutover date and the image retention days — see [[Identity Verification Lifecycle]] |
 | A 17.4 | Notification Settings | email, push, announcement switches |

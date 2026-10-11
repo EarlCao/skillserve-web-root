@@ -9,6 +9,27 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-11 — Providers pay their commission by GCash and submit the reference
+
+- **Provider app:** the Commission screen shows SkillServe's GCash; **I've paid** (`/commissions/pay`)
+  takes the GCash reference number, the amount sent and an optional receipt screenshot. A payment
+  waiting for confirmation, or a rejected one with its reason, is shown; new work stays paused until
+  SkillServe confirms. A `commission_remittance` notification opens the screen.
+- **Admin web:** Commissions → **GCash payments** lists payments waiting for confirmation with the
+  reference, amounts, the provider's own GCash and the receipt; Confirm settles every booking the
+  payment covered, Reject needs a reason. The sidebar shows a live count. SkillServe's GCash is set
+  in System Settings → **Commission payments**.
+- **API:** `GET/POST /api/client/v1/provider/commission-remittances`; `GET /api/commission-remittances`,
+  `…/{id}/proof`, `PATCH …/{id}/confirm`, `…/{id}/reject`; the commission summary adds
+  `payment_account` and `latest_remittance`; `/api/dashboard/attention` adds
+  `pending_commission_remittances`. Migration `2026_10_11_000001` (additive). See
+  [[Commission Tiers and Settlement#Paying it by GCash]], [[commission_remittances]].
+- **Review follow-ups (same day):** the app reloads the balance and eligibility banner when a
+  decision arrives; pending claims may share a reference (only a confirmed one reserves it) and the
+  reviewer is warned about a shared reference and about bookings no longer outstanding; the
+  provider's payment-history `per_page` is validated; receipts are deleted after
+  `receipt_retention_days` (default 180) by `commissions:purge-receipts`, and opening one is audited.
+
 ## 2026-10-10 — Forgot password checks the account; sidebar count badges
 
 - **Forgot password** now answers 404 "There is no SkillServe account with this email" for an

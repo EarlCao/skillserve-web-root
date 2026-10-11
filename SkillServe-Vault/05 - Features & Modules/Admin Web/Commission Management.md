@@ -16,7 +16,7 @@ tags: [feature, admin-web, commissions]
 |---|---|
 | Backend module | `backend/app/Modules/Commissions` |
 | Frontend module | `frontend/src/modules/commissions` |
-| Admin route(s) | `/admin/commissions` (tabs: `?tab=ledger`) |
+| Admin route(s) | `/admin/commissions` (tabs: `?tab=ledger`, `?tab=payments`) |
 | Permissions | `view commissions` to read · `manage commissions` to configure tiers · `settle commissions` to record or waive |
 
 ## What it does
@@ -50,6 +50,25 @@ settled and waived amounts for the current filters.
 requires a reason. **The amount is never entered** — it is shown read-only, because it always comes
 from the booking.
 
+### GCash payments tab
+
+The providers' GCash commission payments ([[Commission Tiers and Settlement#Paying it by GCash]]).
+It opens on the payments **waiting for confirmation**, oldest first; each row shows the GCash
+reference, the provider and their own GCash number (the expected sender), and the amount sent
+against the amount owed (shown in red when short).
+
+`Confirm` opens the reference, both amounts, the receipt screenshot when one was attached, and the
+bookings a confirmation settles with each one's current status; confirming settles them all with
+method `gcash`. Two warnings guard it: **another provider also claimed this reference** (a reference
+can be confirmed once, so only the claim whose sender matches GCash should be), and **some bookings
+are no longer outstanding** (settled by hand, waived or voided since — the provider may have paid
+for them twice and is owed the difference). Opening a receipt is written to the audit log. `Reject` requires a
+reason, which the provider is shown. Both need `settle commissions`.
+
+The sidebar's **Commissions** item carries a live count of waiting payments and links straight to
+this tab while any are waiting. SkillServe's own GCash details are set in
+[[System Settings]] → Commission payments.
+
 > [!info] Why there is no separate Payments page
 > `/api/commissions` already returns the payment status, method, reference and date alongside the
 > commission, so this tab is the payment view. Marking a booking paid and refunding it stay on
@@ -57,11 +76,12 @@ from the booking.
 
 ## Automated tests
 
-`CommissionTierTest`, `CommissionCalculationTest`, `CommissionLedgerTest`, `PaymentGatewayTest` —
+`CommissionTierTest`, `CommissionCalculationTest`, `CommissionLedgerTest`, `CommissionRemittanceTest`,
+`PaymentGatewayTest` —
 see [[Backend Test Suite]]. There is no frontend test framework; the UI is verified by
 `npm run lint` and `npm run build`.
 
 ## Related
 
 [[Commission Tiers and Settlement]] · [[Payments and Refunds]] · [[commission_tiers]] ·
-[[commission_settlements]] · [[Booking Management]] · [[Admin Web Features Index]]
+[[commission_settlements]] · [[commission_remittances]] · [[Booking Management]] · [[Admin Web Features Index]]

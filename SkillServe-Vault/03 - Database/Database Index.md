@@ -18,7 +18,7 @@ tags: [index, database]
 | Recognition | [[provider_badges]] · [[provider_badge_assignments]] |
 | Catalog | [[service_categories]] · [[service_subcategories]] · [[services]] |
 | Bookings | [[bookings]] · [[reviews]] · [[messages]] |
-| Commissions | [[commission_tiers]] · [[commission_settlements]] |
+| Commissions | [[commission_tiers]] · [[commission_settlements]] · [[commission_remittances]] |
 | Payments | [[payment_intents]] |
 | Identity | [[identity_verifications]] · [[identity_documents]] · [[identity_verification_events]] |
 | Moderation | [[reports]] |

@@ -1,7 +1,7 @@
 ---
 type: domain
 tags: [domain, commissions, payments, state-machine]
-sources: [backend/app/Modules/Commissions, backend/app/Modules/Bookings/Services/BookingRules.php, backend/app/Modules/ClientMarketplace/Actions/CreateClientBookingAction.php, backend/database/migrations/2026_09_24_000001_create_commission_tiers_table.php]
+sources: [backend/app/Modules/Commissions, backend/app/Modules/Commissions/Services/CommissionRemittanceService.php, backend/app/Modules/Bookings/Services/BookingRules.php, backend/app/Modules/ClientMarketplace/Actions/CreateClientBookingAction.php, backend/database/migrations/2026_09_24_000001_create_commission_tiers_table.php]
 ---
 # Commission Tiers and Settlement
 
@@ -77,7 +77,7 @@ stateDiagram-v2
   [*] --> pending : booking created
   pending --> outstanding : customer pays and a commission is due
   pending --> settled : customer pays but the commission is ₱0
-  outstanding --> settled : remittance recorded (commission_settlements)
+  outstanding --> settled : remittance recorded, or the provider's GCash payment confirmed
   outstanding --> waived : administrator writes it off (reason required)
   pending --> voided : booking cancelled
   outstanding --> voided : booking cancelled or fully refunded
@@ -94,6 +94,43 @@ stateDiagram-v2
 - `commission_settlements` is one row per booking (unique on `booking_id`), recording amount, method
   (`gcash`, `bank_transfer`, `cash`, `offset`, `other`), reference and who recorded it. The amount is
   always taken from the booking, never from the request.
+
+## Paying it by GCash
+
+The provider does not have to go through support. SkillServe's GCash is set in System Settings →
+**Commission payments** (`gcash_account_name`, `gcash_number`, `payment_instructions`) and shown on
+the provider's Commission screen. The provider sends the money outside the app, taps **I've paid**
+and submits the GCash reference number, the amount sent and, optionally, a receipt screenshot.
+
+```mermaid
+stateDiagram-v2
+  [*] --> pending : provider submits the reference (covers everything outstanding now)
+  pending --> confirmed : administrator finds it in SkillServe's GCash history
+  pending --> rejected : not found / amount short (reason required)
+  confirmed --> [*] : covered bookings settled (method gcash, reference kept)
+  rejected --> [*] : provider may submit again
+```
+
+| Rule | Where |
+|---|---|
+| A submission settles **nothing**; the provider stays blocked until it is confirmed | `CommissionRemittanceService::submit` |
+| It covers every booking outstanding **at submission**, snapshotted with its amount; later debts are not part of it | `commission_remittance_bookings` |
+| `amount_sent` must be at least what is owed (422 otherwise) | service |
+| One pending claim per provider (409 for a second) | service + partial unique index |
+| A reference can be **confirmed** only once: submitting an already-confirmed reference is 422, confirming a second claim on it is 409 | service + partial unique index `commission_remittances_reference_confirmed` |
+| Pending claims **may** share a reference — otherwise whoever typed someone else's receipt first would lock the real payer out. The reviewer sees `other_claims_count` and checks the sender | `countOtherClaims()` |
+| The reference is compared without spaces or dashes, upper-cased | `SubmitCommissionRemittanceRequest` |
+| Confirming settles each covered booking still outstanding through `CommissionLedger::settle` with `commission_remittance_id`; one waived, voided or settled by hand meanwhile is skipped | `confirm()` |
+| The provider gets **one** notification per decision (`commission_remittance`), not one per booking settled | `NotifyProviderOfRemittanceDecision`; `NotifyProviderOfCommissionSettlement` skips remittance settlements |
+| Receipts sit on the private `commission_remittances` disk; reviewers open them through an authorized download, which is written to the audit log | `GET /api/commission-remittances/{id}/proof` |
+| Receipts of decided payments are deleted after `commission_payments.receipt_retention_days` (default 180) from the decision; the payment and its reference are kept | `commissions:purge-receipts`, daily |
+
+The provider app reloads the balance and the eligibility banner as soon as a `commission_remittance`
+or `booking_commission` notification arrives (`CommissionController`), so a confirmation lifts the
+block on screen without a pull to refresh.
+
+Waiting claims are counted on the admin sidebar (`pending_commission_remittances` in
+`GET /api/dashboard/attention`) and update live (`commission-remittances` realtime resource).
 
 ## What an outstanding commission blocks
 
@@ -132,14 +169,18 @@ front would otherwise be unable to begin the very job that put them in debt.
 | Admin | `GET /api/commissions` (+ `meta.totals`) | `view commissions` |
 | Admin | `PATCH /api/commissions/{booking}/settle` · `/waive` | `settle commissions` |
 | Provider | `GET /api/client/v1/provider/commission-preview?amount=` | provider account |
-| Provider | `GET /api/client/v1/provider/commissions` | provider account |
+| Provider | `GET /api/client/v1/provider/commissions` (+ `payment_account`, `latest_remittance`) | provider account |
+| Provider | `GET/POST /api/client/v1/provider/commission-remittances` | provider account |
+| Admin | `GET /api/commission-remittances` · `GET …/{id}/proof` | `view commissions` |
+| Admin | `PATCH /api/commission-remittances/{id}/confirm` · `/reject` | `settle commissions` |
 
 Providers also see an `earnings` block on each of their services and `commission_rate` / `net_amount`
 on each of their bookings, so the split is visible before they publish a price.
 
 > [!note] Settlement is recorded, not processed
-> No payment gateway is called. A remittance is recorded by an administrator once it arrives, exactly
-> as booking payments are. See [[ADR-007 Payments Recorded Not Processed]].
+> No payment gateway is called. The provider's GCash payment is confirmed by an administrator once it
+> arrives (or a remittance is recorded by hand), exactly as booking payments are. See
+> [[ADR-007 Payments Recorded Not Processed]].
 
 Related: [[Payments and Refunds]] · [[Booking Lifecycle]] · [[System Settings Catalog]] ·
-[[bookings]] · [[Cancellation and Fees]]
+[[bookings]] · [[commission_remittances]] · [[Cancellation and Fees]]

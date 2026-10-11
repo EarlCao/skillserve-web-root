@@ -1,6 +1,6 @@
 # Pending Fixes — SkillServe (Backend, Admin Web, Mobile, Deployment)
 
-Last updated: **2026-10-06** (F3; F4 — every code/doc gap from the Known Issues audit fixed).
+Last updated: **2026-10-11** (F5 — providers pay their commission by GCash and submit the reference).
 Previous full audit: 2026-09-21.
 
 Requirements now live in `SkillServe-Vault/` (Obsidian), which supersedes the two functionality
@@ -36,6 +36,26 @@ Required for every account; PhilSys card and ePhilID. See vault [[Philippine Add
 - [ ] **Phase 5** — docs done; **owner:** build the release APK and sign up with a real PhilSys card
   and ePhilID, book with the picker, add a service with a service area.
 **Server-side enforcement:** turn on System Settings → Identity (**H8**) at launch.
+
+### F5 · Providers pay their commission by GCash and submit the reference **[BE][AW][MB]** — built 2026-10-11
+**Asked 2026-10-11:** instead of going through support, the provider sends SkillServe's GCash,
+taps *I've paid* and enters the GCash reference number; an administrator confirms it once the
+reference and amount show up in SkillServe's GCash history. See vault
+[[Commission Tiers and Settlement#Paying it by GCash]].
+- [ ] **Deploy:** push the backend first. Migration `2026_10_11_000001` is additive (two new tables,
+  one nullable column) and can run before the code; rollback drops them, losing only claims made
+  since. Then rebuild the admin web, then build a new APK.
+- [ ] **Owner:** in System Settings → **Commission payments**, enter SkillServe's GCash account name
+  and number (and any instructions). Until both are set the app tells providers to contact support.
+- [ ] **Owner:** rehearse it: as `provider@skillserve.test` with an outstanding commission, tap
+  *I've paid*, submit a reference — the provider stays blocked; in Commissions → GCash payments,
+  confirm it — the provider is notified and the app lifts the block at once. Try a reject too.
+- [x] **Review follow-ups (2026-10-11):** live refresh in the app on a decision; a shared reference
+  no longer locks the payer out (only a confirmed one reserves it; the reviewer is warned); the
+  confirm dialog shows each booking's status and warns about ones no longer outstanding;
+  `per_page` validated on the payment history; receipts deleted after
+  *Keep receipt screenshots for (days)* (default 180) by the daily `commissions:purge-receipts`,
+  and every receipt opened is audited.
 
 ### F3 · Sign-up survives Android closing the app at the ID camera; adults only **[BE][MB]** — built 2026-10-06
 **Asked 2026-10-06:** after the National ID photo the app went back to the start (Android closed it
@@ -268,11 +288,13 @@ once they confirm the payment.
 path: `config/payments.php` routes **both** methods to the manual gateway, so
 `POST /bookings/{booking}/pay` refuses every booking with a 422 and no payment intent is ever
 created. The integration stays in the codebase, tested but unused for bookings; its one defensible
-future use is a provider paying their **own** outstanding commission, which is not built.
+future use is a provider paying their **own** outstanding commission. That payment now exists
+without a gateway (**F5**: GCash sent outside the app, reference confirmed by an administrator);
+taking it through PayMongo instead remains possible but is not built.
 **What replaces it** — verify the *direct* payment flow on the deployed system, as part of the D2
 demo script: a customer makes a GCash booking, sees the provider's GCash details, pays, the provider
-confirms the payment, the commission becomes outstanding and blocks new work, and an administrator
-settles it. No real card or gateway is involved, so this costs nothing to rehearse.
+confirms the payment, the commission becomes outstanding and blocks new work, the provider pays
+SkillServe's GCash and submits the reference, and an administrator confirms it (**F5**). No real card or gateway is involved, so this costs nothing to rehearse.
 **Also done:** the stale comments in `config/payments.php` and the pay endpoint's Swagger
 description (which still claimed a GCash booking could be paid online) now match ADR-021.
 

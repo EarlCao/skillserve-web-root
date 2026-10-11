@@ -1,14 +1,14 @@
 ---
 type: api-endpoints
 generated: true
-generated_on: 2026-10-01
+generated_on: 2026-10-11
 source: php artisan route:list --json -v
 tags: [api, endpoints, generated]
 ---
 # API - Platform and Infrastructure
 
 > [!info] Generated file — do not edit by hand
-> Rebuilt by `99 - Meta/Scripts/generate_endpoint_notes.py` from the live route table on 2026-10-01.
+> Rebuilt by `99 - Meta/Scripts/generate_endpoint_notes.py` from the live route table on 2026-10-11.
 > Authorization is extracted from controller/policy source; request/response shapes live in the
 > generated OpenAPI reference (`api-docs/modules/*.md`, Swagger UI at `/api/documentation`).
 
@@ -24,6 +24,10 @@ Conventions: [[API Conventions]] · Index: [[API Index]]
 | GET | `/api/client/v1/identity-verification` | `IdentityVerification::ClientIdentityVerificationController@show` | `EnsurePlatformAvailable`, `auth:sanctum`, `EnsureMobileAccount` | No controller check found (see middleware / service) |
 | POST | `/api/client/v1/identity-verification` | `IdentityVerification::ClientIdentityVerificationController@store` | `EnsurePlatformAvailable`, `auth:sanctum`, `EnsureMobileAccount`, `throttle:identity-verification` | No controller check found (see middleware / service) |
 | GET | `/api/client/v1/transaction-eligibility` | `IdentityVerification::TransactionEligibilityController@show` | `EnsurePlatformAvailable`, `auth:sanctum`, `EnsureMobileAccount` | No controller check found (see middleware / service) |
+| GET | `/api/commission-remittances` | `Commissions::CommissionRemittanceController@index` | `auth:sanctum` | `view commissions` |
+| PATCH | `/api/commission-remittances/{commissionRemittance}/confirm` | `Commissions::CommissionRemittanceController@confirm` | `auth:sanctum` | `settle commissions` |
+| GET | `/api/commission-remittances/{commissionRemittance}/proof` | `Commissions::CommissionRemittanceController@proof` | `auth:sanctum` | `view commissions` |
+| PATCH | `/api/commission-remittances/{commissionRemittance}/reject` | `Commissions::CommissionRemittanceController@reject` | `auth:sanctum` | `settle commissions` |
 | GET | `/api/commission-tiers` | `Commissions::CommissionTierController@index` | `auth:sanctum` | policy `viewAny` → `view commissions` |
 | POST | `/api/commission-tiers` | `Commissions::CommissionTierController@store` | `auth:sanctum` | policy `create` → `manage commissions` |
 | GET | `/api/commission-tiers/presets` | `Commissions::CommissionTierController@presets` | `auth:sanctum` | policy `viewAny` → `view commissions` |
