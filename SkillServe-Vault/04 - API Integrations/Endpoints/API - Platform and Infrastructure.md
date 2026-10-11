@@ -19,6 +19,7 @@ Conventions: [[API Conventions]] · Index: [[API Index]]
 | Method | Path | Controller action | Middleware | Authorization |
 |---|---|---|---|---|
 | GET | `//` | `Closure` | — | — |
+| GET | `/api/appearance` | `Settings::SettingsController@appearance` | — | No controller check found (see middleware / service) |
 | GET, POST | `/api/broadcasting/auth` | `Illuminate\\Broadcasting\\BroadcastController@authenticate` | `auth:sanctum` | — |
 | POST | `/api/client/v1/bookings/{booking}/pay` | `ClientMarketplace::ClientPaymentController@store` | `EnsurePlatformAvailable`, `auth:sanctum`, `EnsureClient` | Role gate in middleware; ownership/participant check in the client policy or service |
 | GET | `/api/client/v1/identity-verification` | `IdentityVerification::ClientIdentityVerificationController@show` | `EnsurePlatformAvailable`, `auth:sanctum`, `EnsureMobileAccount` | No controller check found (see middleware / service) |

@@ -20,6 +20,9 @@ JSON payload); read everywhere through `SettingsService::value(group, name)`; ed
 | marketplace | `featured_services_enabled` | bool | true | `ServiceService` refuses featuring; catalog hides featured flag |
 | marketplace | `commission_rate` | 0–100 % | 10 | **Fallback only** — used by `CommissionCalculator` when no active `commission_tiers` row exists. Configured tiers take precedence; see [[Commission Tiers and Settlement]] |
 | marketplace | `commission_block_min_amount` | ₱0–1,000,000 | 0 | Unpaid commission total at which a provider is blocked from new work; 0 = any debt (`TransactionEligibility`) |
+| appearance | `primary_color` | `#RRGGBB` or empty | '' | The admin web's theme colour; empty = built-in SkillServe green (`#03833E` light, `#22C55E` dark). Public via `GET /api/appearance` |
+| appearance | `font_family` | system, inter, poppins, roboto, outfit, nunito, open_sans, montserrat | system | Admin web font (Google Fonts) |
+| appearance | `font_size` | small, medium, large, extra_large | medium | Admin web text size (root font size 87.5–125%) |
 | marketplace | `commission_block_after_days` | 0–365 days | 0 | Also blocks once the oldest unpaid commission is this old; 0 = off |
 | identity | `identity_verification_required` | bool | **false** | `IdentityGate` — master switch for National ID enforcement; see [[Identity Verification Lifecycle]] |
 | identity | `identity_verification_enforced_from` | date | `''` | `IdentityGate` — accounts created before this date are grandfathered; empty applies the rule to everyone |

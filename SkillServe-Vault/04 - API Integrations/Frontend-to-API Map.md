@@ -9,7 +9,7 @@ Extracted from every `frontend/src/modules/*/api/*Api.js` (paths relative to `/a
 
 | Admin page (route) | API module file | Endpoints called |
 |---|---|---|
-| Login / Forgot / Reset (`/login`, `/forgot-password`, `/reset-password`), Change password | `authentication/api/authApi.js` | `POST /auth/login`, `/auth/logout`, `GET /auth/me`, `POST /auth/change-password`, `/auth/forgot-password`, `/auth/reset-password` |
+| Login (`/login`), Change password | `authentication/api/authApi.js` | `POST /auth/login`, `/auth/logout`, `GET /auth/me`, `POST /auth/change-password` |
 | Dashboard (`/admin`) | `dashboard/api/dashboardApi.js` | `GET /dashboard` |
 | Administrators (`/admin/administrators`, tabs roles/permissions) | `administrators/api/{administratorApi,roleApi,permissionApi}.js` | `GET/POST /administrators`, `PUT /administrators/{id}`, `PATCH …/status`, `PATCH …/password`; `GET/POST /roles`, `PUT/DELETE /roles/{id}`, `PUT /roles/{id}/permissions`; `GET /permissions` |
 | Users (`/admin/users`, `/admin/users/:userId`) | `users/api/userApi.js` | `GET /users`, `GET/PUT/DELETE /users/{id}`, `PATCH …/suspend`, `/activate`, `/ban`, `/unban`, `GET …/moderation-history` |

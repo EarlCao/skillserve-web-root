@@ -27,10 +27,9 @@ sequenceDiagram
   SPA->>API: GET /api/auth/me (Bearer)
   SPA->>API: POST /api/auth/logout → revokes current token
   SPA->>API: POST /api/auth/change-password → other sessions revoked
-  SPA->>API: POST /api/auth/forgot-password (same answer for every email)
-  API-->>Email: link FRONTEND_URL/reset-password?token&email
-  SPA->>API: POST /api/auth/reset-password → all tokens revoked
 ```
+
+A forgotten admin password is reset by another administrator in Administrator Management; there is no self-service reset (removed 2026-10-11).
 
 - Login refuses: bad credentials (401), inactive account (403), accounts **without any staff role**
   (401 — mobile users can't enter). Expired temporary bans are lifted during login.

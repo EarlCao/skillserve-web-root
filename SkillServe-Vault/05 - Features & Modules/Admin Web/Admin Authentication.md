@@ -13,9 +13,9 @@ Admin requirement module **1** ([[Requirements Sources]]).
 |---|---|
 | Backend module | `backend/app/Modules/Authentication`  |
 | Frontend module | `frontend/src/modules/authentication` |
-| Admin route(s) | `/login`, `/forgot-password`, `/reset-password`, `/admin/change-password` |
+| Admin route(s) | `/login`, `/admin/change-password` |
 | Endpoints | [[API - Admin Authentication]] |
-| Permissions | public (login, forgot, reset — `throttle:login`); signed-in admin for me/logout/change-password (`abilities:admin:auth`) |
+| Permissions | public login (`throttle:login`); signed-in admin for me/logout/change-password (`abilities:admin:auth`) |
 
 ## Requirement coverage
 
@@ -24,7 +24,7 @@ Admin requirement module **1** ([[Requirements Sources]]).
 | A 1.1 | Admin Login | `POST /api/auth/login`; refuses wrong password (401), inactive (403), roleless accounts (401); 5/min per IP |
 | A 1.2 | Admin Logout | `POST /api/auth/logout` revokes the current token; SPA clears `localStorage` |
 | A 1.3 | Role-Based Access Control | Spatie permissions checked per action (policies/gates); SPA hides menu items and wraps routes in `RequirePermission` |
-| A 1.4 | Password Management | change password (other sessions revoked); forgot/reset via separate `admins` password broker, emailed link to `FRONTEND_URL/reset-password`, reset revokes all tokens and is audited |
+| A 1.4 | Password Management | change password (other sessions revoked). A forgotten admin password is reset by another administrator in Administrator Management; there is no self-service reset (removed 2026-10-11). |
 | A 1.5 | Session Management | token lifetime = System Settings → session timeout; any 401 logs the SPA out |
 
 **Status:** code present for every functionality above. UAT result columns in `TEST_PLAN.md` are
@@ -32,7 +32,7 @@ still empty (not yet executed on the deployed system) — see [[UAT and Traceabi
 
 ## Automated tests
 
-`AuthenticationTest`, `AdminPasswordResetTest`, `UserRolesTest`, `RoleManagementTest` — see [[Backend Test Suite]].
+`AuthenticationTest`, `UserRolesTest`, `RoleManagementTest` — see [[Backend Test Suite]].
 
 ## Notes
 

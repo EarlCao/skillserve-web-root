@@ -9,6 +9,19 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-11 — SkillServe green, Appearance settings, official logo; admin forgot-password removed
+
+- **Admin web is green**: daisyUI's blue primary is replaced with SkillServe green (`#03833E` light,
+  `#22C55E` dark), including the dashboard charts.
+- **System Settings → Appearance**: theme colour picker, font (System, Inter, Poppins, Roboto,
+  Outfit, Nunito, Open Sans, Montserrat) and text size (small → extra large), for every
+  administrator and the sign-in page. Public `GET /api/appearance`.
+- **Official logo**: admin web favicon, apple-touch and manifest icons, sidebar and sign-in card;
+  mobile launcher icon (adaptive on Android 8+), launch screen, splash and welcome screens.
+- **Admin forgot-password removed**: the link, pages, `POST /api/auth/forgot-password` and
+  `/reset-password`, and `AdminPasswordResetNotification`. Another administrator resets a forgotten
+  password in Administrator Management.
+
 ## 2026-10-11 — GCash-reference commission payment retired everywhere
 
 - System Settings → **Commission payments** (SkillServe's GCash name, number, instructions,

@@ -6,11 +6,11 @@ tags: [api, index, generated]
 ---
 # Endpoints Index
 
-> [!info] Generated on 2026-10-11 from `php artisan route:list` — 259 route entries in 34 groups.
+> [!info] Generated on 2026-10-11 from `php artisan route:list` — 258 route entries in 34 groups.
 
 | Group | Routes | Scope |
 |---|---|---|
-| [[API - Admin Authentication]] | 6 | Admin web sign-in, sign-out, profile and password endpoints (`/api/auth/*`). |
+| [[API - Admin Authentication]] | 4 | Admin web sign-in, sign-out, profile and password endpoints (`/api/auth/*`). |
 | [[API - Dashboard]] | 2 | Admin dashboard read model. `commission_summary` is included only for viewers holding `view commissions` or `manage commissions`. |
 | [[API - Administrators, Roles and Permissions]] | 15 | Staff accounts, roles and the permission catalogue. |
 | [[API - Users]] | 10 | Admin User Management (customer and provider accounts). |
@@ -43,6 +43,6 @@ tags: [api, index, generated]
 | [[API - Provider Services (Mobile)]] | 6 | Provider-managed services (subject to admin approval). |
 | [[API - Provider Account (Mobile)]] | 16 | Provider profile, portfolio, availability, badges and verification upload. |
 | [[API - Locations]] | 3 | Public Philippine address-picker data (PSA PSGC) and the National-ID address matcher. |
-| [[API - Platform and Infrastructure]] | 37 | Health checks, broadcasting auth, Swagger docs, storage and framework routes. |
+| [[API - Platform and Infrastructure]] | 38 | Health checks, broadcasting auth, Swagger docs, storage and framework routes. |
 
 Back to [[API Index]]

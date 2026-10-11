@@ -13,7 +13,7 @@ Counted by static inspection (`public function test…` / `#[Test]`), audit 2026
 | Administrators | AdministratorManagementTest (23), RoleManagementTest (14) |
 | Analytics | AnalyticsTest (11) |
 | Audit | AuditLogTest (4) |
-| Authentication | AuthenticationTest (12), AdminPasswordResetTest (3) |
+| Authentication | AuthenticationTest (12) |
 | Bookings | BookingCancellationTest (2), BookingListTest (3), BookingPaymentTest (8), DisputeManagementTest (6) |
 | ClientAuthentication | AccountDataTest (10), AccountStatusTest (6), CancelRegistrationTest (7), ClientAuthRateLimitTest (2), ClientAuthenticationTest (14), ClientEmailOtpTest (7), ClientGoogleAuthTest (14), ClientProfileTest (10), ClientProviderRegistrationTest (6) |
 | ClientCommunication | BackgroundNotificationTest (7), ClientCommunicationTest (4), ClientReportTest (15), ConversationTest (11), ProviderSupportTicketTest (3) |

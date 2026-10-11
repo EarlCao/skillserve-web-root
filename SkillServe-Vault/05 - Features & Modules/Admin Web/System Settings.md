@@ -22,6 +22,7 @@ Admin requirement module **17** ([[Requirements Sources]]).
 | ID | Functionality | Implementation |
 |---|---|---|
 | A 17.1 | General Settings | platform name, description, support email; timezone read-only |
+| — | Appearance | theme colour (colour picker, reset to SkillServe green), font and text size for the whole admin web and the sign-in page, with a live preview; applied by `AppearanceProvider` from the public `GET /api/appearance` |
 | A 17.2 | Marketplace Settings | provider registration, service approval, featured services, commission — all enforced |
 | A 17.3 | Booking Settings | booking pause, cancellation window, client/provider fee % |
 | (extra) | Identity Settings | the National ID requirement, its cutover date and the image retention days — see [[Identity Verification Lifecycle]] |

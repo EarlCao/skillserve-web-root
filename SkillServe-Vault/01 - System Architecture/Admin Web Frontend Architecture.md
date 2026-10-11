@@ -64,7 +64,7 @@ Blobs and mutations are never saved; an over-quota write just skips the snapshot
 
 | Guard | Behaviour |
 |---|---|
-| `GuestOnly` | `/login`, `/forgot-password`, `/reset-password`; signed-in users go to `/admin` |
+| `GuestOnly` | `/login`; signed-in users go to `/admin` |
 | `RequireAuth` | everything under `/admin` (inside `AdminLayout`) |
 | `RequirePermission permissions=[…]` | shows `AccessDenied` unless the user is super-admin or holds **any** listed permission |
 | `RequireRole` | exists, not used by the route table |

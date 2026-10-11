@@ -37,7 +37,7 @@ Top bar user menu: Change password (`/admin/change-password`), Sign out.
 | Path | Guard | Page component |
 |---|---|---|
 | `/` | — | redirect → `/login` |
-| `/login`, `/forgot-password`, `/reset-password` | `GuestOnly` | LoginPage, ForgotPasswordPage, ResetPasswordPage |
+| `/login` | `GuestOnly` | LoginPage |
 | `/admin` | `RequireAuth` + `view dashboard` | DashboardPage |
 | `/admin/change-password` | `RequireAuth` | ChangePasswordPage |
 | `/admin/administrators` (`?tab=roles`, `?tab=permissions`) | administrator permissions | AdministratorManagementPage |
