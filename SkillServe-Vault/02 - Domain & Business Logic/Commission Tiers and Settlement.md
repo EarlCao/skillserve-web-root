@@ -129,6 +129,36 @@ The provider app reloads the balance and the eligibility banner as soon as a `co
 or `booking_commission` notification arrives (`CommissionController`), so a confirmation lifts the
 block on screen without a pull to refresh.
 
+## Paying it by QR Ph
+
+When PayMongo keys are configured (`payment_account.qr_payments_available`), the provider can tap
+**Pay with QR code** instead. `CommissionQrPaymentService` creates a PayMongo Payment Intent for the
+exact outstanding total (`payment_method_allowed: [qrph]`), a `qrph` Payment Method, and attaches
+it; the QR image comes back in `next_action.code.image_url`. The money is SkillServe's own
+commission, so this is not escrow ([[ADR-022 Payment QR Codes Without Holding Customer Money]]).
+
+```mermaid
+stateDiagram-v2
+  [*] --> pending : QR created (method qrph, reference QR-…)
+  pending --> confirmed : payment.paid, amount and currency match
+  pending --> pending : payment.paid that does not match (failure_reason, a reviewer decides)
+  pending --> failed : payment.failed, or PayMongo could not create the code
+  pending --> expired : qrph.expired, or 30 min (+2 min grace) without payment
+  expired --> confirmed : a late payment.paid still counts
+```
+
+| Rule | Where |
+|---|---|
+| The amount is the server's outstanding total in centavos; nothing the app sends is used | `start()` |
+| Asking again while a code is payable returns that code (200), never a second one | `start()` + one-pending index |
+| No lock is held across the PayMongo calls; a failure closes the attempt as `failed` (502) and it can be retried | `start()` |
+| Only the signed webhook settles, and only when `amount` and `currency` match; redeliveries are no-ops (`last_event_id`) | `applyWebhook()` |
+| Settlements are written with method `qrph`, recorded by the payer (no administrator is involved) | `settleCovered()` |
+| A QR code waiting to be scanned is not in the reviewers' queue or the sidebar count; a mismatched one is | `CommissionRemittance::needsReview()` |
+| One open payment per provider across **both** methods (409 otherwise) | both services |
+
+Without keys the GCash-reference flow above is the only one offered.
+
 Waiting claims are counted on the admin sidebar (`pending_commission_remittances` in
 `GET /api/dashboard/attention`) and update live (`commission-remittances` realtime resource).
 
@@ -170,7 +200,8 @@ front would otherwise be unable to begin the very job that put them in debt.
 | Admin | `PATCH /api/commissions/{booking}/settle` · `/waive` | `settle commissions` |
 | Provider | `GET /api/client/v1/provider/commission-preview?amount=` | provider account |
 | Provider | `GET /api/client/v1/provider/commissions` (+ `payment_account`, `latest_remittance`) | provider account |
-| Provider | `GET/POST /api/client/v1/provider/commission-remittances` | provider account |
+| Provider | `GET/POST /api/client/v1/provider/commission-remittances` · `GET …/{id}` | provider account |
+| Provider | `POST /api/client/v1/provider/commission-remittances/qr` (10/min) | provider account |
 | Admin | `GET /api/commission-remittances` · `GET …/{id}/proof` | `view commissions` |
 | Admin | `PATCH /api/commission-remittances/{id}/confirm` · `/reject` | `settle commissions` |
 
@@ -183,4 +214,5 @@ on each of their bookings, so the split is visible before they publish a price.
 > [[ADR-007 Payments Recorded Not Processed]].
 
 Related: [[Payments and Refunds]] · [[Booking Lifecycle]] · [[System Settings Catalog]] ·
-[[bookings]] · [[commission_remittances]] · [[Cancellation and Fees]]
+[[bookings]] · [[commission_remittances]] · [[Cancellation and Fees]] ·
+[[ADR-022 Payment QR Codes Without Holding Customer Money]] · [[PayMongo Setup]]

@@ -181,6 +181,12 @@ images must be removed from the private disk separately.
   PostgreSQL and SQLite both support them. Additive, so it may run before the code. Rollback drops
   the column and both tables, losing only claims made since; receipt screenshots on the
   `commission_remittances` disk must be removed separately.
+- **`2026_10_11_000002_add_gcash_qr_to_provider_profiles`** — nullable `gcash_qr_payload` text on
+  [[provider_profiles]]; metadata-only, no backfill. Rollback drops the saved QR codes only.
+- **`2026_10_11_000003_add_qr_ph_to_commission_remittances`** — `method` (NOT NULL default
+  `gcash_reference`, metadata-only; existing rows are GCash-reference claims), `external_id`
+  (unique), `external_payment_id`, `qr_image`, `expires_at`, `last_event_id`, `failure_reason` on
+  [[commission_remittances]]. Additive; roll back only before any QR payment is made.
 
 ## Related
 

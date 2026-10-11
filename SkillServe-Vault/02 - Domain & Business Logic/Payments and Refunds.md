@@ -49,6 +49,13 @@ personal payment details.
 `gcash_name` is shown alongside the number so the customer can check it against the recipient name
 GCash displays before confirming — that is what catches a mistyped number.
 
+**The provider's QR with the exact amount.** A provider can save their own GCash "Receive via QR"
+code (`provider_profiles.gcash_qr_payload`, read on the phone). `payment_instructions.qr_payload` is
+then a copy of it with the booking's total written in (`QrPh::withAmount`: EMV tag `54`, marked
+dynamic, CRC recomputed); the app draws it and lets the customer save it for GCash's *Upload QR*.
+The account fields are untouched, so the money still goes straight to the provider — see
+[[ADR-022 Payment QR Codes Without Holding Customer Money]].
+
 > [!warning] No escrow, no payment guarantee
 > Because the platform never holds the money, it cannot reverse a payment. A customer who pays and
 > receives nothing, or a provider who works unpaid, is a dispute — not something SkillServe can
@@ -60,8 +67,8 @@ GCash displays before confirming — that is what catches a mistyped number.
 > `POST /api/client/v1/bookings/{booking}/pay` resolves the booking's method to its gateway, finds
 > the manual one, and refuses with a **422** — for every booking, with or without credentials. No
 > payment intent is ever created. The endpoint is kept because the mapping is configuration rather
-> than code; the one defensible future use is a provider paying their **own** outstanding
-> commission, which is SkillServe collecting its own revenue and is not built.
+> than code. PayMongo's one real use is a provider paying their **own** commission by QR Ph —
+> SkillServe collecting its own revenue — see [[Commission Tiers and Settlement#Paying it by QR Ph]].
 
 Were a method ever routed to a collecting gateway, the endpoint would start a payment on the
 customer's own unpaid booking once the provider had accepted it, return `redirect_url`, and resume

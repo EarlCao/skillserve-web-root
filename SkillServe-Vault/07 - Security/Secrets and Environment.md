@@ -19,13 +19,15 @@ sources: [backend/.gitignore, frontend/.gitignore, skill-serve-mobile-applicatio
 | `frontend/.env*` | no (`.env`, `.env.*` ignored, `.env.example` allowed) | `VITE_API_BASE_URL`, `VITE_REVERB_*` |
 | mobile `env/local.json`, `env/production.json` | **yes** | only `API_BASE_URL` (public URLs) |
 | mobile `android/key.properties`, `*.jks`, `*.keystore` | no | release signing — back up securely |
-| Render environment | n/a | `APP_KEY`, `DB_*` (Neon), `REVERB_APP_SECRET`, `BREVO_API_KEY`/SMTP, `GOOGLE_CLIENT_ID`, `ADMIN_PASSWORD`. **Not** the `PAYMONGO_*` values — see below |
+| Render environment | n/a | `APP_KEY`, `DB_*` (Neon), `REVERB_APP_SECRET`, `BREVO_API_KEY`/SMTP, `GOOGLE_CLIENT_ID`, `ADMIN_PASSWORD`, and `PAYMONGO_*` only once commission QR payments are switched on — see below |
 
-## PayMongo: the secret that should not exist
+## PayMongo: server-side only, and only for commission QR payments
 
-Nothing routes to PayMongo ([[ADR-021 Direct Payment with Provider-Remitted Commission]]), so
-`PAYMONGO_SECRET_KEY` and `PAYMONGO_WEBHOOK_SECRET` should be **unset everywhere**, including
-Render. A key that is never stored cannot be leaked.
+PayMongo is used for one thing: a provider paying their own commission by QR Ph
+([[ADR-022 Payment QR Codes Without Holding Customer Money]]). `PAYMONGO_SECRET_KEY` and
+`PAYMONGO_WEBHOOK_SECRET` live **only** in the backend's environment (Render) — never in the admin
+web, the app, or a repository. Leave them unset until QR payments are wanted; the app then offers the
+GCash-reference way only.
 
 Two controls back that up, because the previous leak (`PENDING_FIXES.md` → **C5**, resolved
 2026-09-30: live secret key regenerated in PayMongo, both variables deleted from Render) happened by a

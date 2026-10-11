@@ -6,7 +6,7 @@ tags: [api, index, generated]
 ---
 # Endpoints Index
 
-> [!info] Generated on 2026-10-11 from `php artisan route:list` — 257 route entries in 34 groups.
+> [!info] Generated on 2026-10-11 from `php artisan route:list` — 259 route entries in 34 groups.
 
 | Group | Routes | Scope |
 |---|---|---|
@@ -41,7 +41,7 @@ tags: [api, index, generated]
 | [[API - Client Preferences and Platform]] | 3 | Per-user app preferences and public platform info/policies. |
 | [[API - Provider Bookings (Mobile)]] | 8 | The provider's jobs and their lifecycle. |
 | [[API - Provider Services (Mobile)]] | 6 | Provider-managed services (subject to admin approval). |
-| [[API - Provider Account (Mobile)]] | 14 | Provider profile, portfolio, availability, badges and verification upload. |
+| [[API - Provider Account (Mobile)]] | 16 | Provider profile, portfolio, availability, badges and verification upload. |
 | [[API - Locations]] | 3 | Public Philippine address-picker data (PSA PSGC) and the National-ID address matcher. |
 | [[API - Platform and Infrastructure]] | 37 | Health checks, broadcasting auth, Swagger docs, storage and framework routes. |
 

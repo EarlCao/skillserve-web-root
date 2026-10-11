@@ -37,6 +37,7 @@ Professional profile of a provider account; the id used by services, bookings an
 | `created_at, updated_at` |  |  |
 | `gcash_number` | string(20) null | where customers send payment; stored normalised as `09XXXXXXXXX` (`PhilippineMobileNumber`, same rule as every phone field) |
 | `gcash_name` | string(120) null | registered GCash account name, for the customer to check before sending |
+| `gcash_qr_payload` | text null | the provider's GCash "Receive via QR" code as its QR Ph text (read on the phone, checksum-validated); each GCash booking gets a copy with its exact amount |
 
 ## Indexes & constraints
 

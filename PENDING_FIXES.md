@@ -1,6 +1,6 @@
 # Pending Fixes — SkillServe (Backend, Admin Web, Mobile, Deployment)
 
-Last updated: **2026-10-11** (F5 — providers pay their commission by GCash and submit the reference).
+Last updated: **2026-10-11** (F6 — QR codes with the exact amount; F5 — commission paid by GCash reference).
 Previous full audit: 2026-09-21.
 
 Requirements now live in `SkillServe-Vault/` (Obsidian), which supersedes the two functionality
@@ -36,6 +36,28 @@ Required for every account; PhilSys card and ePhilID. See vault [[Philippine Add
 - [ ] **Phase 5** — docs done; **owner:** build the release APK and sign up with a real PhilSys card
   and ePhilID, book with the picker, add a service with a service area.
 **Server-side enforcement:** turn on System Settings → Identity (**H8**) at launch.
+
+### F6 · QR codes with the exact amount **[BE][AW][MB][DEP]** — built 2026-10-11
+**Asked 2026-10-11:** a QR with the exact amount when a customer pays a provider, and when a
+provider pays SkillServe its commission. Decided with the owner: the booking QR is the **provider's
+own** GCash QR with the amount written in (money stays out of SkillServe — ADR-021); the commission
+QR is **PayMongo dynamic QR Ph**, confirmed by webhook. See vault
+[[ADR-022 Payment QR Codes Without Holding Customer Money]].
+- [ ] **Deploy:** push the backend (migrations `2026_10_11_000002`, `000003`, both additive), then
+  the admin web, then build a new APK.
+- [ ] **Check on a real phone (booking QR):** as a provider, GCash details → *Upload my GCash QR*
+  (GCash → Receive → Receive via QR → save). As a customer on a GCash booking, scan the QR in
+  *How to pay* with another phone's GCash: **confirm GCash pre-fills the amount** and shows the
+  provider's name. If GCash ignores the amount on personal QR codes, the customer types it as before
+  — record what GCash does here.
+- [ ] **PayMongo account (owner):** a verified PayMongo business account with **QR Ph enabled**;
+  check PayMongo's current QR Ph fee and settlement terms in the dashboard (not stated in the docs).
+- [ ] **Test mode:** in Render set `PAYMONGO_SECRET_KEY=sk_test_…`; register the webhook
+  `https://<backend>/api/webhooks/paymongo` for `payment.paid`, `payment.failed`, `qrph.expired`
+  and set `PAYMONGO_WEBHOOK_SECRET`. Rehearse *Pay with QR code* end to end with a provider who owes
+  a commission; `php artisan paymongo:status` shows test mode.
+- [ ] **Go live (deliberate):** `sk_live_…`, the live webhook's secret and `PAYMONGO_ALLOW_LIVE=true`;
+  pay one small real commission before relying on it.
 
 ### F5 · Providers pay their commission by GCash and submit the reference **[BE][AW][MB]** — built 2026-10-11
 **Asked 2026-10-11:** instead of going through support, the provider sends SkillServe's GCash,

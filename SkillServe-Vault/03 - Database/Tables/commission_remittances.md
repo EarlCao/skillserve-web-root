@@ -3,18 +3,21 @@ type: table
 tags: [database, table, commissions, payments]
 domain: Commissions
 soft_deletes: false
-sources: [backend/database/migrations/2026_10_11_000001_create_commission_remittances_table.php, backend/app/Modules/Commissions/Models/CommissionRemittance.php, backend/app/Modules/Commissions/Services/CommissionRemittanceService.php]
+sources: [backend/database/migrations/2026_10_11_000001_create_commission_remittances_table.php, backend/database/migrations/2026_10_11_000003_add_qr_ph_to_commission_remittances.php, backend/app/Modules/Commissions/Models/CommissionRemittance.php, backend/app/Modules/Commissions/Services/CommissionRemittanceService.php]
 ---
 # commission_remittances
 
-A provider's claim that they sent SkillServe its commission by GCash. The provider pays
+A provider paying SkillServe its commission — by GCash reference (an administrator confirms it) or
+by a PayMongo QR Ph code (PayMongo's webhook confirms it, see
+[[Commission Tiers and Settlement#Paying it by QR Ph]]). For a GCash-reference claim: The provider pays
 SkillServe's GCash outside the app and submits the GCash reference number; an administrator finds
 that reference in SkillServe's GCash history and confirms it, which settles every booking the claim
 covers. See [[Commission Tiers and Settlement#Paying it by GCash]].
 
 - **Model:** `backend/app/Modules/Commissions/Models/CommissionRemittance.php`
 - **Soft deletes:** no
-- **Migrations:** `2026_10_11_000001_create_commission_remittances_table`
+- **Migrations:** `2026_10_11_000001_create_commission_remittances_table`,
+  `2026_10_11_000003_add_qr_ph_to_commission_remittances`
 
 ## Columns
 
@@ -22,12 +25,19 @@ covers. See [[Commission Tiers and Settlement#Paying it by GCash]].
 |---|---|---|
 | `id` | bigint PK | |
 | `provider_profile_id` | FK, indexed | who paid |
+| `method` | string(30) default `gcash_reference` | `gcash_reference` or `qrph` |
 | `amount_due` | decimal(10,2) | what the covered bookings owed at submission |
 | `amount_sent` | decimal(10,2) | what the provider says they sent; must be ≥ `amount_due` |
-| `reference` | string(40) | GCash reference number, stored without spaces or dashes, upper-cased |
+| `reference` | string(40) | GCash reference number (spaces and dashes removed, upper-cased), or SkillServe's own `QR-…` for a QR payment |
+| `external_id` | string null, **unique** | PayMongo Payment Intent id; the webhook resolves the claim through it |
+| `external_payment_id` | string null | PayMongo payment id once paid |
 | `proof_path` | string null | receipt screenshot on the private `commission_remittances` disk; cleared when `commissions:purge-receipts` deletes it after the retention period |
 | `proof_mime_type` | string(100) null | |
-| `status` | string(20) default `pending` | `pending` / `confirmed` / `rejected` |
+| `qr_image` | text null, hidden | the QR as PayMongo returns it (base-64 image), kept only while payable |
+| `expires_at` | timestamp null | when the QR stops working (30 minutes) |
+| `last_event_id` | string null | last webhook applied; a redelivery is a no-op |
+| `failure_reason` | text null | why a QR attempt failed, or why a paid one needs a reviewer |
+| `status` | string(20) default `pending` | `pending` / `confirmed` / `rejected`, plus `expired` / `failed` for QR attempts |
 | `reviewed_by` | FK users nullOnDelete | the administrator who decided |
 | `reviewed_at` | timestamp null | |
 | `review_notes` | text null | the rejection reason, or the reviewer's note on a confirmation |

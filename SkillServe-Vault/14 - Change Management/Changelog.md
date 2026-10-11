@@ -9,6 +9,20 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-11 — QR codes with the exact amount
+
+- **Booking (customer → provider):** a provider uploads their GCash "Receive via QR" once
+  (GCash details); each GCash booking's *How to pay* then shows that QR with the booking's exact
+  amount written in, plus **Save QR to gallery**. The money still goes straight to the provider.
+- **Commission (provider → SkillServe):** **Pay with QR code** makes a PayMongo dynamic QR Ph code
+  for the exact outstanding total; PayMongo's signed webhook confirms it (amount and currency
+  checked) and the block lifts by itself. Without PayMongo keys the GCash-reference flow remains.
+- **API:** `POST /api/client/v1/provider/commission-remittances/qr`, `GET …/{id}`;
+  `gcash_qr_payload` on the provider profile; `qr_payload` on booking `payment_instructions`;
+  `qr_payments_available` on the commission summary; the webhook also handles `qrph.expired`.
+  Migrations `2026_10_11_000002` and `000003` (additive). [[ADR-022 Payment QR Codes Without Holding Customer Money]].
+- **Admin web:** the tab is now *Provider payments* and shows how each was paid.
+
 ## 2026-10-11 — Providers pay their commission by GCash and submit the reference
 
 - **Provider app:** the Commission screen shows SkillServe's GCash; **I've paid** (`/commissions/pay`)

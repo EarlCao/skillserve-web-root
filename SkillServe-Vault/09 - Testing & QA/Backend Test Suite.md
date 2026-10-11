@@ -22,7 +22,7 @@ Counted by static inspection (`public function test…` / `#[Test]`), audit 2026
 | Dashboard | DashboardTest (6) |
 | DataManagement | DataManagementTest (4) |
 | Notifications | AnnouncementsMigrationTest (1), NotificationsTest (5) |
-| Commissions | CommissionTierTest (25), CommissionCalculationTest (13), CommissionLedgerTest (18), CommissionRemittanceTest (22) |
+| Commissions | CommissionTierTest (25), CommissionCalculationTest (13), CommissionLedgerTest (18), CommissionRemittanceTest (22), CommissionQrPaymentTest (14); QrPhTest (5) in `tests/Feature` |
 | IdentityVerification | IdentityVerificationTest (19), IdentityVerificationReviewTest (11), IdentityEnforcementTest (12) |
 | Payments | PaymentGatewayTest (10) |
 | ProviderRecognition | ProviderRecognitionTest (4) |

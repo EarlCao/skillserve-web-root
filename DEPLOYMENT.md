@@ -420,30 +420,30 @@ You can now browse tables, run queries, and verify data after each deployment.
 | `SESSION_DRIVER` | `database` | `database` |
 | `CACHE_STORE` | `database` | `database` |
 | `FRONTEND_URL` | `http://localhost:5173` | `https://skillserve-frontend.onrender.com` |
-| `PAYMONGO_SECRET_KEY` | _(leave unset)_ | **leave unset** — see below |
-| `PAYMONGO_ALLOW_LIVE` | `false` | `false` |
-| `PAYMONGO_WEBHOOK_SECRET` | _(leave unset)_ | _(leave unset)_ |
+| `PAYMONGO_SECRET_KEY` | `sk_test_…` or unset | unset, then `sk_test_…`, then `sk_live_…` — see below |
+| `PAYMONGO_ALLOW_LIVE` | `false` | `false` until the live rehearsal, then `true` |
+| `PAYMONGO_WEBHOOK_SECRET` | from the test webhook | from the matching (test or live) webhook |
 
-### PayMongo: leave it unset
+### PayMongo: commission QR payments only
 
-No booking is payable online. The customer pays the provider directly — GCash to the provider's own
-number, or cash on the job — and the provider then remits SkillServe's commission
-(`SkillServe-Vault` → ADR-021). `config/payments.php` maps **both** payment methods to the manual
-gateway unconditionally, so setting `PAYMONGO_SECRET_KEY` changes nothing about a booking; it only
-puts a payment credential somewhere it is not needed.
+PayMongo is used for **one** thing: a provider paying their own commission with a dynamic QR Ph
+code (`SkillServe-Vault` → ADR-022). Bookings never use it — the customer pays the provider
+directly (ADR-021), and `config/payments.php` maps both booking methods to the manual gateway
+unconditionally.
 
-If a live key is ever set, the client **refuses every request** and logs it as critical, unless
-`PAYMONGO_ALLOW_LIVE=true` is also set. Leave that off. Collecting a booking total into SkillServe's
-account would make SkillServe owe every provider their share, with no payout mechanism to send it.
+- **Unset:** the app offers only the GCash-reference way to pay the commission.
+- **Test key + test webhook:** *Pay with QR code* appears; rehearse it end to end.
+- **Live:** set the `sk_live_` key, the live webhook's secret and `PAYMONGO_ALLOW_LIVE=true`. A live
+  key without that flag is **refused** and logged as critical.
 
-Check any environment with:
+Register the webhook at `https://<backend>/api/webhooks/paymongo` for `payment.paid`,
+`payment.failed` and `qrph.expired` (vault → PayMongo Setup). Check any environment with:
 
 ```bash
 php artisan paymongo:status
 ```
 
-"No key is set" is the healthy answer. See "Rotating an exposed PayMongo key" under Troubleshooting
-if one was ever leaked.
+See "Rotating an exposed PayMongo key" under Troubleshooting if one was ever leaked.
 
 ---
 
@@ -474,8 +474,10 @@ Do these in order on the real services and note the date and result of each — 
 5. **Mobile release APK** built against production (Flutter repo README → "Building a
    release"), with the Android Google OAuth client registered for `com.skillserve.mobile` and
    the release SHA-1.
-6. **Payments posture** — `php artisan paymongo:status` on the deployed backend reports
-   "No key is set". If it reports a live key, remove `PAYMONGO_SECRET_KEY` and rotate that key.
+6. **Payments posture** — `php artisan paymongo:status` on the deployed backend reports what you
+   intend: "QR Ph payments are off", test mode while rehearsing, or a live key **with**
+   `PAYMONGO_ALLOW_LIVE=true` once commission QR payments go live. A live key you did not mean to
+   set: remove it and rotate it.
 7. **End-to-end smoke test** on the deployed stack, with two phones: register a customer and a
    provider → provider uploads verification → admin approves → provider adds a service → admin
    approves it → customer books → provider accepts → chat → reschedule → start → complete →

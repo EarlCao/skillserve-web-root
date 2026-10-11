@@ -16,7 +16,7 @@ tags: [feature, admin-web, commissions]
 |---|---|
 | Backend module | `backend/app/Modules/Commissions` |
 | Frontend module | `frontend/src/modules/commissions` |
-| Admin route(s) | `/admin/commissions` (tabs: `?tab=ledger`, `?tab=payments`) |
+| Admin route(s) | `/admin/commissions` (tabs: `?tab=ledger`, `?tab=payments` — *Provider payments*) |
 | Permissions | `view commissions` to read · `manage commissions` to configure tiers · `settle commissions` to record or waive |
 
 ## What it does
@@ -50,9 +50,13 @@ settled and waived amounts for the current filters.
 requires a reason. **The amount is never entered** — it is shown read-only, because it always comes
 from the booking.
 
-### GCash payments tab
+### Provider payments tab
 
-The providers' GCash commission payments ([[Commission Tiers and Settlement#Paying it by GCash]]).
+The providers' commission payments ([[Commission Tiers and Settlement#Paying it by GCash]],
+[[Commission Tiers and Settlement#Paying it by QR Ph]]). Each row says how it was paid: *GCash
+reference* (a reviewer confirms it) or *QR Ph (PayMongo)* (PayMongo confirms it by itself — such a
+payment appears in the waiting list only when it needs a decision, e.g. PayMongo reported a
+different amount, shown in red with the PayMongo payment id).
 It opens on the payments **waiting for confirmation**, oldest first; each row shows the GCash
 reference, the provider and their own GCash number (the expected sender), and the amount sent
 against the amount owed (shown in red when short).

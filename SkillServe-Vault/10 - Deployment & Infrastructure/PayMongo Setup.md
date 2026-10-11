@@ -1,20 +1,19 @@
 ---
 type: deployment
 tags: [deployment, payments, paymongo, secrets]
-sources: [backend/config/payments.php, backend/app/Modules/Payments]
+sources: [backend/config/payments.php, backend/app/Modules/Payments, backend/app/Modules/Commissions/Services/CommissionQrPaymentService.php]
 ---
 # PayMongo Setup
 
-> [!danger] Nothing should be set today
-> GCash does **not** go through PayMongo. The customer pays the provider's own number directly and
-> the provider remits the commission ([[ADR-021 Direct Payment with Provider-Remitted Commission]]),
-> so `config/payments.php` maps both payment methods to the manual gateway **unconditionally** —
-> setting a key changes nothing about a booking. Every variable below should be empty in Render.
-> `php artisan paymongo:status` answers "No key is set" when the environment is right.
+> [!info] What PayMongo is for (since 2026-10-11)
+> **One thing:** a provider paying their own commission with a dynamic QR Ph code
+> ([[ADR-022 Payment QR Codes Without Holding Customer Money]]). Bookings never use PayMongo — the
+> customer pays the provider directly ([[ADR-021 Direct Payment with Provider-Remitted Commission]]),
+> and `config/payments.php` maps both booking methods to the manual gateway unconditionally.
 >
-> This note is kept for two reasons: **section 1** is the rotation runbook for the exposed key
-> (`PENDING_FIXES.md` → **C5**, done 2026-09-30), and the rest documents how the integration would be switched on if
-> the one remaining candidate — a provider paying their own outstanding commission — is ever built.
+> With no key set, the app simply offers the GCash-reference way to pay the commission;
+> `php artisan paymongo:status` says "QR Ph payments are off". Section 1 is the rotation runbook
+> for an exposed key (`PENDING_FIXES.md` → **C5**, done 2026-09-30).
 
 | Variable | What it is | Where it comes from |
 |---|---|---|
@@ -88,13 +87,15 @@ curl -X POST https://api.paymongo.com/v1/webhooks \
   -H "Content-Type: application/json" \
   -d '{"data":{"attributes":{
         "url":"https://YOUR-BACKEND.onrender.com/api/webhooks/paymongo",
-        "events":["payment.paid","payment.failed"]}}}'
+        "events":["payment.paid","payment.failed","qrph.expired"]}}}'
 ```
 
 The response's `data.attributes.secret_key` (`whsk_…`) is `PAYMONGO_WEBHOOK_SECRET`. It is a
 different value from the API key, and swapping the two makes every webhook fail verification.
 
-Only `payment.paid` and `payment.failed` are needed — those are the two the processor acts on.
+`payment.paid`, `payment.failed` and `qrph.expired` are the events the processor acts on. A
+commission is settled only on `payment.paid` whose amount and currency match what was due; a
+mismatch is left for a reviewer under Commissions → Provider payments.
 
 Existing webhooks can be listed again later with `GET /v1/webhooks`, which returns `secret_key` as
 part of the webhook resource.
@@ -106,11 +107,12 @@ endpoint refuses everything until it has the secret.
 
 1. **Deploy first** with no PayMongo variables set. Nothing breaks and nothing charges.
 2. **Register the webhook** against the deployed URL and keep the `whsk_…` value.
-3. **Set the variables in Render.** Note that this alone does **not** switch GCash on any more: the
-   gateway mapping in `config/payments.php` is hardcoded to manual, and changing it for a booking is
-   forbidden by ADR-021. A key only becomes useful once a flow is built that is meant to reach
-   PayMongo.
-4. **Test with a ₱1 payment** — the PayMongo minimum — before trusting it.
+3. **Set the variables in Render** (`sk_test_` first). The provider app then shows *Pay with QR
+   code* on the Commission screen. Bookings are unaffected (ADR-021).
+4. **Rehearse in test mode:** a provider with an outstanding commission opens *Pay with QR code*;
+   pay it with PayMongo's test flow; the webhook confirms it and the block lifts.
+5. **Go live deliberately:** swap in `sk_live_` and the live webhook secret, and set
+   `PAYMONGO_ALLOW_LIVE=true`. Pay one small real commission end to end before relying on it.
 
 ## 4. Test mode first
 
@@ -126,7 +128,9 @@ matching signature segment (`li=` vs `te=`), so switching later needs no code ch
 |---|---|
 | Webhook returns 401 | `PAYMONGO_WEBHOOK_SECRET` missing, or the API key was pasted into it by mistake |
 | 401 only in production | Live keys configured but the webhook was created in test mode, so the `li=` segment does not match |
-| Booking never becomes paid | The webhook never arrived. Check the endpoint URL and that the events include `payment.paid` |
+| Commission QR paid but still blocked | The webhook never arrived (check the URL and that the events include `payment.paid`), or PayMongo's amount did not match — see Commissions → Provider payments for the reason |
+| App shows no *Pay with QR code* | No usable key: unset, or a live key without `PAYMONGO_ALLOW_LIVE`. `php artisan paymongo:status` says which |
+| 502 "We could not create a QR code" | PayMongo refused the request (e.g. QR Ph not enabled on the account); the attempt is closed and can be retried |
 | Customer returns but nothing happened | Expected — the return redirect is not trusted; only the webhook records payment |
 | 502 on pay | PayMongo refused the request; the response carries their own message |
 | 502 "PayMongo is not available." | A live key is configured without `PAYMONGO_ALLOW_LIVE`. The log has a `critical` line; the key is never logged |
@@ -134,5 +138,5 @@ matching signature segment (`li=` vs `te=`), so switching later needs no code ch
 
 ## Related
 
-[[ADR-020 PayMongo Collects Into the Platform Account]] · [[Payments and Refunds]] ·
+[[ADR-022 Payment QR Codes Without Holding Customer Money]] · [[ADR-020 PayMongo Collects Into the Platform Account]] · [[Payments and Refunds]] ·
 [[Render Backend Service]] · [[Secrets and Environment]] · [[Go-Live Checklist]]
