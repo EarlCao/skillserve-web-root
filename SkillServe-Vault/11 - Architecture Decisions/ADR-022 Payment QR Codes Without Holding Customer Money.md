@@ -34,7 +34,8 @@ The two payments get different QR codes, chosen by the owner on 2026-10-11:
   goes straight from customer to provider and SkillServe never sees it. `config/payments.php` still
   maps both booking methods to the manual gateway.
 - **The commission is SkillServe's own money**, so collecting it through PayMongo is not escrow.
-  Without PayMongo keys the app falls back to the GCash-reference flow an administrator confirms.
+  It is the only way to pay the commission in the app (the GCash-reference way was retired the
+  same day); without PayMongo keys the provider is told to contact support.
 
 ## Consequences
 

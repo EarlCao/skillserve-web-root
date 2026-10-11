@@ -9,6 +9,14 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-11 — GCash-reference commission payment retired everywhere
+
+- System Settings → **Commission payments** (SkillServe's GCash name, number, instructions,
+  receipt retention) is removed; receipts are kept 180 days after a decision, as a fixed rule.
+- `POST /api/client/v1/provider/commission-remittances` answers **410** — an outdated app tells the
+  provider to update and pay with a QR code. Payments already submitted that way are still reviewed.
+- The commission summary's `payment_account` carries only `qr_payments_available`.
+
 ## 2026-10-11 — Commission QR: 15 minutes, QR only, visible save button
 
 - The commission QR now expires after **15 minutes** (PayMongo `expiry_seconds` 900; the app's

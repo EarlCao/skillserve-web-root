@@ -21,10 +21,6 @@ JSON payload); read everywhere through `SettingsService::value(group, name)`; ed
 | marketplace | `commission_rate` | 0–100 % | 10 | **Fallback only** — used by `CommissionCalculator` when no active `commission_tiers` row exists. Configured tiers take precedence; see [[Commission Tiers and Settlement]] |
 | marketplace | `commission_block_min_amount` | ₱0–1,000,000 | 0 | Unpaid commission total at which a provider is blocked from new work; 0 = any debt (`TransactionEligibility`) |
 | marketplace | `commission_block_after_days` | 0–365 days | 0 | Also blocks once the oldest unpaid commission is this old; 0 = off |
-| commission_payments | `gcash_account_name` | ≤120 chars | '' | SkillServe's GCash name shown to providers paying their commission (`CommissionRemittanceService::account`) |
-| commission_payments | `gcash_number` | `09XXXXXXXXX` | '' | SkillServe's GCash number; until both are set `payment_account.configured` is false and the app sends the provider to support |
-| commission_payments | `payment_instructions` | ≤1000 chars | '' | Extra text on the provider's payment screen |
-| commission_payments | `receipt_retention_days` | 1–3650 days | 180 | Receipt screenshots of decided payments are deleted this long after the decision (`commissions:purge-receipts`) |
 | identity | `identity_verification_required` | bool | **false** | `IdentityGate` — master switch for National ID enforcement; see [[Identity Verification Lifecycle]] |
 | identity | `identity_verification_enforced_from` | date | `''` | `IdentityGate` — accounts created before this date are grandfathered; empty applies the rule to everyone |
 | identity | `identity_document_retention_days` | int 1–3650 | 90 | `identity:purge-documents` (daily) |

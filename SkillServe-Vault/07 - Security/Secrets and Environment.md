@@ -26,8 +26,8 @@ sources: [backend/.gitignore, frontend/.gitignore, skill-serve-mobile-applicatio
 PayMongo is used for one thing: a provider paying their own commission by QR Ph
 ([[ADR-022 Payment QR Codes Without Holding Customer Money]]). `PAYMONGO_SECRET_KEY` and
 `PAYMONGO_WEBHOOK_SECRET` live **only** in the backend's environment (Render) — never in the admin
-web, the app, or a repository. Leave them unset until QR payments are wanted; the app then offers the
-GCash-reference way only.
+web, the app, or a repository. QR Ph is the only way providers pay the commission in the app, so production needs them; without
+them the app tells providers to contact support.
 
 Two controls back that up, because the previous leak (`PENDING_FIXES.md` → **C5**, resolved
 2026-09-30: live secret key regenerated in PayMongo, both variables deleted from Render) happened by a

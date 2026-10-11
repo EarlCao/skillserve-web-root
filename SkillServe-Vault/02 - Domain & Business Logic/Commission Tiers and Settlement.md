@@ -97,10 +97,15 @@ stateDiagram-v2
 
 ## Paying it by GCash
 
-The provider does not have to go through support. SkillServe's GCash is set in System Settings →
-**Commission payments** (`gcash_account_name`, `gcash_number`, `payment_instructions`) and shown on
-the provider's Commission screen. The provider sends the money outside the app, taps **I've paid**
-and submits the GCash reference number, the amount sent and, optionally, a receipt screenshot.
+> [!warning] Retired 2026-10-11
+> Providers now pay only by QR Ph (below). `POST /api/client/v1/provider/commission-remittances`
+> answers **410** ("update the app and pay with a QR code"), and System Settings → Commission
+> payments (SkillServe's GCash name and number) was removed. Payments already submitted this way
+> are still reviewed exactly as described here.
+
+Before it was retired: SkillServe's GCash was shown on the provider's Commission screen; the
+provider sent the money outside the app, tapped **I've paid** and submitted the GCash reference
+number, the amount sent and, optionally, a receipt screenshot.
 
 ```mermaid
 stateDiagram-v2
@@ -123,7 +128,7 @@ stateDiagram-v2
 | Confirming settles each covered booking still outstanding through `CommissionLedger::settle` with `commission_remittance_id`; one waived, voided or settled by hand meanwhile is skipped | `confirm()` |
 | The provider gets **one** notification per decision (`commission_remittance`), not one per booking settled | `NotifyProviderOfRemittanceDecision`; `NotifyProviderOfCommissionSettlement` skips remittance settlements |
 | Receipts sit on the private `commission_remittances` disk; reviewers open them through an authorized download, which is written to the audit log | `GET /api/commission-remittances/{id}/proof` |
-| Receipts of decided payments are deleted after `commission_payments.receipt_retention_days` (default 180) from the decision; the payment and its reference are kept | `commissions:purge-receipts`, daily |
+| Receipts of decided payments are deleted 180 days after the decision (`RECEIPT_RETENTION_DAYS`); the payment and its reference are kept | `commissions:purge-receipts`, daily |
 
 The provider app reloads the balance and the eligibility banner as soon as a `commission_remittance`
 or `booking_commission` notification arrives (`CommissionController`), so a confirmation lifts the
@@ -162,7 +167,7 @@ stateDiagram-v2
 | A QR code waiting to be scanned is not in the reviewers' queue or the sidebar count; a mismatched one is | `CommissionRemittance::needsReview()` |
 | One open payment per provider across **both** methods (409 otherwise) | both services |
 
-Without keys the GCash-reference flow above is the only one offered.
+It is the only way to pay in the app: without keys the provider is told to contact support.
 
 Waiting claims are counted on the admin sidebar (`pending_commission_remittances` in
 `GET /api/dashboard/attention`) and update live (`commission-remittances` realtime resource).

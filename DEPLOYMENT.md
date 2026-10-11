@@ -431,7 +431,8 @@ code (`SkillServe-Vault` → ADR-022). Bookings never use it — the customer pa
 directly (ADR-021), and `config/payments.php` maps both booking methods to the manual gateway
 unconditionally.
 
-- **Unset:** the app offers only the GCash-reference way to pay the commission.
+- **Unset:** providers cannot pay the commission in the app (it is paid by QR code only); the app
+  tells them to contact support.
 - **Test key + test webhook:** *Pay with QR code* appears; rehearse it end to end.
 - **Live:** set the `sk_live_` key, the live webhook's secret and `PAYMONGO_ALLOW_LIVE=true`. A live
   key without that flag is **refused** and logged as critical.

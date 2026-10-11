@@ -70,8 +70,8 @@ for them twice and is owed the difference). Opening a receipt is written to the 
 reason, which the provider is shown. Both need `settle commissions`.
 
 The sidebar's **Commissions** item carries a live count of waiting payments and links straight to
-this tab while any are waiting. SkillServe's own GCash details are set in
-[[System Settings]] → Commission payments.
+this tab while any are waiting. Providers now pay by QR Ph only, so GCash-reference payments come
+only from older app versions.
 
 > [!info] Why there is no separate Payments page
 > `/api/commissions` already returns the payment status, method, reference and date alongside the

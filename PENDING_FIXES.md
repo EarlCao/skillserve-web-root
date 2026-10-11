@@ -67,10 +67,10 @@ reference and amount show up in SkillServe's GCash history. See vault
 - [ ] **Deploy:** push the backend first. Migration `2026_10_11_000001` is additive (two new tables,
   one nullable column) and can run before the code; rollback drops them, losing only claims made
   since. Then rebuild the admin web, then build a new APK.
-- [ ] **Owner:** in System Settings → **Commission payments**, enter SkillServe's GCash account name
-  and number (and any instructions). Until both are set the app tells providers to contact support.
+- [x] ~~**Owner:** enter SkillServe's GCash name and number in System Settings → Commission payments~~
+  — **no longer needed:** the setting was removed when the commission became QR-only (F6).
 - [x] ~~**Owner:** rehearse it~~ — **superseded 2026-10-11:** the app now pays the commission by QR
-  code only (F6); the GCash-reference flow remains in the API for older app versions. Was: tap
+  code only (F6), and the API answers 410 to the old GCash-reference submission. Was: tap
   *I've paid*, submit a reference — the provider stays blocked; in Commissions → GCash payments,
   confirm it — the provider is notified and the app lifts the block at once. Try a reject too.
 - [x] **Review follow-ups (2026-10-11):** live refresh in the app on a decision; a shared reference

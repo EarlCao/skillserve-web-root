@@ -11,7 +11,8 @@ sources: [backend/config/payments.php, backend/app/Modules/Payments, backend/app
 > customer pays the provider directly ([[ADR-021 Direct Payment with Provider-Remitted Commission]]),
 > and `config/payments.php` maps both booking methods to the manual gateway unconditionally.
 >
-> With no key set, the app simply offers the GCash-reference way to pay the commission;
+> It is the only way to pay the commission in the app. With no key set, providers are told to contact
+> support;
 > `php artisan paymongo:status` says "QR Ph payments are off". Section 1 is the rotation runbook
 > for an exposed key (`PENDING_FIXES.md` → **C5**, done 2026-09-30).
 
