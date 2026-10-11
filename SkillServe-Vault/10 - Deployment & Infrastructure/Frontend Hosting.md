@@ -22,9 +22,9 @@ The build injects a CSP `<meta>` tag; frame-blocking must come from real headers
 
 `frontend/vercel.json` rewrites `/assets/*` and everything else to `/index.html`, sends the same
 long-lived `Cache-Control` on `/assets/*`, and the backend
-CORS list includes `https://skillserve-admin-side.vercel.app` and
-`https://skillserve-web-admin.vercel.app` (backend commit "Fix CORS config for Vercel frontend",
-2026-09-12).
+CORS list allows `https://skillserve-web-admin.vercel.app`, the live admin web. The older
+`skillserve-admin-side.vercel.app` (gone) and `skillserve-frontend.onrender.com` (now an unrelated
+app) were removed on 2026-10-11.
 
 > [!warning] Needs Verification
 > Which host serves the live admin web (Render static site, Vercel, or both) and whether the

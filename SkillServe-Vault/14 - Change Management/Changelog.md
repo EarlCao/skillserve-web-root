@@ -9,6 +9,13 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-11 — CORS: retired admin-web addresses removed
+
+`skillserve-frontend.onrender.com` now serves an unrelated app and `skillserve-admin-side.vercel.app`
+no longer exists, so neither is trusted any more; the live admin web is
+`skillserve-web-admin.vercel.app`. `FRONTEND_URL` in `DEPLOYMENT.md` corrected. Owner: update the
+same variable in Render (PENDING_FIXES).
+
 ## 2026-10-11 — Administrators can set a profile photo
 
 Account menu (top right, beside the light/dark toggle) → *Add profile photo* / *Remove photo*. The

@@ -9,9 +9,7 @@ sources: [backend/config/cors.php, frontend/vite.config.js, DEPLOYMENT.md, backe
 
 - Paths: `api/*`, `sanctum/csrf-cookie`; all methods and headers; `supports_credentials: true`;
   `max_age: 0`.
-- **Allowed origins** (exact): `https://skillserve-admin-side.vercel.app`,
-  `https://skillserve-web-admin.vercel.app`, `https://skillserve-frontend.onrender.com`,
-  `http://localhost:5173`, `http://localhost:3000`, `http://127.0.0.1:5173`, plus `FRONTEND_URL` and
+- **Allowed origins** (exact): `https://skillserve-web-admin.vercel.app`, `http://localhost:5173`, `http://localhost:3000`, `http://127.0.0.1:5173`, plus `FRONTEND_URL` and
   comma-separated `FRONTEND_URLS`.
 - Pattern: any `http://localhost:*` / `127.0.0.1:*` **only when `APP_ENV=local`** (for
   `flutter run -d chrome`).

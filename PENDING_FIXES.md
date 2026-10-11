@@ -37,6 +37,12 @@ Required for every account; PhilSys card and ePhilID. See vault [[Philippine Add
   and ePhilID, book with the picker, add a service with a service area.
 **Server-side enforcement:** turn on System Settings → Identity (**H8**) at launch.
 
+### F7 · Render's `FRONTEND_URL` may name a site that is not ours **[DEP]** — owner action
+`skillserve-frontend.onrender.com` now serves an unrelated app, and the backend trusts whatever
+`FRONTEND_URL` names for CORS. The address was removed from `config/cors.php` (2026-10-11).
+- [ ] **Render → backend → Environment:** if `FRONTEND_URL` is `https://skillserve-frontend.onrender.com`,
+  change it to `https://skillserve-web-admin.vercel.app` (and check `FRONTEND_URLS`, if set). Save.
+
 ### F6 · QR codes with the exact amount **[BE][AW][MB][DEP]** — built 2026-10-11
 **Asked 2026-10-11:** a QR with the exact amount when a customer pays a provider, and when a
 provider pays SkillServe its commission. Decided with the owner: the booking QR is the **provider's

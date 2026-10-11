@@ -28,9 +28,8 @@ middleware and the permission checked.
 > [!warning] Needs Verification — production hostname
 > The mobile app defaults to `https://skillserve-web-backend.onrender.com/api`
 > (`lib/core/config/app_config.dart`, `env/production.json`), while `DEPLOYMENT.md` uses
-> `skillserve-backend.onrender.com` in its examples. The CORS list names
-> `skillserve-frontend.onrender.com`, `skillserve-admin-side.vercel.app` and
-> `skillserve-web-admin.vercel.app`. Confirm the real live hosts in the Render/Vercel dashboards.
+> `skillserve-backend.onrender.com` in its examples. The admin web is live at
+> `skillserve-web-admin.vercel.app` (checked 2026-10-11), the only admin origin CORS allows.
 
 Swagger UI: `/api/documentation`, raw spec `/docs` (hidden in production unless
 `SWAGGER_UI_ENABLED=true`).

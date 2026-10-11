@@ -74,7 +74,7 @@ be. Keep it in step with the dashboard when you change either.
    APP_DEBUG=false
    APP_KEY=            # leave blank — use Render's "Generate" button
    APP_URL=https://skillserve-backend.onrender.com
-   FRONTEND_URL=https://skillserve-frontend.onrender.com
+   FRONTEND_URL=https://skillserve-web-admin.vercel.app
    DB_CONNECTION=pgsql
    DB_HOST=ep-xxx-pooler.us-east-2.aws.neon.tech
    DB_DIRECT_HOST=ep-xxx.us-east-2.aws.neon.tech   # optional, see below
@@ -419,7 +419,7 @@ You can now browse tables, run queries, and verify data after each deployment.
 | `DB_SSLMODE` | `prefer` | `require` |
 | `SESSION_DRIVER` | `database` | `database` |
 | `CACHE_STORE` | `database` | `database` |
-| `FRONTEND_URL` | `http://localhost:5173` | `https://skillserve-frontend.onrender.com` |
+| `FRONTEND_URL` | `http://localhost:5173` | `https://skillserve-web-admin.vercel.app` (the admin web on Vercel) |
 | `PAYMONGO_SECRET_KEY` | `sk_test_…` or unset | unset, then `sk_test_…`, then `sk_live_…` — see below |
 | `PAYMONGO_ALLOW_LIVE` | `false` | `false` until the live rehearsal, then `true` |
 | `PAYMONGO_WEBHOOK_SECRET` | from the test webhook | from the matching (test or live) webhook |
