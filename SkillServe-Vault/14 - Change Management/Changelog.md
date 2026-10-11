@@ -9,6 +9,15 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-11 — Commission QR: 15 minutes, QR only, visible save button
+
+- The commission QR now expires after **15 minutes** (PayMongo `expiry_seconds` 900; the app's
+  countdown matches).
+- The app pays the commission **only** by QR code: the GCash-reference "I've paid" screen
+  (`/commissions/pay`) is removed. The API still accepts it from older app versions.
+- **Save QR to gallery** is a filled button; outlined buttons now follow the theme, so they no
+  longer vanish in dark mode.
+
 ## 2026-10-11 — QR codes with the exact amount
 
 - **Booking (customer → provider):** a provider uploads their GCash "Receive via QR" once

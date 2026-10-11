@@ -10,9 +10,9 @@ Mobile requirement(s): **(extra)** ([[Requirements Sources]]).
 
 | | |
 |---|---|
-| Screens / routes | `/commissions`, `/commissions/pay`, `/commissions/qr`, `/gcash-details` |
-| Code (Flutter `lib/`) | `features/provider/ (models/commission_model.dart, services/commission_service.dart, views/commissions_screen.dart, views/pay_commission_screen.dart, views/commission_qr_screen.dart, views/gcash_details_screen.dart)`, `core/utils/payment_qr.dart`, `core/widgets/misc/payment_qr_card.dart` |
-| Endpoints | `GET /api/client/v1/provider/commissions`, `POST /api/client/v1/provider/commission-remittances`, `PATCH /api/client/v1/provider/profile` |
+| Screens / routes | `/commissions`, `/commissions/qr`, `/gcash-details` |
+| Code (Flutter `lib/`) | `features/provider/ (models/commission_model.dart, services/commission_service.dart, views/commissions_screen.dart, views/commission_qr_screen.dart, views/gcash_details_screen.dart)`, `core/utils/payment_qr.dart`, `core/widgets/misc/payment_qr_card.dart` |
+| Endpoints | `GET /api/client/v1/provider/commissions`, `POST /api/client/v1/provider/commission-remittances/qr`, `GET /api/client/v1/provider/commission-remittances/{id}`, `PATCH /api/client/v1/provider/profile` |
 
 ## Requirement coverage
 
@@ -20,8 +20,8 @@ Mobile requirement(s): **(extra)** ([[Requirements Sources]]).
 |---|---|---|---|
 | — | See what is owed | the outstanding total and each unremitted booking: the service, the booking number, the commission, its rate against the job's price, and when the customer paid | implemented |
 | — | Understand the block | while anything is outstanding the provider cannot accept or start jobs or publish services; declining and cancelling stay open, and the screen says so | implemented |
-| — | Settle it | **I've paid** (`/commissions/pay`): SkillServe's GCash number, name and the amount, each copyable; then the GCash reference number, the amount sent and an optional receipt screenshot. A payment waiting for confirmation, or a rejected one with its reason, is shown on `/commissions`. Without SkillServe's GCash configured the screen falls back to contacting support | implemented |
-| — | Pay by QR Ph | **Pay with QR code** (`/commissions/qr`, when `qr_payments_available`): PayMongo's QR for the exact amount, a countdown to expiry, **Save QR to gallery**, and a check every 5 s until PayMongo confirms it — then the block lifts. An expired or failed code offers a new one; leaving and returning shows the same open code | implemented |
+| — | ~~Settle it by GCash reference~~ | **Removed 2026-10-11** — the commission is paid by QR code only. Was: **I've paid** (`/commissions/pay`): SkillServe's GCash number, name and the amount, each copyable; then the GCash reference number, the amount sent and an optional receipt screenshot. A payment waiting for confirmation, or a rejected one with its reason, is shown on `/commissions`. Without SkillServe's GCash configured the screen falls back to contacting support | implemented |
+| — | Pay by QR Ph | **Pay with QR code** (`/commissions/qr`, when `qr_payments_available`): PayMongo's QR for the exact amount, a 15-minute countdown, **Save QR to gallery**, and a check every 5 s until PayMongo confirms it — then the block lifts. An expired or failed code offers a new one; leaving and returning shows the same open code | implemented |
 | — | Add the GCash QR customers pay | `/gcash-details` → **Upload my GCash QR**: the QR saved from GCash is read on the phone (ML Kit) and its text saved as `gcash_qr_payload`; customers then get it with each booking's amount | implemented |
 | — | Hear the decision | a `commission_remittance` notification (confirmed or rejected) opens `/commissions`, and on arrival reloads the balance (`CommissionController`) and the eligibility banner, so the block lifts on screen at once | implemented |
 | — | Receive GCash payments | `/gcash-details` saves `gcash_number` and `gcash_name`, which is what makes `payment_instructions` useful to the customer | implemented |

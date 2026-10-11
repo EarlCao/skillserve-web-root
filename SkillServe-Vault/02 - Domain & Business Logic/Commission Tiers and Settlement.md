@@ -134,7 +134,12 @@ block on screen without a pull to refresh.
 When PayMongo keys are configured (`payment_account.qr_payments_available`), the provider can tap
 **Pay with QR code** instead. `CommissionQrPaymentService` creates a PayMongo Payment Intent for the
 exact outstanding total (`payment_method_allowed: [qrph]`), a `qrph` Payment Method, and attaches
-it; the QR image comes back in `next_action.code.image_url`. The money is SkillServe's own
+it with `expiry_seconds` 900 (15 minutes; PayMongo's default is 30); the QR image comes back in
+`next_action.code.image_url`.
+
+Since 2026-10-11 the app offers **only** this way to pay the commission. The GCash-reference
+endpoints below still answer — an older app version may use them, and an administrator still
+reviews what arrives that way — but the current app has no "I've paid" form. The money is SkillServe's own
 commission, so this is not escrow ([[ADR-022 Payment QR Codes Without Holding Customer Money]]).
 
 ```mermaid
@@ -143,7 +148,7 @@ stateDiagram-v2
   pending --> confirmed : payment.paid, amount and currency match
   pending --> pending : payment.paid that does not match (failure_reason, a reviewer decides)
   pending --> failed : payment.failed, or PayMongo could not create the code
-  pending --> expired : qrph.expired, or 30 min (+2 min grace) without payment
+  pending --> expired : qrph.expired, or 15 min (+2 min grace) without payment
   expired --> confirmed : a late payment.paid still counts
 ```
 
