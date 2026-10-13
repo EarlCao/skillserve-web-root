@@ -16,6 +16,8 @@ All uploads use Laravel **local disks under `storage/app`**. In production that 
 | `public` | `storage/app/public`, URL `APP_URL/storage` | yes (via `storage:link`) | profile photos (`profile-photos/`), portfolio images (`portfolio/`) — JPG/PNG/WebP ≤5 MB | `ClientProfileService`, `ProviderAccountService` |
 | `verification` | `storage/app/private` | no (`serve: false`) | provider ID / certificate / other documents (JPG/PNG/PDF ≤10 MB, 1–5 per submission) | `ProviderVerificationService` |
 | `dispute_evidence` | `storage/app/private/dispute-evidence` | no | dispute photos — JPG/PNG/WebP ≤5 MB, ≤5 per dispute, optional caption ≤500 chars | `BookingDisputeService` |
+| `report_attachments` | `storage/app/private/report-attachments` | no | report proof photos — JPG/PNG/WebP ≤5 MB, ≤5 per report | `ClientReportService` |
+| `support_attachments` | `storage/app/private/support-attachments` | no | support ticket / reply photos — JPG/PNG/WebP ≤5 MB, ≤5 per post | `ClientSupportTicketService` |
 | `message_images` | `storage/app/private/message-images` | no | chat photos — JPG/PNG/WebP ≤5 MB, one per message | `BookingMessageService` |
 | `local` | `storage/app/private` | `serve: true` (signed temporary URLs only) | default disk (`FILESYSTEM_DISK=local`) | — |
 | `s3` | — | — | configured by the framework default; **not used** | — |
@@ -29,6 +31,10 @@ The profile-photo disk is configurable: `CLIENT_PROFILE_PHOTO_DISK` (default `pu
 | Verification document | `GET /api/providers/{provider}/verification-documents/{document}/download` | `ProviderPolicy::view` → `view providers` |
 | Dispute evidence | `GET /api/disputes/{booking}/evidence/{evidence}` | `BookingPolicy::viewDisputes` → `view bookings` |
 | Chat photo (mobile) | `GET /api/client/v1/bookings/{booking}/messages/{message}/image` | booking participants only |
+| Report photo (admin) | `GET /api/reports/{report}/attachments/{attachment}` | `ReportPolicy::view` → `view reports` |
+| Report photo (reporter) | `GET /api/client/v1/reports/{report}/attachments/{attachment}` | the reporter only |
+| Support photo (admin) | `GET /api/support/tickets/{ticket}/attachments/{attachment}` | `SupportTicketPolicy::view` → `view support` |
+| Support photo (requester) | `GET /api/client/v1/support/tickets/{ticket}/attachments/{attachment}` | the requester only |
 | Reported chat photo (admin) | `GET /api/reports/{report}/message-image` | `ReportPolicy::view` → `view reports` |
 
 The admin web fetches these as blobs and opens them in a new tab. Migration

@@ -38,7 +38,7 @@ Required for every account; PhilSys card and ePhilID. See vault [[Philippine Add
   and ePhilID, book with the picker, add a service with a service area.
 **Server-side enforcement:** turn on System Settings → Identity (**H8**) at launch.
 
-### F10 · Chat photos, notification archive, clear National ID photos **[BE][AW][MB]** — built 2026-10-13, phone check left
+### F10 · Chat photos, notification archive, clear National ID photos, photos as proof **[BE][AW][MB]** — built 2026-10-13, phone check left
 Backend `8acc5a1` (migrations `2026_10_13_000004`/`000005`, additive) and the ID-photo checks; see vault Changelog.
 - [ ] **Phone check, chat:** with a customer and a provider on one booking, send a photo from the
   camera and one from the gallery (with and without a caption); it appears on the other phone at once,
@@ -47,6 +47,10 @@ Backend `8acc5a1` (migrations `2026_10_13_000004`/`000005`, additive) and the ID
 - [ ] **Phone check, notifications:** swipe right to archive, open Archived and move it back; swipe
   left to delete; long-press to select several. With the app open on two phones on one account, the
   other follows.
+- [ ] **Phone check, photos as proof:** file a report with 2 photos, raise a dispute with photos, open
+  a support ticket with a screenshot and reply with a photo alone. In the admin web, each shows the
+  thumbnails in the Reports dialog and the Support ticket (click for full size); dispute photos open from the Disputes dialog (Open evidence). Known gap:
+  these files, like chat photos and dispute evidence, are not deleted when an account is purged.
 - [ ] **Phone check, National ID:** scan a sharp card in good light (accepted), then try in a dark
   room, under a lamp's glare and while moving the phone — each should ask for a retake with a
   reason. If a good photo is ever refused, report it: the thresholds in

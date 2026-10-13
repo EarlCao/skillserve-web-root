@@ -23,6 +23,7 @@ Feature note: [[Support Management]] · Conventions: [[API Conventions]] · Inde
 | GET | `/api/support/tickets/{ticket}` | `Support::SupportTicketController@show` | `auth:sanctum` | policy `view` → `view support` |
 | PATCH | `/api/support/tickets/{ticket}/assign` | `Support::SupportTicketController@assign` | `auth:sanctum` | policy `assign` → `assign support tickets` |
 | PATCH | `/api/support/tickets/{ticket}/resolve` | `Support::SupportTicketController@resolve` | `auth:sanctum` | policy `resolve` → `resolve support tickets` |
+| GET | `/api/support/tickets/{ticket}/attachments/{attachment}` | `Support::SupportTicketController@attachment` | `auth:sanctum` | policy `view` → `view support` |
 | POST | `/api/support/tickets/{ticket}/responses` | `Support::SupportTicketController@respond` | `auth:sanctum` | policy `respond` → `respond to support tickets` |
 
 Every `api/*` route also runs the `api` group: `throttle:api` (60/min per user or IP), `SubstituteBindings`, `ForceJsonResponse`, `CacheApiResponse`, `AddRateLimitHeaders`.

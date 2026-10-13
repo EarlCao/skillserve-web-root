@@ -19,6 +19,7 @@ Feature note: [[Client Reports]] · Conventions: [[API Conventions]] · Index: [
 | Method | Path | Controller action | Middleware | Authorization |
 |---|---|---|---|---|
 | GET | `/api/client/v1/reports` | `ClientCommunication::ClientReportController@index` | `EnsurePlatformAvailable`, `auth:sanctum`, `EnsureMobileAccount` | Role gate in middleware; ownership/participant check in the client policy or service |
+| GET | `/api/client/v1/reports/{report}/attachments/{attachment}` | `ClientCommunication::ClientReportController@attachment` | `EnsurePlatformAvailable`, `auth:sanctum`, `EnsureMobileAccount` | Role gate in middleware; ownership/participant check in the client policy or service |
 | POST | `/api/client/v1/reports` | `ClientCommunication::ClientReportController@store` | `EnsurePlatformAvailable`, `auth:sanctum`, `EnsureMobileAccount` | Role gate in middleware; ownership/participant check in the client policy or service |
 | GET | `/api/client/v1/reports/{report}` | `ClientCommunication::ClientReportController@show` | `EnsurePlatformAvailable`, `auth:sanctum`, `EnsureMobileAccount` | Role gate in middleware; ownership/participant check in the client policy or service |
 

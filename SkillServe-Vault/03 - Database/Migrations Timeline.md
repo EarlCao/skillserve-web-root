@@ -204,6 +204,11 @@ images must be removed from the private disk separately.
   The planner uses them for the search's `LOWER(col) LIKE '%word%' ESCAPE '!'` (verified with
   `EXPLAIN`). Rollback drops the indexes and keeps the extension. A failed concurrent build would
   leave an INVALID index that `IF NOT EXISTS` skips: drop it by name and migrate again.
+- **`2026_10_13_000006_create_report_and_support_attachments_tables`** — new [[report_attachments]]
+  and [[support_ticket_attachments]] (FKs cascade from their report/ticket/message, `uploaded_by`
+  null on delete). Additive, no backfill. Rollback drops both tables; the photo files stay on disk,
+  unreferenced. Deploy the backend before the app build that sends photos. Like chat photos and
+  dispute evidence, files are not removed when an account is purged (known gap).
 - **`2026_10_13_000004_add_image_to_messages`** — nullable `image_path` on [[messages]];
   metadata-only, no backfill. Rollback drops the column (photo messages lose their photo; files stay
   on disk, unreferenced). Deploy the backend before the app build that sends photos.

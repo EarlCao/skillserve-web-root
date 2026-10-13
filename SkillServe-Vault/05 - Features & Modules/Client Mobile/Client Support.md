@@ -18,10 +18,10 @@ Mobile requirement(s): **M12** ([[Requirements Sources]]).
 
 | ID | Functionality | Implementation | Status |
 |---|---|---|---|
-| M 12.1 | Create Support Ticket | subject, description, category | implemented |
+| M 12.1 | Create Support Ticket | subject, description, category, up to 5 photos | implemented |
 | M 12.2 | View My Support Tickets | own tickets | implemented |
 | M 12.3 | View Ticket Details | thread with staff | implemented |
-| M 12.4 | Reply to Support Ticket | refused once resolved | implemented |
+| M 12.4 | Reply to Support Ticket | text and/or up to 5 photos; refused once resolved | implemented |
 | M 12.5 | View Ticket Status | open / in_progress / resolved (no separate *assigned* status) | implemented |
 
 UAT result columns in the mobile `TEST_PLAN.md` are still empty — see [[UAT and Traceability]].

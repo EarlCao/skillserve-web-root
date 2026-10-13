@@ -41,6 +41,8 @@ still empty (not yet executed on the deployed system) — see [[UAT and Traceabi
 ## Notes
 
 - Reason filter reads `GET /api/reports/reasons` (current + legacy reasons).
+- **Photos from the reporter** show as thumbnails in the report dialog (`PrivatePhotos`, fetched with
+  the admin's token); click one for full size. A reported chat photo has its own **View photo**.
 
 ## Related
 

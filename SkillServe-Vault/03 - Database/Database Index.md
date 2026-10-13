@@ -21,8 +21,8 @@ tags: [index, database]
 | Commissions | [[commission_tiers]] · [[commission_settlements]] · [[commission_remittances]] |
 | Payments | [[payment_intents]] |
 | Identity | [[identity_verifications]] · [[identity_documents]] · [[identity_verification_events]] |
-| Moderation | [[reports]] |
-| Support | [[support_tickets]] · [[support_ticket_messages]] |
+| Moderation | [[reports]] · [[report_attachments]] |
+| Support | [[support_tickets]] · [[support_ticket_messages]] · [[support_ticket_attachments]] |
 | Notifications | [[notifications]] · [[announcements]] |
 | Mobile | [[client_preferences]] · [[favorite_providers]] |
 | Platform | [[settings]] · [[data_archives]] · [[activity_log]] · [[media]] |

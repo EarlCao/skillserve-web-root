@@ -21,6 +21,7 @@ Feature note: [[Reports and Moderation]] · Conventions: [[API Conventions]] · 
 | GET | `/api/reports` | `ReportsAndModeration::ReportController@index` | `auth:sanctum` | policy `viewAny` → `view reports` |
 | GET | `/api/reports/reasons` | `ReportsAndModeration::ReportController@reasons` | `auth:sanctum` | policy `viewAny` → `view reports` |
 | GET | `/api/reports/{report}` | `ReportsAndModeration::ReportController@show` | `auth:sanctum` | policy `view` → `view reports` |
+| GET | `/api/reports/{report}/attachments/{attachment}` | `ReportsAndModeration::ReportController@attachment` | `auth:sanctum` | policy `view` → `view reports` |
 | GET | `/api/reports/{report}/message-image` | `ReportsAndModeration::ReportController@messageImage` | `auth:sanctum` | policy `view` → `view reports` |
 | PATCH | `/api/reports/{report}/action` | `ReportsAndModeration::ReportController@takeAction` | `auth:sanctum` | policy `action` → `manage moderation` |
 | PATCH | `/api/reports/{report}/investigate` | `ReportsAndModeration::ReportController@investigate` | `auth:sanctum` | policy `investigate` → `investigate reports` |

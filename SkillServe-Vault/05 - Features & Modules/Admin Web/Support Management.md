@@ -39,6 +39,8 @@ still empty (not yet executed on the deployed system) — see [[UAT and Traceabi
 ## Notes
 
 - Module was entirely missing in the 2026-09-08 readiness audit; added 2026-09-08.
+- **Photos from the requester** show as thumbnails under the request and under each reply that
+  carried them (`PrivatePhotos`); click one for full size.
 
 ## Related
 

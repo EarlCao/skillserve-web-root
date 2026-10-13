@@ -9,6 +9,22 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-13 — Photos as proof on reports, disputes and support tickets
+
+- **Reports:** the Report an Issue screen and the report sheet (message, review, service, provider)
+  take up to 5 photos (camera or gallery). `POST /client/v1/reports` accepts multipart `images[]`
+  (JPG/PNG/WebP ≤5 MB); new table [[report_attachments]]. Moderators see thumbnails in the report
+  dialog (click for full size); the reporter sees them in My Reports.
+- **Disputes:** *Raise a dispute* is now a sheet with photos; they are attached through the existing
+  evidence endpoint right after the dispute is raised (a photo that fails is reported, and can be
+  added later from My Reports).
+- **Support tickets:** photos with a new ticket and with any reply (a reply can be photos alone);
+  new table [[support_ticket_attachments]]. Staff see thumbnails with the request and each reply.
+- All photos are private (disks `report_attachments`, `support_attachments`) and streamed only after
+  authorisation (`view reports`, `view support`, or the requester/reporter). Shared code:
+  `App\Shared\Helpers\PrivateImages` (backend), `PrivatePhotos` (admin), `pickPhotos`,
+  `PhotoAttachmentsField`, `PrivatePhotoStrip` (app). Migration `2026_10_13_000006`.
+
 ## 2026-10-13 — National ID photos must be clear and unfiltered
 
 Front and back photos are taken with the document scanner in its no-filter mode (no colour filters,
