@@ -15,7 +15,7 @@ Admin requirement module **15** ([[Requirements Sources]]).
 | Frontend module | `frontend/src/modules/administrators` |
 | Admin route(s) | `/admin/administrators`, `/admin/administrators?tab=roles`, `/admin/administrators?tab=permissions` |
 | Endpoints | [[API - Administrators, Roles and Permissions]] |
-| Permissions | administrators: `view|create|edit administrators`; roles & permissions: `manage administrators`; assigning `super-admin` requires being super-admin |
+| Permissions | administrators: `view|create|edit administrators`; roles & permissions: `manage administrators`; `super-admin` is never assigned (there is exactly one) |
 
 ## Requirement coverage
 
@@ -37,7 +37,13 @@ still empty (not yet executed on the deployed system) — see [[UAT and Traceabi
 
 ## Notes
 
-- The 2026-09-08 audit's CRITICAL super-admin escalation is addressed by `AdministratorPolicy::assignSuperAdmin` checked on store/update.
+- **One super administrator (2026-10-13).** A new administrator is always `admin` — the Add form has
+  no role field, and `POST /api/administrators` accepts `role` only as `admin` (optional). Nobody,
+  not even the super administrator, can grant `super-admin`: store and update reject it with 422.
+  This also closes the 2026-09-08 audit's super-admin escalation (formerly guarded by
+  `AdministratorPolicy::assignSuperAdmin`, now unreachable).
+- Administrators' profile photos show in the list, the details and the header, falling back to
+  initials when there is none or it fails to load (`UserAvatar`).
 - `SystemRole::PROTECTED_PERMISSIONS = ['manage administrators']`.
 
 ## Related

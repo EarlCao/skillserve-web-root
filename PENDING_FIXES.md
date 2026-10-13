@@ -389,7 +389,14 @@ migrations and went live (the new `/api/commission-tiers/presets` answers 401 un
 `/api/health` up); the frontend was pushed after it.
 
 ### Owner actions before go-live (cannot be done from the code)
-1. **Render:** a paid backend instance with the persistent disk, and the environment from
+1. **⚠ Urgent — uploads are being lost now (verified 2026-10-13).** Every uploaded file on
+   production returns 404 (administrator and mobile profile photos, portfolio photos, ID documents,
+   dispute evidence): without a persistent disk, `storage/app` is wiped by every redeploy and every
+   free-tier restart. `GET /api/health` now shows `"storage": {"persistent": false, "warning": …}`.
+   Fix: Render → backend → Settings → Instance Type: a paid plan; then Disks → Add Disk, mount path
+   `/var/www/html/storage/app` (DEPLOYMENT.md → "Uploaded files"). Afterwards health shows
+   `"persistent": true`; ask users to re-upload photos lost before the disk existed.
+   **Render:** a paid backend instance with the persistent disk, and the environment from
    `DEPLOYMENT.md`, including `SEED_MODE=starter` on the first deploy, then `admin-only`.
    After that, follow `DEPLOYMENT.md` → "Go-live checklist".
 2. ~~**Android signing**~~ — keystore and `android/key.properties` created 2026-09-30 (Flutter repo

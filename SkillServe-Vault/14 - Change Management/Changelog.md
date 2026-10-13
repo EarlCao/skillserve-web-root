@@ -9,6 +9,17 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-13 — One super administrator; photos that fail to load; uploads need the disk
+
+- **Add administrator** has no role field: every new administrator is `admin`, and `super-admin` can
+  never be granted (422 on create and update). See [[Admin Management]].
+- **Profile photos "not appearing":** on production every uploaded file returns 404 — the backend runs
+  without a persistent disk, so `storage/app` is wiped by each redeploy and restart (verified on
+  portfolio photos uploaded the same day). Owner action: attach the Render disk (PENDING_FIXES →
+  go-live 1). Meanwhile avatars fall back to initials instead of a blank, photos now show in the
+  Users and Administrators lists, and `GET /api/health` reports `storage.persistent` (with a
+  `warning` in production when false).
+
 ## 2026-10-13 — Live statistics, reviews on every service, multi-photo portfolio
 
 - **Statistics (provider)** now reads `GET /client/v1/provider/statistics`; it had shown hard-coded
