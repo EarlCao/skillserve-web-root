@@ -44,8 +44,8 @@ Backend `3d2190e` (migration `2026_10_13_000003`, additive) and the app are done
   numbers match your bookings; complete a booking and watch them change. Add a portfolio item with
   several photos, edit it (add/remove photos), open it, delete it. As a customer, open a service's
   reviews and a provider's portfolio item.
-- [ ] **Small, found on the way:** the National ID screen (`identity_verification_screen.dart:458`)
-  overflows on very narrow phones in the contrast test — tighten that column.
+- [x] **National ID capture card overflow** — fixed 2026-10-13: the card had a fixed height, so a
+  wrapped title clipped by 8 px on narrow phones; it now grows. No overflow left in the test suite.
 
 ### F8 · Live marketplace, keyword and name search, full provider profile, report a provider, back from booking details **[BE][MB][DEP]** — built 2026-10-13, owner checks left
 Built in backend, mobile and docs (vault Changelog 2026-10-13). Nothing reaches the phone until the
