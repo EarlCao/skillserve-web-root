@@ -10,7 +10,7 @@ Booking-scoped chat messages (also reportable).
 
 - **Model:** `backend/app/Modules/ReportsAndModeration/Models/Message.php`
 - **Soft deletes:** yes
-- **Migrations:** `2026_09_04_000001_create_messages_table`, `2026_09_08_000008_add_read_state_and_idempotency_to_messages`
+- **Migrations:** `2026_09_04_000001_create_messages_table`, `2026_09_08_000008_add_read_state_and_idempotency_to_messages`, `2026_10_13_000004_add_image_to_messages`
 
 ## Columns
 
@@ -19,7 +19,8 @@ Booking-scoped chat messages (also reportable).
 | `id` | bigint PK |  |
 | `sender_id, receiver_id` | FK users |  |
 | `booking_id` | FK bookings null |  |
-| `content` | text |  |
+| `content` | text | empty when the message is a photo alone |
+| `image_path` | string null | photo on the private `message_images` disk; never exposed — read via `image_url` |
 | `status` | string(20) default 'active' | active / removed |
 | `removed_by, removed_at` |  | moderation |
 | `read_at` | timestamp null |  |

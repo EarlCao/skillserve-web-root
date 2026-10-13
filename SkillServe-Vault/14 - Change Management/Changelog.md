@@ -9,6 +9,26 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-13 — Photos in chat; archive and delete notifications; leaner Profile
+
+- **Photos in chat:** both parties can send a photo (camera or gallery, optional caption) on a
+  booking's chat. `POST /client/v1/bookings/{booking}/messages` takes multipart `image`
+  (JPG/PNG/WebP ≤5 MB, `content` optional when a photo is attached); the photo is private (disk
+  `message_images`) and read with the user's token from `image_url`
+  (`GET …/messages/{message}/image`, participants only). It arrives live on `client.message.created`;
+  the inbox preview reads "📷 Photo". Admins see a **View photo** button on a reported photo message
+  (`GET /api/reports/{report}/message-image`, `view reports`). Migration `2026_10_13_000004`.
+- **Notifications:** an **Inbox | Archived** switch; swipe right to archive (or move back to the
+  inbox), left to delete (asks first); long-press or the select button to archive/delete several.
+  Archived notifications are marked read and leave the unread badge. Endpoints `POST
+  /client/v1/notifications/archive|unarchive|delete` (`ids`, ≤100) and `DELETE
+  /client/v1/notifications/{id}`; `GET /notifications?archived=1`. Other open sessions follow live
+  via `client.notifications.changed`. Migration `2026_10_13_000005`.
+- **Profile (both roles):** removed the Notifications tile from Activity (the bell is in the Home app
+  bar) and the edit button on the profile card (Account → Edit profile remains).
+
+Tests: `ClientCommunicationTest`, Flutter `marketplace_models_test`, `messaging_test`.
+
 ## 2026-10-13 — Providers see their exact take on every booking
 
 A provider's Booking Details has a **Your earnings** card: the price the customer pays, SkillServe's

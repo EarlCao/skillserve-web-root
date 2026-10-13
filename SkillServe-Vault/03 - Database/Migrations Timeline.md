@@ -204,6 +204,12 @@ images must be removed from the private disk separately.
   The planner uses them for the search's `LOWER(col) LIKE '%word%' ESCAPE '!'` (verified with
   `EXPLAIN`). Rollback drops the indexes and keeps the extension. A failed concurrent build would
   leave an INVALID index that `IF NOT EXISTS` skips: drop it by name and migrate again.
+- **`2026_10_13_000004_add_image_to_messages`** — nullable `image_path` on [[messages]];
+  metadata-only, no backfill. Rollback drops the column (photo messages lose their photo; files stay
+  on disk, unreferenced). Deploy the backend before the app build that sends photos.
+- **`2026_10_13_000005_add_archived_at_to_notifications`** — nullable `archived_at` plus index
+  `notifications_notifiable_archived_index` on [[notifications]]; no backfill (nothing is archived).
+  Rollback drops both; archived notifications return to the feed.
 - **`2026_10_13_000003_create_provider_portfolio_images_table`** — new [[provider_portfolio_images]]
   (FK cascade to [[provider_portfolio_items]]); backfills each existing item's `image_path` as its
   photo #1. Additive; `image_path` stays as the cover so older apps keep working. Rollback drops the

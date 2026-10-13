@@ -23,7 +23,7 @@ Mobile requirement(s): **M8** ([[Requirements Sources]]).
 | M 8.3 | Receive Service Notifications | service moderation notifications | implemented |
 | M 8.4 | View Announcements | announcement category | implemented |
 | M 8.5 | Targeted Notifications | admin targeting all/customers/providers/selected | implemented |
-| M 8.6 | Notification History | paginated feed | implemented |
+| M 8.6 | Notification History | paginated feed; **Inbox / Archived**; swipe right archive/restore, left delete; select several (long-press) | implemented |
 
 UAT result columns in the mobile `TEST_PLAN.md` are still empty — see [[UAT and Traceability]].
 

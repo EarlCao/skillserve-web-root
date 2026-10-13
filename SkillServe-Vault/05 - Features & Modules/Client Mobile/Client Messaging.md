@@ -19,7 +19,7 @@ Mobile requirement(s): **M7** ([[Requirements Sources]]).
 | ID | Functionality | Implementation | Status |
 |---|---|---|---|
 | M 7.1 | View Conversations | one thread per booking (`GET /conversations`), unread counts | implemented |
-| M 7.2 | Send Message | optimistic send with retry, `Idempotency-Key` | implemented |
+| M 7.2 | Send Message | optimistic send with retry, `Idempotency-Key`; photos from camera or gallery with an optional caption (multipart `image`) | implemented |
 | M 7.3 | Receive Messages | realtime `client.message.created`; presence ("in this chat") and typing on `presence-booking-chat.{id}` | implemented |
 | M 7.4 | Message History | `GET /bookings/{id}/messages`; `POST …/messages/read` | implemented |
 | M 7.5 | Report Message | long-press → Report (`message_id`) | implemented |
@@ -38,6 +38,10 @@ UAT result columns in the mobile `TEST_PLAN.md` are still empty — see [[UAT an
   profile id; providers see no link (customers have no public profile). A chat opened from a
   notification or a booking before the inbox loaded fetches the inbox, so the header always has the
   participant.
+
+- **Photos:** private; the app loads them through the API client with the user's token
+  (`core/widgets/misc/private_image.dart`, small in-memory cache) and opens them full screen with
+  zoom. A failed photo send keeps the local file so Retry re-uploads it.
 
 - Messaging exists only inside a booking: you cannot message a provider before booking.
 

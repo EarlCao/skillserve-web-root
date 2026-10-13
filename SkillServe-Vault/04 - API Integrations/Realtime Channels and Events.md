@@ -22,7 +22,8 @@ Client-facing contract for Reverb. Architecture and internals: [[Realtime Archit
 |---|---|---|---|
 | `private-admin.data` | `.admin.data.changed` | `{ resources: ["bookings", …] }` | Admin Web (`liveUpdates.js`) |
 | `private-App.Models.User.{id}` | `.client.notification.created` | stored notification | Admin Web (re-dispatched as `skillserve:realtime-notification`), Mobile |
-| `private-App.Models.User.{id}` | `.client.message.created` | `{ booking_id, message }` | Mobile chat |
+| `private-App.Models.User.{id}` | `.client.message.created` | `{ booking_id, message }` (message includes `image_url`) | Mobile chat |
+| `private-App.Models.User.{id}` | `.client.notifications.changed` | `{}` — notifications were archived, restored or deleted | Mobile (other sessions re-read the feed) |
 | `presence-booking-chat.{bookingId}` | members + `client-typing` whisper `{user_id, typing}` | — | Mobile chat |
 | `marketplace` (public — no auth call, plain `pusher:subscribe`) | `.marketplace.changed` | `{ resources: ["services", "providers", …] }` | Mobile Home, Explore, provider profile, service details (`MarketplaceLiveSync`) |
 
