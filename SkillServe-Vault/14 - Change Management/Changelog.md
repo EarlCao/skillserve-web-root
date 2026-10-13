@@ -9,6 +9,15 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-13 — Providers see their exact take on every booking
+
+A provider's Booking Details has a **Your earnings** card: the price the customer pays, SkillServe's
+commission (with the rate recorded when it was booked), and **You receive**, then where the
+commission stands — due once the payment is recorded, owed (with a link to Commission), paid on a
+date, waived (full price kept) or voided (cancelled: nothing earned, nothing owed). The sum is the
+server's: `earnings` on the provider booking payload, from `CommissionLedger::breakdownFor`. Tests:
+`ProviderBookingTest`, Flutter `booking_test`.
+
 ## 2026-10-13 — One super administrator; photos that fail to load; uploads need the disk
 
 - **Add administrator** has no role field: every new administrator is `admin`, and `super-admin` can

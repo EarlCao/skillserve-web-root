@@ -228,3 +228,12 @@ on each of their bookings, so the split is visible before they publish a price.
 Related: [[Payments and Refunds]] · [[Booking Lifecycle]] · [[System Settings Catalog]] ·
 [[bookings]] · [[commission_remittances]] · [[Cancellation and Fees]] ·
 [[ADR-022 Payment QR Codes Without Holding Customer Money]] · [[PayMongo Setup]]
+
+## What the provider is shown per booking
+
+`CommissionLedger::breakdownFor()` returns `earnings` on every provider booking
+(`GET /client/v1/provider/bookings[/{id}]`): `price`, `commission_rate` (recorded at booking time),
+`commission`, `provider_receives` and the `commission_status`. A waived share leaves the whole price;
+a voided (cancelled) booking earns and owes nothing. The app shows it as **Your earnings** on Booking
+Details and never computes it.
+
