@@ -9,6 +9,21 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-13 — Cleaner provider card; "bookings" and "service" instead of "jobs"
+
+- **Provider card** (Home *Available providers*, Explore, Browse, Favorites): one compact row — the
+  provider's own photo or initials with a verified tick, name, category and area, rating and
+  bookings done, "From ₱…" and the heart. Replaces Home's tall two-column card with its own Book
+  button, and drops the random stock photo the shared card showed for providers without a
+  portfolio (it looked like their work).
+- **One vocabulary** ([[Glossary]] → *Wording in the apps*): *booking* for the arrangement and its
+  lists, *service* for the work — e.g. *Active Bookings*, *Start service*, *Service started*,
+  *Cancel booking*. About 60 app strings, plus the backend's *Service started* / *Service completed*
+  notifications and two API messages. `ProviderModel.completedJobs` → `completedBookings`.
+- **Provider home**: the *Upcoming Bookings* empty state now reads *No upcoming bookings — Bookings
+  you accept will show up here* (was *Nothing scheduled — Confirmed jobs …*), and its *See all*
+  opens Active Bookings instead of the new requests.
+
 ## 2026-10-13 — Booking a service you already picked skips "Choose a service"
 
 **Book this service** (Service Details) and a service's **Book** button (provider profile) now open

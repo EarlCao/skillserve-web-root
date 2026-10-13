@@ -14,6 +14,7 @@ tags: [foundation, glossary]
 | **Super-admin** | Role id 1; bypasses every gate. |
 | **Service** | A provider's listing (`services`), with `status` (draft/published/archived) and `approval_status` (pending/approved/rejected). |
 | **Booking** | A customer's request for a service at a time (`bookings`). Also *is* the chat conversation and the dispute record. |
+| **Wording in the apps** | Say **booking** for the arrangement and its lists and counts (*Upcoming bookings*, *Active Bookings*, *Completed Bookings*, *12 bookings done*), and **service** for the work itself (*Start service*, *Service started*, *Service completed*). The word *job* is not used in user-facing text (decided 2026-10-13); route paths such as `/active-jobs` are internal and unchanged. |
 | **Booking number** | Human-readable unique `bookings.booking_number`. |
 | **Dispute** | Columns on a booking (`dispute_status`, `dispute_reason`, `dispute_evidence`, …); raised from the app, managed in Admin → Disputes. |
 | **Report** | A complaint against a user, review or message (`reports`, polymorphic `reportable`). |
