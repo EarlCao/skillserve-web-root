@@ -104,7 +104,9 @@ the settings page warns about that before it is saved.
 ## Documents and retention
 
 Images (`id_front`, `id_back`, `selfie`; JPG/PNG/PDF ≤10 MB) live on the private `identity` disk with
-random UUID filenames, and are never reachable by URL. An administrator opens one through an
+random UUID filenames, and are never reachable by URL. A photo of the front or back must be at
+least 800 × 500 px in either orientation (422 otherwise); the app also refuses dark, washed-out and
+unreadably blurry photos and takes them without filters ([[Mobile Identity Verification]]). An administrator opens one through an
 authorised, audited download that verifies the document belongs to the submission in the path.
 
 A decision starts the retention clock (`documents_purge_after`); `identity:purge-documents` (daily)

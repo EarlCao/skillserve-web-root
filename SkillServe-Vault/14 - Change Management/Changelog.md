@@ -9,6 +9,15 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-13 — National ID photos must be clear and unfiltered
+
+Front and back photos are taken with the document scanner in its no-filter mode (no colour filters,
+no stain or finger removal) and the National ID screen no longer offers the gallery. Each side is
+checked on the phone before it is kept — big enough, not too dark, not washed out by light or glare,
+not blurry (unless its text or QR still reads) — with a message saying how to retake it. The API
+refuses a front/back photo under 800 × 500 px. Tips on both screens say: even light, no flash
+glare, hold steady, no filters. See [[Mobile Identity Verification]].
+
 ## 2026-10-13 — Photos in chat; archive and delete notifications; leaner Profile
 
 - **Photos in chat:** both parties can send a photo (camera or gallery, optional caption) on a

@@ -38,6 +38,20 @@ Required for every account; PhilSys card and ePhilID. See vault [[Philippine Add
   and ePhilID, book with the picker, add a service with a service area.
 **Server-side enforcement:** turn on System Settings → Identity (**H8**) at launch.
 
+### F10 · Chat photos, notification archive, clear National ID photos **[BE][AW][MB]** — built 2026-10-13, phone check left
+Backend `8acc5a1` (migrations `2026_10_13_000004`/`000005`, additive) and the ID-photo checks; see vault Changelog.
+- [ ] **Phone check, chat:** with a customer and a provider on one booking, send a photo from the
+  camera and one from the gallery (with and without a caption); it appears on the other phone at once,
+  opens full screen, and the Messages list reads "📷 Photo". Photos vanish after a redeploy until
+  the Render disk is attached (go-live 1).
+- [ ] **Phone check, notifications:** swipe right to archive, open Archived and move it back; swipe
+  left to delete; long-press to select several. With the app open on two phones on one account, the
+  other follows.
+- [ ] **Phone check, National ID:** scan a sharp card in good light (accepted), then try in a dark
+  room, under a lamp's glare and while moving the phone — each should ask for a retake with a
+  reason. If a good photo is ever refused, report it: the thresholds in
+  `id_photo_quality.dart` (brightness 55–235, blown-out ≤ 35 %, sharpness ≥ 35) may need tuning.
+
 ### F9 · Live statistics, service reviews, multi-photo portfolio **[BE][MB]** — built 2026-10-13, phone check left
 Backend `3d2190e` (migration `2026_10_13_000003`, additive) and the app are done; see vault Changelog.
 - [ ] **Phone check:** as a provider, open Statistics — the last bar is the current month and the
