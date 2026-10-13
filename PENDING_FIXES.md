@@ -58,6 +58,8 @@ backend is deployed: the app talks to the Render API.
 - [x] **Search indexes** — done 2026-10-13: `pg_trgm` GIN indexes on the searched `LOWER(column)`s
   (migration `2026_10_13_000002`, PostgreSQL only, built concurrently, skipped with a log line if
   the database refuses — never blocks a deploy). `EXPLAIN` shows the search uses them.
+- [x] **Backend CI** — green again 2026-10-13 (`2013508`); it had been red on every push since
+  before F8 (two tests sensitive to `.env.example`, one flaky). See vault Changelog.
 - [x] **Accented skills** — done 2026-10-13: profile JSON saved with letters as written; migration
   `2026_10_13_000001` rewrites existing rows (values unchanged). "niño" now matches.
 

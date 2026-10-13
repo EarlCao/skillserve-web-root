@@ -21,6 +21,11 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 - Verified live: `/api/bookings` answers 401 (H9); the F4–F6 migrations ran (a failed migration
   stops Render's boot); `/api/health` reports email codes `up` through `brevo-api`.
 - Release APK built against production. Removed an unused import (`flutter analyze`: no issues).
+- **Backend CI is green again** (it had been failing on every push). CI copies `.env.example`, whose
+  `CLIENT_AUTH_RATE_LIMIT=20` shadowed the test's `putenv()` and whose empty `PAYMONGO_SECRET_KEY=`
+  read as `''` rather than unset. The limit now lives in `config('client-auth.rate_limit')`, empty
+  PayMongo variables mean "not set", and `BookingListTest` no longer uses random provider names
+  that could match its search terms.
 
 ## 2026-10-13 — Mobile marketplace: live Home and Explore, search by any keyword or provider name, full provider profile, report a provider, back from booking details
 
