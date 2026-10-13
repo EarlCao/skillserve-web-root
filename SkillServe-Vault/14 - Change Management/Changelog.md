@@ -9,6 +9,13 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-13 — Services: edit form shows the current listing; Edit removed from details modal
+
+- **Edit Service** opened empty. The React Compiler memoizes `register()`, so the inputs never
+  picked up the values `reset()` seeded. The fields are now `Controller`-backed (as in the
+  administrator form), and the subcategory keeps its value once its options load.
+- The **Service Details** modal no longer has an Edit button; edit from the row's pencil action.
+
 ## 2026-10-11 — CORS: retired admin-web addresses removed
 
 `skillserve-frontend.onrender.com` now serves an unrelated app and `skillserve-admin-side.vercel.app`
