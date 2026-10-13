@@ -9,6 +9,13 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-13 — Commission tiers: overlapping range error shown in the form
+
+Saving a tier whose price range clashes with an active tier now shows
+*Error: Another tier already has this price range ("<tier>", min–max).* inside the tier modal.
+Before, the only feedback was a generic "The given data was invalid." toast, hidden behind the open
+dialog. The rule itself is unchanged (`CommissionTierService::assertNoOverlap`, 422 on `min_amount`).
+
 ## 2026-10-13 — Services: edit form shows the current listing; Edit removed from details modal
 
 - **Edit Service** opened empty. The React Compiler memoizes `register()`, so the inputs never
