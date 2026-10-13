@@ -193,7 +193,9 @@ identical behaviour from the API.
 
 The defaults (₱0, off) block on any debt at once, the original rule. `forProvider()` reports
 `block_threshold` and `block_deadline` alongside `outstanding_total`, so the app can warn a provider
-before they are stopped.
+before they are stopped — and it does: while something is owed but not yet blocking, the app's
+Commission screen shows an amber notice, "new jobs and services pause on {deadline}, or once it
+reaches ₱{threshold}, whichever comes first" (`CommissionSummary.warnsBeforeBlock`).
 
 Work the provider has already agreed to is deliberately never blocked: a customer who is already
 booked must not be stranded by a debt between the provider and the platform, and a provider paid up

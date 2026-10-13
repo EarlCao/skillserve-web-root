@@ -25,7 +25,7 @@ Professional profile of a provider account; the id used by services, bookings an
 | `location` | string null |  |
 | `latitude, longitude` | decimal(10,7) null |  |
 | `website` | string null |  |
-| `social_links, portfolio, skills, certifications, languages` | json null | `portfolio` JSON predates `provider_portfolio_items` |
+| `social_links, portfolio, skills, certifications, languages` | json null | `portfolio` JSON predates `provider_portfolio_items`; saved with accented letters as written (`JSON_UNESCAPED_UNICODE`, `ProviderProfile::asJson`) so search matches them |
 | `average_rating` | decimal(3,2) default 0, indexed | average of the rated services' ratings, each service once — [[Reviews and Ratings Rules]] |
 | `total_reviews, total_bookings, completed_bookings` | int default 0 | aggregates |
 | `verification_status` | string default 'unverified', indexed | unverified / pending / verified / rejected / additional_info_required |
@@ -45,6 +45,10 @@ Professional profile of a provider account; the id used by services, bookings an
 - index(verification_status)
 - index(average_rating)
 - index(is_featured)
+- PostgreSQL only: GIN `pg_trgm` index on `LOWER(business_name)` (`provider_profiles_business_name_trgm_idx`) for the marketplace keyword search (`2026_10_13_000002`)
+- PostgreSQL only: GIN `pg_trgm` index on `LOWER(specialization)` (`provider_profiles_specialization_trgm_idx`) for the marketplace keyword search (`2026_10_13_000002`)
+- PostgreSQL only: GIN `pg_trgm` index on `LOWER(bio)` (`provider_profiles_bio_trgm_idx`) for the marketplace keyword search (`2026_10_13_000002`)
+- PostgreSQL only: GIN `pg_trgm` index on `LOWER(location)` (`provider_profiles_location_trgm_idx`) for the marketplace keyword search (`2026_10_13_000002`)
 
 ## Foreign keys
 

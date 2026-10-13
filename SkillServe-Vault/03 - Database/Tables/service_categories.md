@@ -27,6 +27,7 @@ Top-level service categories.
 ## Indexes & constraints
 
 - unique(name)
+- PostgreSQL only: GIN `pg_trgm` index on `LOWER(name)` (`service_categories_name_trgm_idx`) for the marketplace keyword search (`2026_10_13_000002`)
 
 ## Foreign keys
 

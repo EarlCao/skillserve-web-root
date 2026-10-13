@@ -9,6 +9,19 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-13 — Pending fixes cleared: accented-skill search, search indexes, commission block warning
+
+- **Accented skills are searchable.** Provider profile JSON (skills, certifications, languages) was
+  saved with `\u00f1`-style escapes, so "niño" never matched. `ProviderProfile` now saves letters as
+  written, and migration `2026_10_13_000001` rewrites existing rows (values unchanged).
+- **Search indexes** for when the catalog grows: `pg_trgm` GIN indexes on the searched
+  `LOWER(column)`s (`2026_10_13_000002`, PostgreSQL only, concurrent, best effort).
+- **Providers are warned before the commission block** (M8 follow-up): with a block threshold or age
+  set in System Settings → Marketplace, the app's Commission screen says when new work will pause.
+- Verified live: `/api/bookings` answers 401 (H9); the F4–F6 migrations ran (a failed migration
+  stops Render's boot); `/api/health` reports email codes `up` through `brevo-api`.
+- Release APK built against production. Removed an unused import (`flutter analyze`: no issues).
+
 ## 2026-10-13 — Mobile marketplace: live Home and Explore, search by any keyword or provider name, full provider profile, report a provider, back from booking details
 
 - **New services show on Home, live.** Home only listed providers and loaded once, so a service a

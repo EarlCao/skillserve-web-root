@@ -47,6 +47,9 @@ Provider service listings.
 - index(is_hidden)
 - index(category_id, status)
 - index(provider_id, status)
+- PostgreSQL only: GIN `pg_trgm` index on `LOWER(title)` (`services_title_trgm_idx`) for the marketplace keyword search (`2026_10_13_000002`)
+- PostgreSQL only: GIN `pg_trgm` index on `LOWER(description)` (`services_description_trgm_idx`) for the marketplace keyword search (`2026_10_13_000002`)
+- PostgreSQL only: GIN `pg_trgm` index on `LOWER(location)` (`services_location_trgm_idx`) for the marketplace keyword search (`2026_10_13_000002`)
 
 ## Foreign keys
 

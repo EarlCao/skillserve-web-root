@@ -39,7 +39,9 @@ the customer are matched literally (escaped with `!`).
 
 So "electronics" lists every Electronics service *and* the providers who offer one, and a
 provider who registered without a business name is found by their own name. Hidden or unapproved
-services never make a provider match.
+services never make a provider match. Accented skills ("Niño") match as typed: profile JSON is saved
+with the letters themselves. On PostgreSQL, `pg_trgm` GIN indexes on each `LOWER(column)` serve
+the `LIKE '%word%'` matches ([[Migrations Timeline]] → 2026-10-13).
 
 Results update live: when a provider publishes or edits a service, the search on screen re-runs
 silently ([[Realtime Architecture]]).

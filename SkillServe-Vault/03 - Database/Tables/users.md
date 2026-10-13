@@ -47,6 +47,7 @@ Every account: staff, customers and providers. `role_id` decides the kind.
 
 ## Indexes & constraints
 
+- PostgreSQL only: GIN `pg_trgm` index on `LOWER(name)` (`users_name_trgm_idx`) for the marketplace keyword search (`2026_10_13_000002`)
 - unique(email)
 - index(role_id)
 - index(google_sub)

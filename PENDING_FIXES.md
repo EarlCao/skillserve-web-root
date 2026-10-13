@@ -1,6 +1,7 @@
 # Pending Fixes — SkillServe (Backend, Admin Web, Mobile, Deployment)
 
-Last updated: **2026-10-11** (F6 — QR codes with the exact amount; F5 — commission paid by GCash reference).
+Last updated: **2026-10-13** (F8 — live marketplace and search; every code item cleared, deploys
+verified live — what is left below is owner action only).
 Previous full audit: 2026-09-21.
 
 Requirements now live in `SkillServe-Vault/` (Obsidian), which supersedes the two functionality
@@ -51,20 +52,23 @@ backend is deployed: the app talks to the Render API.
   reason a new service "doesn't show"); search "electronics" and a provider's own name on Home and
   Explore; open a provider, report them and a service; book → *View booking details* → back arrow
   goes home; cancel a booking → *Back to home*.
-- [ ] **If live updates do not arrive** on production, check that the phone's WebSocket reaches
-  Reverb (`wss://<backend>/app/<key>`); the app still re-checks every 60 s and on returning to it.
-- [ ] **Later, when the catalog grows (not needed now):** search is `LOWER(col) LIKE '%word%'`, which
-  no index serves. Past a few thousand services, add `pg_trgm` GIN indexes on the searched columns
-  (a reviewed migration) or move to PostgreSQL full-text search.
-- [ ] **Later, small:** provider `skills` are stored as JSON with non-ASCII escaped (`ñ` → `\u00f1`),
-  so a search for "niño" does not match a skill spelled that way. Fix by searching a plain-text copy
-  of the skills, or saving them with `JSON_UNESCAPED_UNICODE`.
+- [x] **Production WebSocket** — verified 2026-10-13 from outside: `wss://<backend>/app/skillserve`
+  connects and the public `marketplace` channel subscribes. (If a phone still gets no live updates,
+  the app re-checks every 60 s and on returning to it.)
+- [x] **Search indexes** — done 2026-10-13: `pg_trgm` GIN indexes on the searched `LOWER(column)`s
+  (migration `2026_10_13_000002`, PostgreSQL only, built concurrently, skipped with a log line if
+  the database refuses — never blocks a deploy). `EXPLAIN` shows the search uses them.
+- [x] **Accented skills** — done 2026-10-13: profile JSON saved with letters as written; migration
+  `2026_10_13_000001` rewrites existing rows (values unchanged). "niño" now matches.
 
-### F7 · Render's `FRONTEND_URL` may name a site that is not ours **[DEP]** — owner action
+### ~~F7 · Render's `FRONTEND_URL` may name a site that is not ours~~ — **RESOLVED 2026-10-13**
+**Verified from outside:** a CORS preflight from `https://skillserve-frontend.onrender.com` gets no
+`Access-Control-Allow-Origin`, while `https://skillserve-web-admin.vercel.app` is allowed — so
+Render's `FRONTEND_URL` does not name the retired site.
 `skillserve-frontend.onrender.com` now serves an unrelated app, and the backend trusts whatever
 `FRONTEND_URL` names for CORS. The address was removed from `config/cors.php` (2026-10-11).
-- [ ] **Render → backend → Environment:** if `FRONTEND_URL` is `https://skillserve-frontend.onrender.com`,
-  change it to `https://skillserve-web-admin.vercel.app` (and check `FRONTEND_URLS`, if set). Save.
+- [x] ~~**Render → backend → Environment:** if `FRONTEND_URL` is `https://skillserve-frontend.onrender.com`,
+  change it to `https://skillserve-web-admin.vercel.app`~~ — not needed (see above).
 
 ### F6 · QR codes with the exact amount **[BE][AW][MB][DEP]** — built 2026-10-11
 **Asked 2026-10-11:** a QR with the exact amount when a customer pays a provider, and when a
@@ -72,8 +76,9 @@ provider pays SkillServe its commission. Decided with the owner: the booking QR 
 own** GCash QR with the amount written in (money stays out of SkillServe — ADR-021); the commission
 QR is **PayMongo dynamic QR Ph**, confirmed by webhook. See vault
 [[ADR-022 Payment QR Codes Without Holding Customer Money]].
-- [ ] **Deploy:** push the backend (migrations `2026_10_11_000002`, `000003`, both additive), then
-  the admin web, then build a new APK.
+- [x] **Deploy** — verified 2026-10-13: backend live with both migrations (Render's `start.sh` runs
+  `migrate` under `set -e`, so a live deploy means they ran; `POST …/commission-remittances/qr`
+  answers 401), admin web live, release APK built 2026-10-13 (see F8).
 - [ ] **Check on a real phone (booking QR):** as a provider, GCash details → *Upload my GCash QR*
   (GCash → Receive → Receive via QR → save). As a customer on a GCash booking, scan the QR in
   *How to pay* with another phone's GCash: **confirm GCash pre-fills the amount** and shows the
@@ -93,9 +98,7 @@ QR is **PayMongo dynamic QR Ph**, confirmed by webhook. See vault
 taps *I've paid* and enters the GCash reference number; an administrator confirms it once the
 reference and amount show up in SkillServe's GCash history. See vault
 [[Commission Tiers and Settlement#Paying it by GCash]].
-- [ ] **Deploy:** push the backend first. Migration `2026_10_11_000001` is additive (two new tables,
-  one nullable column) and can run before the code; rollback drops them, losing only claims made
-  since. Then rebuild the admin web, then build a new APK.
+- [x] **Deploy** — verified 2026-10-13 (backend, admin web, APK; as F6).
 - [x] ~~**Owner:** enter SkillServe's GCash name and number in System Settings → Commission payments~~
   — **no longer needed:** the setting was removed when the commission became QR-only (F6).
 - [x] ~~**Owner:** rehearse it~~ — **superseded 2026-10-11:** the app now pays the commission by QR
@@ -127,11 +130,9 @@ process items KI-24/KI-25 (test evidence, go-live actions) remain, and those are
 Also: the backend's `composer audit` is clean again (laravel/framework 13.34, commonmark 2.10.3,
 flysystem 3.36) and the admin web's axios is 1.20 (production dependencies clean; three build-tool
 advisories have no non-breaking fix yet).
-- [ ] **Deploy:** push the backend first. Migrations `2026_10_06_000001` (dispute statuses) and
-  `2026_10_06_000002` (super-admin gets every permission) are data only, add nothing to the schema
-  and need no rollback. Then rebuild the admin web, and build a new APK (package renamed to
-  `skillserve_mobile`; same app ID `com.skillserve.mobile`, so it installs over the old one).
-- [ ] **Render:** delete `SANCTUM_EXPIRATION` (no longer read).
+- [x] **Deploy** — verified 2026-10-13 (backend, admin web, APK; as F6).
+- [ ] **Render (optional tidy-up):** delete `SANCTUM_EXPIRATION`. Nothing reads it any more, so
+  leaving it is harmless.
 
 ### F2 · Password after the sign-up code; Google needs the password; readable light/dark app **[BE][MB]** — built, owner checks left
 **Asked 2026-10-03.** Built and tested the same day (vault [[Registration and OTP Flow]],
@@ -154,7 +155,10 @@ advisories have no non-breaking fix yet).
   Email sign-up, email login and everything else keep working. Ask testers to install the new build.
 - [ ] **Accounts made by Google sign-up before 2026-10-03** have no password their owner knows. They
   sign in by tapping "Forgot password?" on the password prompt once. Tell your testers.
-- [ ] **OTP email: back to Brevo, new account (decided 2026-10-07).** The old Brevo account was
+- [ ] **OTP email: back to Brevo, new account (decided 2026-10-07).** **Setup done** — checked
+  2026-10-13: `GET /api/health` reports `"otp": {"status": "up", "driver": "mail", "mailer":
+  "brevo-api"}`, so Brevo accepts the key and the account is sending. **Left:** confirm codes show
+  *Delivered* in Brevo → Transactional → Logs after a few days of testing. The old Brevo account was
   suspended by Brevo ("sending platform is currently disabled"), which is why codes worked at first
   and then stopped — Brevo kept answering *accepted*, so the app saw no error. Built and tested:
   repeated resends and forgot-password requests through `brevo-api`, an immediate retry after a
@@ -365,7 +369,7 @@ rendered nowhere — this owner action could not be performed at all. The tab is
 cutover date is a date picker, and turning the switch on with the date empty raises a warning about
 freezing every existing account.
 
-### ~~H9 · Push the outstanding 401 fix~~ — **RESOLVED**
+### ~~H9 · Push the outstanding 401 fix~~ — **RESOLVED** (confirmed live 2026-10-13: `/api/bookings` → 401)
 Commit `6f4c46c` (`redirectGuestsTo(fn () => null)` plus a regression test) is on `origin/main`;
 the entry was stale. `curl https://skillserve-web-backend.onrender.com/api/bookings` should return
 401, not 500 — worth confirming once against the deployed backend.
@@ -399,8 +403,8 @@ any debt blocks at once — so deploying changes nothing until an administrator 
 `GET /api/client/v1/provider/commissions` and `/transaction-eligibility` now also return
 `block_threshold` and `block_deadline`. Tests in `CommissionLedgerTest`.
 **Owner action:** pick the values (for example ₱200 and 7 days) in the admin web when ready.
-**Optional mobile follow-up:** the app already obeys `eligible`; it could also show "remit by
-{block_deadline}" to warn a provider before the block. Not required for correctness.
+**Mobile follow-up — done 2026-10-13:** the Commission screen warns a provider who owes but is not
+blocked yet when new work will pause (`block_deadline` / `block_threshold`).
 
 <details><summary>Original entry</summary>
 

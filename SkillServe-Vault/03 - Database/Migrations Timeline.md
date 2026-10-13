@@ -188,6 +188,23 @@ images must be removed from the private disk separately.
   (unique), `external_payment_id`, `qr_image`, `expires_at`, `last_event_id`, `failure_reason` on
   [[commission_remittances]]. Additive; roll back only before any QR payment is made.
 
+## 2026-10-13 — Marketplace search
+
+- **`2026_10_13_000001_unescape_provider_profile_json_text`** — data only: rewrites
+  `provider_profiles.skills`, `certifications` and `languages` that hold `\uXXXX` escapes with the
+  letters themselves ("Niño"), as `ProviderProfile` now saves them, so search matches them. Decoded
+  values are identical; rows without escapes are untouched. `down()` is a no-op (nothing to undo).
+- **`2026_10_13_000002_add_marketplace_search_trigram_indexes`** — PostgreSQL only (skipped on
+  SQLite): `CREATE EXTENSION IF NOT EXISTS pg_trgm`, then ten GIN indexes on `LOWER(column)` —
+  [[services]] `title`, `description`, `location`; [[service_categories]] and
+  [[service_subcategories]] `name`; [[provider_profiles]] `business_name`, `specialization`, `bio`,
+  `location`; [[users]] `name`. Built `CONCURRENTLY` outside a transaction (no write locks).
+  **Best effort:** if the database refuses the extension or an index, it is logged
+  ("Marketplace search index skipped.") and the deploy continues — search works without them.
+  The planner uses them for the search's `LOWER(col) LIKE '%word%' ESCAPE '!'` (verified with
+  `EXPLAIN`). Rollback drops the indexes and keeps the extension. A failed concurrent build would
+  leave an INVALID index that `IF NOT EXISTS` skips: drop it by name and migrate again.
+
 ## Related
 
 [[Database Overview]] · [[Changelog]] · [[Database Index]]
