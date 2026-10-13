@@ -32,6 +32,13 @@ UAT result columns in the mobile `TEST_PLAN.md` are still empty — see [[UAT an
 
 ## Notes
 
+- **Provider profile from the chat (customers):** tapping the provider's photo or name in the chat
+  header, the person icon in its top bar, or the provider's photo in the Messages list opens
+  `/provider-profile/:id`. The inbox's `counterpart.provider_id` (customer's view only) carries the
+  profile id; providers see no link (customers have no public profile). A chat opened from a
+  notification or a booking before the inbox loaded fetches the inbox, so the header always has the
+  participant.
+
 - Messaging exists only inside a booking: you cannot message a provider before booking.
 
 ## Related

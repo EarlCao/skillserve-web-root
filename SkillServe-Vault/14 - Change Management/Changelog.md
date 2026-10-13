@@ -9,6 +9,13 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-13 — Open the provider's profile from the chat
+
+Customers tap the provider's photo or name in a chat (header, or a person icon in its top bar), or
+the provider's photo in the Messages list, to open their full profile. `GET /client/v1/conversations`
+adds `counterpart.provider_id` on the customer's side (additive) and names the provider by
+`display_name`. Tests: `ConversationTest`, Flutter `messaging_test`.
+
 ## 2026-10-13 — Pending fixes cleared: accented-skill search, search indexes, commission block warning
 
 - **Accented skills are searchable.** Provider profile JSON (skills, certifications, languages) was
