@@ -40,7 +40,9 @@ Required for every account; PhilSys card and ePhilID. See vault [[Philippine Add
 ### F8 · Live marketplace, keyword and name search, full provider profile, report a provider, back from booking details **[BE][MB][DEP]** — built 2026-10-13, owner checks left
 Built in backend, mobile and docs (vault Changelog 2026-10-13). Nothing reaches the phone until the
 backend is deployed: the app talks to the Render API.
-- [ ] **Deploy the backend** (push `backend/` `main`; Render auto-deploys). No migration. The new
+- [x] **Deploy the backend** — pushed 2026-10-13 (`04f9181`), live: `display_name` returned, search
+  for "electronics" and a provider's name verified, `marketplace` channel subscribes on production.
+  No migration. The new
   `display_name`/`profile_photo_url` fields and `provider_id` reports are additive, so older app
   builds keep working.
 - [ ] **On a phone with two accounts**, check: as a provider, add a service → it appears on the
