@@ -9,6 +9,34 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-13 — Mobile marketplace: live Home and Explore, search by any keyword or provider name, full provider profile, report a provider, back from booking details
+
+- **New services show on Home, live.** Home only listed providers and loaded once, so a service a
+  provider published never appeared. Home now has a **Latest services** list, and Home, Explore,
+  the provider profile and service details refetch silently when the catalog changes — over a new
+  public Reverb channel `marketplace` (`MarketplaceChanged`, fired by `RealtimeChangeTracker`), with
+  a 60 s fallback and a catch-up on reconnect and on returning to the app. Each Home list loads on
+  its own, so one failed request no longer turns the whole tab into an error.
+- **Search finds providers by name, and every keyword everywhere.** Providers who registered without
+  a business name showed blank and could not be found. The API now returns `display_name` (business
+  name, else account name) and `profile_photo_url`. Search splits the text into words; each must
+  match title, description, location, category, subcategory or the provider (services), or the
+  provider's name, profile, skills or any of their public services (providers). "electronics" now
+  lists every Electronics service and the providers offering one. LIKE wildcards are escaped.
+- **Provider profile**: photo and name header, location, services that open their details,
+  portfolio thumbnails, rating summary, and **Report this provider**. Tapping a provider's name on a
+  service card or the **Offered by** tile on service details opens it.
+- **Report a provider** without a booking: `POST /client/v1/reports` with `provider_id`; the report
+  is about the provider's account. Service details also gets a visible **Report this service**.
+  *My Reports* names a reported provider by their public (business) name, never the personal name
+  behind it.
+- **Booking details always has a way back.** After confirming a booking, "View booking details"
+  replaced the navigation stack, leaving no back button and a back gesture that closed the app.
+  The screen now shows a back arrow to home (and handles system back) when nothing is beneath it,
+  and a **Back to home** button once a booking is cancelled.
+- Tests: `ClientMarketplaceTest`, `ClientReportTest`, `RealtimeAdminUpdatesTest`; Flutter
+  `discovery_test`, `presence_background_test`, `reports_support_test`, `app_sweep_test`.
+
 ## 2026-10-13 — Commission tiers: overlapping range error shown in the form
 
 Saving a tier whose price range clashes with an active tier now shows

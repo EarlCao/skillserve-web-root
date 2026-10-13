@@ -28,6 +28,15 @@ Mobile requirement(s): **M5** ([[Requirements Sources]]).
 
 UAT result columns in the mobile `TEST_PLAN.md` are still empty — see [[UAT and Traceability]].
 
+## Navigation
+
+The confirmation screen's **View booking details** replaces the navigation stack, and a booking
+opened from a notification can also have nothing beneath it. Booking Details then shows a back
+arrow (tooltip *Back to home*) that goes to the user's home (`/client`, or `/provider` for a
+provider), and the system back gesture does the same instead of closing the app. A cancelled
+booking also offers a **Back to home** button. Test: `app_sweep_test` → *booking details opened
+with nothing beneath it leads back home*.
+
 ## Tests
 
 `booking_test`, `ClientMarketplaceTest`, `BookingRescheduleTest`, `ProviderBookingTest`, `SettingsEnforcementTest`, `BookingDisputeTest` (Flutter tests in snake_case, backend tests in PascalCase — [[Mobile Test Suite]], [[Backend Test Suite]]).

@@ -24,11 +24,13 @@ Client-facing contract for Reverb. Architecture and internals: [[Realtime Archit
 | `private-App.Models.User.{id}` | `.client.notification.created` | stored notification | Admin Web (re-dispatched as `skillserve:realtime-notification`), Mobile |
 | `private-App.Models.User.{id}` | `.client.message.created` | `{ booking_id, message }` | Mobile chat |
 | `presence-booking-chat.{bookingId}` | members + `client-typing` whisper `{user_id, typing}` | — | Mobile chat |
+| `marketplace` (public — no auth call, plain `pusher:subscribe`) | `.marketplace.changed` | `{ resources: ["services", "providers", …] }` | Mobile Home, Explore, provider profile, service details (`MarketplaceLiveSync`) |
 
 ## Guarantees
 
 - Best effort only; the database is authoritative. Clients refetch on events and poll when the socket
-  is down (admin 15 s, mobile 30 s).
+  is down (admin 15 s, mobile 30 s; the mobile marketplace 60 s, plus a catch-up on reconnect and on
+  returning to the app).
 - Message realtime is **not** gated by the "message notifications" preference (muting the alert
   must not freeze an open chat); the separate `BookingMessageNotification` is gated.
 - Notification broadcasts are gated by System Settings → push notifications.

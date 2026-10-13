@@ -37,6 +37,27 @@ Required for every account; PhilSys card and ePhilID. See vault [[Philippine Add
   and ePhilID, book with the picker, add a service with a service area.
 **Server-side enforcement:** turn on System Settings → Identity (**H8**) at launch.
 
+### F8 · Live marketplace, keyword and name search, full provider profile, report a provider, back from booking details **[BE][MB][DEP]** — built 2026-10-13, owner checks left
+Built in backend, mobile and docs (vault Changelog 2026-10-13). Nothing reaches the phone until the
+backend is deployed: the app talks to the Render API.
+- [ ] **Deploy the backend** (push `backend/` `main`; Render auto-deploys). No migration. The new
+  `display_name`/`profile_photo_url` fields and `provider_id` reports are additive, so older app
+  builds keep working.
+- [ ] **On a phone with two accounts**, check: as a provider, add a service → it appears on the
+  customer's Home under *Latest services* within a second or two (**only once approved** while
+  System Settings → Marketplace → *Require service approval* is on — that setting is the usual
+  reason a new service "doesn't show"); search "electronics" and a provider's own name on Home and
+  Explore; open a provider, report them and a service; book → *View booking details* → back arrow
+  goes home; cancel a booking → *Back to home*.
+- [ ] **If live updates do not arrive** on production, check that the phone's WebSocket reaches
+  Reverb (`wss://<backend>/app/<key>`); the app still re-checks every 60 s and on returning to it.
+- [ ] **Later, when the catalog grows (not needed now):** search is `LOWER(col) LIKE '%word%'`, which
+  no index serves. Past a few thousand services, add `pg_trgm` GIN indexes on the searched columns
+  (a reviewed migration) or move to PostgreSQL full-text search.
+- [ ] **Later, small:** provider `skills` are stored as JSON with non-ASCII escaped (`ñ` → `\u00f1`),
+  so a search for "niño" does not match a skill spelled that way. Fix by searching a plain-text copy
+  of the skills, or saving them with `JSON_UNESCAPED_UNICODE`.
+
 ### F7 · Render's `FRONTEND_URL` may name a site that is not ours **[DEP]** — owner action
 `skillserve-frontend.onrender.com` now serves an unrelated app, and the backend trusts whatever
 `FRONTEND_URL` names for CORS. The address was removed from `config/cors.php` (2026-10-11).

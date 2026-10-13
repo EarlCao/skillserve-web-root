@@ -1,7 +1,7 @@
 ---
 type: architecture
 tags: [architecture, realtime, reverb]
-sources: [backend/routes/channels.php, backend/app/Shared/Realtime, backend/app/Modules/ClientCommunication/Events, backend/app/Modules/ClientCommunication/Listeners/BroadcastClientNotification.php, frontend/src/services/echo.js, frontend/src/services/liveUpdates.js, mobile lib/core/services/realtime_client.dart]
+sources: [backend/routes/channels.php, backend/app/Shared/Realtime, backend/app/Modules/ClientCommunication/Events, backend/app/Modules/ClientCommunication/Listeners/BroadcastClientNotification.php, frontend/src/services/echo.js, frontend/src/services/liveUpdates.js, mobile lib/core/services/realtime_client.dart, mobile lib/features/marketplace/views/marketplace_live_sync.dart, mobile lib/features/marketplace/services/catalog_updates.dart]
 ---
 # Realtime Architecture
 
@@ -14,6 +14,7 @@ every realtime event is a hint to refetch; clients also poll as a fallback.
 | Channel | Type | Who may join | Used by |
 |---|---|---|---|
 | `admin.data` | private | any account with at least one Spatie role (staff) | Admin Web live refresh |
+| `marketplace` | **public** | anyone connected — no auth, guests included (the catalog is public) | Mobile Home, Explore, provider profile and service details live refresh |
 | `App.Models.User.{id}` | private | the user with that id; **refused** for background-only tokens (`client:notifications` without `client:auth`) | Admin Web (notifications), Mobile (notifications + chat) |
 | `booking-chat.{booking}` | presence | the booking's two participants (reuses `BookingMessagePolicy::viewAny`); member info `{id, name}` | Mobile chat presence + typing |
 
@@ -25,6 +26,7 @@ Channel auth endpoint: `POST|GET /api/broadcasting/auth` with `api` + `auth:sanc
 | Event (broadcastAs) | Class | Channel | Delivery | Payload |
 |---|---|---|---|---|
 | `admin.data.changed` | `App\Shared\Realtime\AdminDataChanged` | `admin.data` | `ShouldBroadcastNow` (immediate, no queue) | `resources: string[]` only — never record data |
+| `marketplace.changed` | `App\Shared\Realtime\MarketplaceChanged` | `marketplace` | `ShouldBroadcastNow` (immediate, no queue) | `resources: string[]` only (`services`, `providers`, `categories`, `reviews`, `settings`) |
 | `client.notification.created` | `ClientCommunication\Events\ClientNotificationCreated` | `App.Models.User.{userId}` | `ShouldBroadcast` (**queued**) | the new notification |
 | `client.message.created` | `ClientCommunication\Events\ClientMessageCreated` | `App.Models.User.{receiverId}` | `ShouldBroadcast` (**queued**) | `booking_id` + message |
 | `client-typing` (whisper) | client event | `presence-booking-chat.{id}` | peer-to-peer via Reverb | `{user_id, typing}` |
@@ -43,6 +45,33 @@ Channel auth endpoint: `POST|GET /api/broadcasting/auth` with `api` + `auth:sanc
    read are skipped (loop protection); a missing WebSocket server never fails the request.
 4. The SPA maps resources to React Query keys and invalidates them ([[Admin Web Frontend Architecture]]).
 
+### How the mobile marketplace stays live
+
+The same tracker also collects changes the **public catalog** shows and broadcasts them once per
+request as `MarketplaceChanged` on the public `marketplace` channel:
+
+| Model | Resource |
+|---|---|
+| Service | `services` |
+| ServiceCategory, ServiceSubcategory | `categories` |
+| ProviderProfile, ProviderPortfolioItem, ProviderAvailability, ProviderBadge | `providers` |
+| Review | `reviews` |
+| Setting (e.g. "Enable featured services") | `settings` |
+| User — only a **provider** account, and only when `name`, `first_name`, `last_name`, `profile_photo_path`, `status`, `suspended_at`, `banned_at`, `banned_until` or `deleted_at` changed, or the user was deleted | `providers` |
+
+A sign-in (`last_login_at`) or token refresh therefore never makes every open app refetch. So a
+provider publishing a service (with "Require service approval" off), an administrator approving
+one, a new review or a renamed category all reach open apps within a second.
+
+On the phone, `MarketplaceLiveSync` (wraps the app in `main.dart`, inside `NotificationPoller`)
+subscribes with `RealtimeClient.listenPublic` while the app is in the foreground, coalesces bursts
+(400 ms) and fires `CatalogUpdates.instance.changed(resources)`. `MarketplaceController` (Home),
+`DiscoveryController` (Explore rails and the search on screen), `ProviderProfileScreen` and
+`ServiceDetailsScreen` listen and refetch **silently** — the lists stay on screen, and a failed
+refresh keeps them; only a 404 (the listing or provider is no longer public) replaces an open
+detail page with its "no longer available" state. Public channels survive `RealtimeClient.disconnect()` (sign-out ends only the
+private and presence channels).
+
 ### How mobile notifications work
 
 `Illuminate\Notifications\Events\NotificationSent` → `BroadcastClientNotification` listener →
@@ -54,7 +83,7 @@ Channel auth endpoint: `POST|GET /api/broadcasting/auth` with `api` + `auth:sanc
 | Client | While socket down | App closed |
 |---|---|---|
 | Admin Web | polls all open queries every 15 s (visible tab) | — |
-| Mobile | polls unread counts every 30 s | WorkManager every ~15 min with the background token ([[ADR-006 Closed-App Notifications via WorkManager]]) |
+| Mobile | polls unread counts every 30 s; re-checks the marketplace every 60 s, and once on reconnect and on returning to the app | WorkManager every ~15 min with the background token ([[ADR-006 Closed-App Notifications via WorkManager]]) |
 
 ## Configuration
 

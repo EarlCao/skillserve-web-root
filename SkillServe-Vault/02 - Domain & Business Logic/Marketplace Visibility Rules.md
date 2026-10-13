@@ -27,7 +27,7 @@ What the public catalog (`/api/client/v1/categories|services|providers`) shows, 
 
 | Param | Applies to | Meaning |
 |---|---|---|
-| `search` | services, providers | text search (title, provider, category, keywords / name, skills) |
+| `search` | services, providers | every word must match somewhere — services: title, description, location, category, subcategory, provider name/profile; providers: display name, specialization, bio, location, skills, or one of their public services ([[Search and Personalized Discovery]]) |
 | `category_id`, `subcategory_id` | both | via public services |
 | `min_rating` | both | minimum `average_rating` |
 | `featured` | providers | `is_featured` |
@@ -35,6 +35,8 @@ What the public catalog (`/api/client/v1/categories|services|providers`) shows, 
 | `available_day` | providers | has an availability window on weekday 0–6 |
 | `sort`, `direction` | both | `created_at, title, price, average_rating, business_name` |
 
+- A provider's public name is `display_name`: the business name, else the account holder's name.
+  Their account photo is `profile_photo_url`. The owning account itself is never exposed.
 - Categories/subcategories: only `enabled`.
 - Badges shown: only `provider_badges.is_active = true`.
 - `featured` service flags are suppressed when `marketplace.featured_services_enabled` is off.
