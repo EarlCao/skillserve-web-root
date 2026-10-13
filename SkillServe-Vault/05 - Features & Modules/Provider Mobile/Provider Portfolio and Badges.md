@@ -19,6 +19,7 @@ Mobile requirement(s): **M9.2, M4.6** ([[Requirements Sources]]).
 | ID | Functionality | Implementation | Status |
 |---|---|---|---|
 | — | Portfolio | a piece of work = title, optional description, **1–10 photos** (first = cover). `GET/POST /provider/portfolio` (`images[]`, ≤5 MB each; legacy single `image` still accepted), `PATCH …/{item}` (text), `POST …/{item}/images`, `DELETE …/{item}/images/{image}` (never the last), `DELETE …/{item}` | implemented |
+| — | Delete several | the Portfolio app bar's trash button selects pieces of work (tick boxes) and deletes them after one confirmation; adding is the floating *Add work* button only | implemented |
 | — | Portfolio details | one screen for both roles (`PortfolioItemScreen`): swipeable photos with full-screen zoom, title, date, description; the provider gets Edit/Delete, the customer a link to the provider. Cards (`PortfolioCard`) look the same on Portfolio, the customer gallery and the profile. Customer screens are live (marketplace channel) | implemented |
 | — | Badges | `GET /provider/badges` — admin-assigned recognition | implemented |
 
