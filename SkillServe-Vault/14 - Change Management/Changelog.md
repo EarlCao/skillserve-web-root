@@ -9,6 +9,18 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-13 — Profile menu in groups; consistent colours in dark mode
+
+- **Profile tab** (customer and provider): the long list is now a few cards that open to show their
+  items — customer *Account, Activity, Preferences, Help & support, Your data*; provider *Business,
+  Earnings & reputation, Account, Activity, Preferences, Help & support, Your data* — with Log out
+  kept below. Providers gain *Your data* (view or delete account data), which they lacked.
+- **Dark mode**: notices, status badges, the verification seal, icon discs and chips used fixed light
+  backgrounds, so in dark mode they showed as bright boxes — the Edit Service notice was light blue
+  on near-white (1.9:1). Dark-mode tints were added and every inline notice now uses one shared
+  `AppNotice`; a test fails if a fixed light tint comes back. Light-mode success / warning / error
+  were deepened slightly to reach 4.5:1. See [[Mobile UI System]].
+
 ## 2026-10-13 — Cleaner provider card; "bookings" and "service" instead of "jobs"
 
 - **Provider card** (Home *Available providers*, Explore, Browse, Favorites): one compact row — the

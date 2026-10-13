@@ -20,7 +20,10 @@ sources: [skill-serve-mobile-application/lib/core/constants/app_colors.dart, app
 | `secondaryInk` | `#4A6B00` | the lime's hue dark enough to read on light surfaces |
 | text: `textPrimary` / `textSecondary` / `textMuted` | `#1C2128` / `#575E6A` / `#626975` | |
 | dark text: `textOnDark` / `textSecondaryDark` / `textMutedDark` | `#F5F7FA` / `#C2C8D0` / `#9DA3AF` | |
-| status: success / warning / error / info | `#12896A` / `#9E6D0F` / `#D1453B` / `#1F5F8B` (+ light backgrounds) | |
+| status: success / warning / error / info | `#107D60` / `#93650E` / `#C1372D` / `#1F5F8B` | deepened 2026-10-13 to 4.5:1+ on white and on their tints |
+| status tints, light: `successBg` / `warningBg` / `errorBg` / `infoBg` | `#EBF7F2` / `#FAF4E6` / `#FBEAE9` / `#EBF3F8` | |
+| status tints, dark: `successBgDark` / `warningBgDark` / `errorBgDark` / `infoBgDark` | `#173A35` / `#3A3220` / `#3F2528` / `#1C3248` | the *OnDark colours read 5.7–6.9:1 on them |
+| lime tint: `secondarySoft` / `secondarySoftDark` | `#E1F2AE` / `#2C3912` | lime on the dark one: 9.6:1 |
 | status on dark: `successOnDark` / `warningOnDark` / `errorOnDark` / `infoOnDark` | `#4FD1A5` / `#E8B84A` / `#F08A82` / `#7DB8E8` | |
 | `star` / `starOnLight` | `#F2B705` / `#B07800` | rating star on dark / light |
 
@@ -43,6 +46,15 @@ charcoal, slate and the status colours were near-invisible on the dark surfaces.
   text or icon sits on its real background below **3:1**. At the time of the fix, all text was at
   4.5:1 or better; three icons sit at 3.3–3.6:1.
 
+**Tints follow the theme too (2026-10-13).** Notices, badges, chips and icon discs take their
+background from `context.successBgColor` / `warningBgColor` / `errorBgColor` / `infoBgColor`,
+`accentSoftColor` (+ `onAccentSoftColor`) and `neutralSoftColor` (+ `onNeutralSoftColor`) — pale
+in light mode, deep in dark mode. A fixed `AppColors.*Bg` stays pale on a dark screen; the Edit
+Service notice showed light blue text on a near-white box (1.9:1). Every inline notice is now
+the shared `AppNotice` (`core/widgets/feedback/app_notice.dart`, tones info/success/warning/error);
+`test/theme_consistency_test.dart` fails if a screen uses a fixed light tint again. The
+`VerificationSeal` on the always-dark hero card passes `onDark: true`.
+
 **Typography:** Google Fonts **Outfit** (`AppTextStyles._outfit`, the theme's font family).
 `assets/fonts/` is empty; the pubspec font block is commented out.
 
@@ -57,6 +69,14 @@ charcoal, slate and the status colours were near-invisible on the dark surfaces.
 > Treat the code as authoritative. See [[Known Issues and Gaps]].
 
 ## Shared widgets (`lib/core/widgets`)
+
+- **Profile menu** (`features/settings/views/settings_menu.dart`): `SettingsGroup` — a card per
+  category that opens to show its items (summary line while closed) — with `SettingsTile`,
+  `SettingsSwitchTile` and `SettingsSessionButton` (Log out / Log in, kept outside the groups).
+  Customer groups: Account · Activity · Preferences · Help & support · Your data. Provider groups:
+  Business · Earnings & reputation · Account · Activity · Preferences · Help & support · Your data.
+- **`AppNotice`** (`feedback/app_notice.dart`): the one inline notice — tone, icon, optional title,
+  message or rich content, optional action.
 
 | Folder | Widgets |
 |---|---|
