@@ -14,7 +14,7 @@ tags: [index, database]
 |---|---|
 | Accounts & auth | [[users]] · [[personal_access_tokens]] · [[client_refresh_tokens]] · [[pending_registrations]] · [[password_reset_tokens]] |
 | RBAC | [[roles]] · [[permissions]] · [[Permission Pivot Tables]] |
-| Providers | [[provider_profiles]] · [[verification_requests]] · [[verification_documents]] · [[provider_availabilities]] · [[provider_portfolio_items]] |
+| Providers | [[provider_profiles]] · [[verification_requests]] · [[verification_documents]] · [[provider_availabilities]] · [[provider_portfolio_items]] · [[provider_portfolio_images]] |
 | Recognition | [[provider_badges]] · [[provider_badge_assignments]] |
 | Catalog | [[service_categories]] · [[service_subcategories]] · [[services]] |
 | Bookings | [[bookings]] · [[reviews]] · [[messages]] |

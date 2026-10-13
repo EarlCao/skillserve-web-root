@@ -38,23 +38,14 @@ Required for every account; PhilSys card and ePhilID. See vault [[Philippine Add
   and ePhilID, book with the picker, add a service with a service area.
 **Server-side enforcement:** turn on System Settings → Identity (**H8**) at launch.
 
-### F9 · Portfolio redesign with multi-photo items and a details screen **[MB]** — backend done, app left
-Asked 2026-10-13. **Done:** backend (`3d2190e`, deployed with migration `2026_10_13_000003`):
-items hold up to 10 photos (`images[]` on create, `PATCH /provider/portfolio/{item}`,
-`POST|DELETE /provider/portfolio/{item}/images[/{image}]`), photos on the public profile, live
-updates on the `marketplace` channel. Also done in the app: live Statistics and service reviews.
-**Left (Flutter):**
-- [ ] `PortfolioModel.images`, `ProviderModel.portfolio` (items, not just cover URLs); service and
-  controller calls for multi-photo create, edit text, add and remove photos.
-- [ ] Provider Portfolio screen redesign (cards with cover, photo count, date) and one create/edit form
-  (pick up to 10 photos, first is the cover). Drop the false "reviewed by an admin" text — items go
-  live at once.
-- [ ] A portfolio item details screen shared by both roles: photo carousel with full-screen zoom,
-  title, date, description; provider gets Edit/Delete, customer a link to the provider. Routes
-  `/portfolio-item/:providerId/:itemId` (marketplace) and `/my-portfolio/:itemId`,
-  `/edit-portfolio/:itemId` (provider only). Customer gallery and the profile's portfolio strip
-  open it; live via `CatalogUpdates`.
-- [ ] Build a new APK once done.
+### F9 · Live statistics, service reviews, multi-photo portfolio **[BE][MB]** — built 2026-10-13, phone check left
+Backend `3d2190e` (migration `2026_10_13_000003`, additive) and the app are done; see vault Changelog.
+- [ ] **Phone check:** as a provider, open Statistics — the last bar is the current month and the
+  numbers match your bookings; complete a booking and watch them change. Add a portfolio item with
+  several photos, edit it (add/remove photos), open it, delete it. As a customer, open a service's
+  reviews and a provider's portfolio item.
+- [ ] **Small, found on the way:** the National ID screen (`identity_verification_screen.dart:458`)
+  overflows on very narrow phones in the contrast test — tighten that column.
 
 ### F8 · Live marketplace, keyword and name search, full provider profile, report a provider, back from booking details **[BE][MB][DEP]** — built 2026-10-13, owner checks left
 Built in backend, mobile and docs (vault Changelog 2026-10-13). Nothing reaches the phone until the

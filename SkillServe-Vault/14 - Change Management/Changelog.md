@@ -9,6 +9,19 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-13 — Live statistics, reviews on every service, multi-photo portfolio
+
+- **Statistics (provider)** now reads `GET /client/v1/provider/statistics`; it had shown hard-coded
+  numbers (a Feb–Jul chart, fixed rating percentages). Redesigned: this month's earnings, headline
+  numbers, a monthly chart of bookings or earnings (3/6/12 months, ending with the current month in
+  Manila time), bookings by status, star breakdown, top services. Live.
+- **Service reviews (customer)**: Service Details shows the rating summary and the latest reviews;
+  *See all* lists every review with a star filter (`GET /client/v1/services/{service}/reviews`). Live.
+- **Portfolio**: a piece of work holds up to 10 photos (migration `2026_10_13_000003`); providers add,
+  edit (text and photos) and delete; one details screen for both roles with swipe and zoom. The
+  upload screen no longer claims an admin reviews items — they go live at once.
+- Shared `RatingSummary`, `SectionCard`, `PortfolioCard` keep these screens consistent.
+
 ## 2026-10-13 — Profile menu in groups; consistent colours in dark mode
 
 - **Profile tab** (customer and provider): the long list is now a few cards that open to show their

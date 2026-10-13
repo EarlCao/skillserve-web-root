@@ -21,7 +21,7 @@ Mobile requirement(s): **M3, M4** ([[Requirements Sources]]).
 | M 3.1 | Browse Services | only approved, visible services of verified providers | implemented |
 | M 3.2 | Search Services | `search` — every word, across title, description, location, category, subcategory and provider ([[Search and Personalized Discovery]]) | implemented |
 | M 3.3 | Filter Services | filter sheet: category, subcategory, min rating, availability | implemented |
-| M 3.4 | View Service Details | price in ₱ (or "On quote"), category and area, **Offered by** tile → provider profile, Book button, **Report this service** | implemented |
+| M 3.4 | View Service Details | price in ₱ (or "On quote"), category and area, **Offered by** tile → provider profile, **Reviews** (rating summary, latest 3, *See all* → `/service-reviews/:id` with star filter and paging, live), Book button, **Report this service** | implemented |
 | M 3.5 | View Featured Services | home rail (suppressed when featured services disabled) | implemented |
 | M 3.6 | View Service Categories | enabled categories + subcategories | implemented |
 | M 4.1 | Browse Service Providers | verified, active, public providers | implemented |

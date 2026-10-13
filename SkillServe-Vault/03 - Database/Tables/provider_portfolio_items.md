@@ -6,7 +6,9 @@ soft_deletes: false
 ---
 # provider_portfolio_items
 
-Provider portfolio gallery images.
+A provider's piece of work: title, description and its photos in [[provider_portfolio_images]]
+(up to 10, `ProviderPortfolioItem::MAX_IMAGES`). `image_path` is the cover — always the first
+photo — kept for app versions that show a single image.
 
 - **Model:** `backend/app/Modules/Providers/Models/ProviderPortfolioItem.php`
 - **Soft deletes:** no
@@ -20,7 +22,7 @@ Provider portfolio gallery images.
 | `provider_profile_id` | FK |  |
 | `title` | string |  |
 | `description` | text null |  |
-| `image_path` | string | `public` disk |
+| `image_path` | string | cover (first photo), `public` disk |
 | `created_at, updated_at` |  |  |
 
 ## Indexes & constraints
@@ -33,4 +35,4 @@ Provider portfolio gallery images.
 
 ## Related
 
-[[Provider Portfolio and Badges]] · [[Database Index]]
+[[provider_portfolio_images]] · [[Provider Portfolio and Badges]] · [[Database Index]]

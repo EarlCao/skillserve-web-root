@@ -204,6 +204,10 @@ images must be removed from the private disk separately.
   The planner uses them for the search's `LOWER(col) LIKE '%word%' ESCAPE '!'` (verified with
   `EXPLAIN`). Rollback drops the indexes and keeps the extension. A failed concurrent build would
   leave an INVALID index that `IF NOT EXISTS` skips: drop it by name and migrate again.
+- **`2026_10_13_000003_create_provider_portfolio_images_table`** — new [[provider_portfolio_images]]
+  (FK cascade to [[provider_portfolio_items]]); backfills each existing item's `image_path` as its
+  photo #1. Additive; `image_path` stays as the cover so older apps keep working. Rollback drops the
+  table — items keep their cover, extra photos are lost (files stay on disk, unreferenced).
 
 ## Related
 
