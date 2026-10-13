@@ -28,6 +28,15 @@ Mobile requirement(s): **M5** ([[Requirements Sources]]).
 
 UAT result columns in the mobile `TEST_PLAN.md` are still empty — see [[UAT and Traceability]].
 
+## Starting from a service
+
+The wizard is *Service → Schedule → Details → Confirm*. Started from one particular service —
+**Book this service** on Service Details, or a service's **Book** button on the provider profile —
+the route carries it (`/booking-form/:providerId?serviceId=:id`), so the service step is skipped:
+the wizard opens on *Schedule* with the service shown above it, three steps in all. A service that
+is no longer bookable falls back to choosing one. Booking a provider generally (their **Book now**)
+still starts by choosing the service. Test: `booking_form_test`.
+
 ## Navigation
 
 The confirmation screen's **View booking details** replaces the navigation stack, and a booking
