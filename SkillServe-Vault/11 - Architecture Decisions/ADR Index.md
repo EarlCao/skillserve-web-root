@@ -32,5 +32,6 @@ New decisions: copy [[Template - ADR]] and add a row.
 | 020 | [[ADR-020 PayMongo Collects Into the Platform Account]] | 2026-09-25 |
 | 021 | [[ADR-021 Direct Payment with Provider-Remitted Commission]] | 2026-09-25 |
 | 022 | [[ADR-022 Payment QR Codes Without Holding Customer Money]] | 2026-10-11 |
+| 023 | [[ADR-023 Refunds After Cancellation and No Self-Deletion]] | 2026-10-14 |
 
 Back to [[Home]]

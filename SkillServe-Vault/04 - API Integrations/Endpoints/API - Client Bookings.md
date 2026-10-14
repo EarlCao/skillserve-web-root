@@ -12,7 +12,7 @@ tags: [api, endpoints, generated]
 > Authorization is extracted from controller/policy source; request/response shapes live in the
 > generated OpenAPI reference (`api-docs/modules/*.md`, Swagger UI at `/api/documentation`).
 
-Customer booking lifecycle and GCash payment proofs.
+Customer booking lifecycle, GCash payment proofs and refunds after cancellation.
 
 Feature note: [[Client Booking]] · Conventions: [[API Conventions]] · Index: [[API Index]]
 
@@ -24,6 +24,9 @@ Feature note: [[Client Booking]] · Conventions: [[API Conventions]] · Index: [
 | PATCH | `/api/client/v1/bookings/{booking}/cancel` | `ClientMarketplace::ClientBookingController@cancel` | `EnsurePlatformAvailable`, `auth:sanctum`, `EnsureClient` | Role gate in middleware; ownership/participant check in the client policy or service |
 | POST | `/api/client/v1/bookings/{booking}/payment-proofs` | `ClientMarketplace::PaymentProofController@store` | `EnsurePlatformAvailable`, `auth:sanctum`, `EnsureClient`, `throttle:10,1` | Role gate in middleware; ownership/participant check in the client policy or service |
 | GET | `/api/client/v1/bookings/{booking}/payment-proofs/{proof}/image` | `ClientMarketplace::PaymentProofController@customerImage` | `EnsurePlatformAvailable`, `auth:sanctum`, `EnsureClient` | Role gate in middleware; ownership/participant check in the client policy or service |
+| PATCH | `/api/client/v1/bookings/{booking}/refund/confirm` | `ClientMarketplace::BookingRefundController@confirm` | `EnsurePlatformAvailable`, `auth:sanctum`, `EnsureClient` | Role gate in middleware; ownership/participant check in the client policy or service |
+| PATCH | `/api/client/v1/bookings/{booking}/refund/not-received` | `ClientMarketplace::BookingRefundController@notReceived` | `EnsurePlatformAvailable`, `auth:sanctum`, `EnsureClient` | Role gate in middleware; ownership/participant check in the client policy or service |
+| GET | `/api/client/v1/bookings/{booking}/refund/proof` | `ClientMarketplace::BookingRefundController@customerProof` | `EnsurePlatformAvailable`, `auth:sanctum`, `EnsureClient` | Role gate in middleware; ownership/participant check in the client policy or service |
 | PATCH | `/api/client/v1/bookings/{booking}/reschedule` | `ClientMarketplace::ClientBookingController@reschedule` | `EnsurePlatformAvailable`, `auth:sanctum`, `EnsureClient` | Role gate in middleware; ownership/participant check in the client policy or service |
 
 Every `api/*` route also runs the `api` group: `throttle:api` (60/min per user or IP), `SubstituteBindings`, `ForceJsonResponse`, `CacheApiResponse`, `AddRateLimitHeaders`.

@@ -85,6 +85,17 @@ optional `reference`, `image` screenshot). Then:
 `payment_instructions.amount` and its QR carry the **balance**, not the total, after a downpayment.
 Table: [[booking_payment_proofs]].
 
+## Refunds after cancellation
+
+A cancelled booking with money paid on it opens a refund the provider must return — see
+[[ADR-023 Refunds After Cancellation and No Self-Deletion]] and [[booking_refunds]]. Endpoints:
+provider `POST /client/v1/provider/bookings/{id}/refund` (screenshot), customer
+`PATCH /client/v1/bookings/{id}/refund/confirm` · `/refund/not-received` (note), admin
+`PATCH /api/bookings/{id}/refund/resolve` (`returned` | `not_returned`, note; `manage booking
+payments`). Confirming (or *returned*) adds to `refunded_amount`; `payment_status` becomes
+`refunded` (or `partially_refunded` when less than was paid comes back). Unreturned refunds block
+the provider (`refund_overdue`).
+
 > [!warning] No escrow, no payment guarantee
 > Because the platform never holds the money, it cannot reverse a payment. A customer who pays and
 > receives nothing, or a provider who works unpaid, is a dispute — not something SkillServe can

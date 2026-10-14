@@ -54,7 +54,7 @@ GROUPS = [
     ("API - Support Tickets (Admin)", lambda u: u.startswith("api/support"), "Admin support ticket desk.", "Support Management"),
     ("API - Client Authentication", lambda u: u.startswith("api/client/v1/auth"), "Mobile registration, OTP, login, Google sign-in, refresh, profile and account deletion.", "Client Authentication and Account"),
     ("API - Client Catalog", lambda u: u.startswith(("api/client/v1/categories", "api/client/v1/services", "api/client/v1/providers")), "Public marketplace discovery (no token required).", "Service and Provider Discovery"),
-    ("API - Client Bookings", lambda u: re.match(r"api/client/v1/bookings(/\{booking\})?(/cancel|/reschedule|/payment-proofs.*)?$", u) is not None, "Customer booking lifecycle and GCash payment proofs.", "Client Booking"),
+    ("API - Client Bookings", lambda u: re.match(r"api/client/v1/bookings(/\{booking\})?(/cancel|/reschedule|/payment-proofs.*|/refund.*)?$", u) is not None, "Customer booking lifecycle, GCash payment proofs and refunds after cancellation.", "Client Booking"),
     ("API - Client Disputes", lambda u: "dispute" in u and u.startswith("api/client/v1/"), "Either party raises a dispute and uploads evidence.", "Client Disputes"),
     ("API - Client Messaging", lambda u: u.startswith("api/client/v1/conversations") or u.startswith("api/client/v1/inquiries") or "/messages" in u and u.startswith("api/client/v1/"), "Booking chats, conversations before booking (inquiries) and the conversation inbox.", "Client Messaging"),
     ("API - Client Notifications", lambda u: u.startswith("api/client/v1/notifications"), "Notification feed, read state and the background (closed-app) token.", "Client Notifications"),

@@ -30,7 +30,7 @@ Initial location `/splash`. Role access is decided by the first path segment (`r
 | `/identity-verification` | National ID capture and status (optional `?next=`) | signed in (either role) |
 | `/notifications`, `/chat-conversation/:threadKey`, `/booking-details/:id`, `/file-report`, `/my-reports`, `/my-disputes` | shared | signed in (either role) |
 | `/support/tickets`, `/support/new`, `/support/tickets/:ticketId`, `/help-center` | support | signed in (`support` segment shared); help center public |
-| `/edit-profile`, `/change-password`, `/activity-history`, `/notification-preferences`, `/privacy-settings`, `/application-preferences`, `/security-activity`, `/account-data`, `/account-deletion` | account & settings | signed in |
+| `/edit-profile`, `/change-password`, `/activity-history`, `/notification-preferences`, `/privacy-settings`, `/application-preferences`, `/security-activity`, `/account-data` | account & settings | signed in |
 
 Redirect rules: signed out + protected → `/login`; signed in + other role's route or signed-out-only
 route → own home (`/client` or `/provider`). Notification taps deep-link to the booking,

@@ -188,7 +188,11 @@ images must be removed from the private disk separately.
   (unique), `external_payment_id`, `qr_image`, `expires_at`, `last_event_id`, `failure_reason` on
   [[commission_remittances]]. Additive; roll back only before any QR payment is made.
 
-## 2026-10-14 — Chat before booking; GCash payment proofs
+## 2026-10-14 — Chat before booking; GCash payment proofs; refunds after cancellation
+
+- **`2026_10_14_000004_create_booking_refunds`** — new [[booking_refunds]] (one per booking, cascade).
+  Additive, no backfill: bookings cancelled earlier get no refund retroactively. Rollback drops the
+  table (proof screenshots stay on disk). Verified up → down → up on local Postgres.
 
 - **`2026_10_14_000003_create_booking_payment_proofs`** — new [[booking_payment_proofs]] (cascade
   with the booking) and `bookings.amount_paid` decimal default 0; `payment_status` gains the value

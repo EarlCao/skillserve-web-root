@@ -37,9 +37,11 @@ Tags: **[BE]** Laravel backend · **[AW]** React admin web · **[MB]** Flutter a
 - [x] **Bookings tab icon** changed in both apps.
 - [x] **GCash payment proofs** — downpayment / rest with screenshot, provider confirms or rejects,
   live via `client.booking.changed` (migration `2026_10_14_000003`).
-- [ ] **Cancelling after a downpayment** — a cancelled booking keeps `amount_paid`, and nothing tells
-  either side a downpayment should be returned. **Do:** decide the rule (refund owed by the provider,
-  or kept as a fee) and show it on cancellation; until then it is settled through a dispute.
+- [x] **Cancelling after a downpayment** — the provider must return it (owner decision); two-sided
+  verification, deadline, provider block, admin resolution (ADR-023, migration `2026_10_14_000004`).
+- [x] **Self-service account deletion removed** (410 for older apps).
+- [ ] **Republish edited policies** — if Terms/Privacy were edited in System Settings on production,
+  the new defaults (refund duty, no self-deletion) do not apply until an admin updates them.
 
 ### F11 · Clean-up round: photo purge, instant pushes, policies, permissions page **[BE][AW][MB]** — done 2026-10-14
 - [x] **Photos removed with their records** — a chat photo goes with its message, dispute evidence

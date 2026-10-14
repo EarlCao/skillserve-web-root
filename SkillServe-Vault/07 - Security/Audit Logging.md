@@ -12,7 +12,7 @@ in `AppServiceProvider`.
 |---|---|---|
 | `authentication` | `LogAuthenticationActivity` | `administrator_logged_in`, `administrator_logged_out`, `administrator_login_failed`, password changed (with IP, user agent) |
 | `administrators`, `roles` | `LogAdministratorActivity` | admin created/updated/status/password (`administrators`); role created/updated/deleted/permissions synced (`roles`) |
-| `users` | `LogUserActivity` | user updated/suspended/activated/banned/unbanned/deleted/warned, `user_self_deleted` |
+| `users` | `LogUserActivity` | user updated/suspended/activated/banned/unbanned/deleted/warned (`user_self_deleted` only on entries before 2026-10-14, when self-deletion was removed) |
 | `service_categories`, `service_subcategories` | `LogServiceCategoryActivity` | category/subcategory CRUD, status |
 | `provider` | `LogProviderActivity` | verification submitted/approved/rejected/info requested/removed, suspended/activated |
 | `provider_recognition` | `LogProviderRecognitionActivity` | badge CRUD, assign/remove, featured |

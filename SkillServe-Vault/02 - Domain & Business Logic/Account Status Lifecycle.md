@@ -17,7 +17,7 @@ stateDiagram-v2
   active --> banned : admin ban (days | forever)
   suspended --> banned : admin ban
   banned --> active : admin unban (reason)\nor ban expiry (scheduler / next login)
-  active --> deleted : admin delete / self-delete
+  active --> deleted : admin delete
   deleted --> active : admin restore (Data Management)
 ```
 
@@ -28,7 +28,7 @@ stateDiagram-v2
 | ban | `PATCH /api/users/{u}/ban` `{duration: days|forever, days, reason}` | not already banned; clears suspension fields; `banned_until` null = permanent |
 | unban | `PATCH /api/users/{u}/unban` `{reason}` | — |
 | delete | `DELETE /api/users/{u}` | not yourself; not already deleted; revokes all tokens |
-| self-delete | `DELETE /api/client/v1/auth/me` `{password, reason?}` | refused while any booking is `pending/confirmed/active/disputed`; revokes all tokens |
+| self-delete | removed 2026-10-14 — `DELETE /api/client/v1/auth/me` answers **410** ([[ADR-023 Refunds After Cancellation and No Self-Deletion]]) | — |
 | ban expiry | `users:unban-expired` (every minute) + on login | `banned_until` in the past |
 
 Administrators: `PATCH /api/administrators/{id}/status {active|inactive}`; inactive admins cannot

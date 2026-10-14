@@ -6,7 +6,7 @@ tags: [api, index, generated]
 ---
 # Endpoints Index
 
-> [!info] Generated on 2026-10-14 from `php artisan route:list` — 290 route entries in 35 groups.
+> [!info] Generated on 2026-10-14 from `php artisan route:list` — 297 route entries in 35 groups.
 
 | Group | Routes | Scope |
 |---|---|---|
@@ -17,7 +17,7 @@ tags: [api, index, generated]
 | [[API - Service Categories]] | 11 | Categories and nested subcategories. |
 | [[API - Providers]] | 10 | Admin provider management and verification workflow. |
 | [[API - Services]] | 9 | Admin service moderation. |
-| [[API - Bookings]] | 8 | Admin booking management, payments and refunds. |
+| [[API - Bookings]] | 10 | Admin booking management, payments and refunds. |
 | [[API - Disputes]] | 9 | Admin dispute queue (disputes live on the bookings table). |
 | [[API - Reviews]] | 4 | Admin review moderation. |
 | [[API - Reports and Moderation]] | 10 | Admin report queue and moderation actions. |
@@ -31,7 +31,7 @@ tags: [api, index, generated]
 | [[API - Support Tickets (Admin)]] | 7 | Admin support ticket desk. |
 | [[API - Client Authentication]] | 23 | Mobile registration, OTP, login, Google sign-in, refresh, profile and account deletion. |
 | [[API - Client Catalog]] | 7 | Public marketplace discovery (no token required). |
-| [[API - Client Bookings]] | 7 | Customer booking lifecycle and GCash payment proofs. |
+| [[API - Client Bookings]] | 10 | Customer booking lifecycle, GCash payment proofs and refunds after cancellation. |
 | [[API - Client Disputes]] | 3 | Either party raises a dispute and uploads evidence. |
 | [[API - Client Messaging]] | 11 | Booking chats, conversations before booking (inquiries) and the conversation inbox. |
 | [[API - Client Notifications]] | 10 | Notification feed, read state and the background (closed-app) token. |
@@ -40,7 +40,7 @@ tags: [api, index, generated]
 | [[API - Client Reports]] | 4 | Reports filed from the app against a user, review or message. |
 | [[API - Client Support]] | 5 | Support tickets from customers and providers. |
 | [[API - Client Preferences and Platform]] | 3 | Per-user app preferences and public platform info/policies. |
-| [[API - Provider Bookings (Mobile)]] | 11 | The provider's jobs and their lifecycle. |
+| [[API - Provider Bookings (Mobile)]] | 13 | The provider's jobs and their lifecycle. |
 | [[API - Provider Services (Mobile)]] | 6 | Provider-managed services (subject to admin approval). |
 | [[API - Provider Account (Mobile)]] | 20 | Provider profile, portfolio, availability, badges and verification upload. |
 | [[API - Locations]] | 3 | Public Philippine address-picker data (PSA PSGC) and the National-ID address matcher. |

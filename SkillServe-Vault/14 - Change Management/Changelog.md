@@ -9,6 +9,20 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-14 — Refunds after cancellation; no self-deletion; anti-scam safeguards
+
+- **Refunds:** a cancelled booking with money paid opens a refund the provider must return by a
+  deadline (System Settings → Booking → *Days to return a payment after cancellation*, default 3).
+  The provider uploads proof; the customer confirms or reports *not received*; admins resolve in the
+  booking dialog (*Returned* / *Not returned*). New [[booking_refunds]] (migration
+  `2026_10_14_000004`), `BookingRefundService`, `bookings:escalate-overdue-refunds` (every 15 min).
+- **Anti-scam:** an overdue, disputed or unreturned refund blocks the provider from new bookings and
+  services (`refund_overdue`); Admin Inbox alerts (kind `refund`); Bookings filter *Refund owed*;
+  screenshot evidence at every step; Terms and Privacy updated.
+- **No self-deletion:** the app's *Delete account* is gone; `DELETE /client/v1/auth/me` → 410.
+  See [[ADR-023 Refunds After Cancellation and No Self-Deletion]]. Tests: `BookingRefundTest`,
+  `AccountDataTest`, app `booking_refund_test`.
+
 ## 2026-10-14 — GCash payment proofs: downpayment, the rest, live
 
 Customers send proof of a GCash payment — a downpayment or the rest — with a screenshot and optional

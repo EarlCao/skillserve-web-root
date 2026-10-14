@@ -26,5 +26,7 @@ Feature note: [[Booking Management]] · Conventions: [[API Conventions]] · Inde
 | PATCH | `/api/bookings/{booking}/mark-paid` | `Bookings::BookingController@markPaid` | `auth:sanctum` | policy `managePayments` → `manage booking payments` |
 | GET | `/api/bookings/{booking}/payment-proofs/{proof}/image` | `Bookings::BookingController@paymentProofImage` | `auth:sanctum` | policy `view` → `view bookings` |
 | PATCH | `/api/bookings/{booking}/refund` | `Bookings::BookingController@refund` | `auth:sanctum` | policy `managePayments` → `manage booking payments` |
+| GET | `/api/bookings/{booking}/refund/proof` | `Bookings::BookingController@refundProof` | `auth:sanctum` | policy `view` → `view bookings` |
+| PATCH | `/api/bookings/{booking}/refund/resolve` | `Bookings::BookingController@resolveRefund` | `auth:sanctum` | policy `managePayments` → `manage booking payments` |
 
 Every `api/*` route also runs the `api` group: `throttle:api` (60/min per user or IP), `SubstituteBindings`, `ForceJsonResponse`, `CacheApiResponse`, `AddRateLimitHeaders`.

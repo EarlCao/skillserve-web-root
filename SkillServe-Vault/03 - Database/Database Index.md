@@ -17,7 +17,7 @@ tags: [index, database]
 | Providers | [[provider_profiles]] · [[verification_requests]] · [[verification_documents]] · [[provider_availabilities]] · [[provider_portfolio_items]] · [[provider_portfolio_images]] |
 | Recognition | [[provider_badges]] · [[provider_badge_assignments]] |
 | Catalog | [[service_categories]] · [[service_subcategories]] · [[services]] |
-| Bookings | [[bookings]] · [[booking_payment_proofs]] · [[reviews]] · [[messages]] · [[inquiries]] |
+| Bookings | [[bookings]] · [[booking_payment_proofs]] · [[booking_refunds]] · [[reviews]] · [[messages]] · [[inquiries]] |
 | Commissions | [[commission_tiers]] · [[commission_settlements]] · [[commission_remittances]] |
 | Payments | [[payment_intents]] |
 | Identity | [[identity_verifications]] · [[identity_documents]] · [[identity_verification_events]] |
