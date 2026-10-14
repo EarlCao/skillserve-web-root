@@ -27,8 +27,9 @@ Channel auth endpoint: `POST|GET /api/broadcasting/auth` with `api` + `auth:sanc
 |---|---|---|---|---|
 | `admin.data.changed` | `App\Shared\Realtime\AdminDataChanged` | `admin.data` | `ShouldBroadcastNow` (immediate, no queue) | `resources: string[]` only — never record data |
 | `marketplace.changed` | `App\Shared\Realtime\MarketplaceChanged` | `marketplace` | `ShouldBroadcastNow` (immediate, no queue) | `resources: string[]` only (`services`, `providers`, `categories`, `reviews`, `settings`) |
-| `client.notification.created` | `ClientCommunication\Events\ClientNotificationCreated` | `App.Models.User.{userId}` | `ShouldBroadcast` (**queued**) | the new notification |
-| `client.message.created` | `ClientCommunication\Events\ClientMessageCreated` | `App.Models.User.{receiverId}` | `ShouldBroadcast` (**queued**) | `booking_id` + message |
+| `client.notification.created` | `ClientCommunication\Events\ClientNotificationCreated` | `App.Models.User.{userId}` | `ShouldBroadcastNow` (immediate since 2026-10-14; a failed push is logged) | the new notification |
+| `client.message.created` | `ClientCommunication\Events\ClientMessageCreated` | `App.Models.User.{receiverId}` | `ShouldBroadcastNow` (immediate since 2026-10-14; a failed push is logged) | `booking_id` + message (with `image_url`) |
+| `client.notifications.changed` | `ClientCommunication\Events\ClientNotificationsChanged` | `App.Models.User.{userId}` | `ShouldBroadcastNow` | `{}` — archived/restored/deleted elsewhere |
 | `client-typing` (whisper) | client event | `presence-booking-chat.{id}` | peer-to-peer via Reverb | `{user_id, typing}` |
 
 ### How admin "data changed" works

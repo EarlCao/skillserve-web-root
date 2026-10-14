@@ -1,7 +1,7 @@
 # Pending Fixes — SkillServe (Backend, Admin Web, Mobile, Deployment)
 
-Last updated: **2026-10-13** (F8 — live marketplace and search; every code item cleared, deploys
-verified live — what is left below is owner action only).
+Last updated: **2026-10-14** (F11 — every code item cleared and realtime re-verified end to end;
+what is left below needs the owner's accounts, money, devices or a launch decision).
 Previous full audit: 2026-09-21.
 
 Requirements now live in `SkillServe-Vault/` (Obsidian), which supersedes the two functionality
@@ -19,6 +19,25 @@ Tags: **[BE]** Laravel backend · **[AW]** React admin web · **[MB]** Flutter a
 ---
 
 ## Features in progress
+
+### F11 · Clean-up round: photo purge, instant pushes, policies, permissions page **[BE][AW][MB]** — done 2026-10-14
+- [x] **Photos removed with their records** — a chat photo goes with its message, dispute evidence
+  with its booking, report/ticket/reply photos with their rows; a purged account takes its own proof
+  photos and profile photo (tests `PurgeStoredFilesTest`). Closes the F10 known gap.
+- [x] **Realtime verified end to end** on the local stack (real API + Reverb, three accounts): chat
+  photo, report with photos, report decision, ticket with photo, admin reply, photo-only reply,
+  dispute with photo, dispute update, notification archive/delete — every push arrived in
+  100–340 ms. Chat messages and notifications are now broadcast immediately (they waited for the
+  queue worker, 1–5 s). The app refreshes an open ticket, My Reports and bookings when support acts.
+- [x] **Policies** — starting Terms of Service, Privacy Policy (Data Privacy Act) and Community
+  Guidelines ship as the defaults (`backend/resources/policies`); System Settings shows them for
+  review and edit.
+- [x] **Permissions page** — one row per admin area, each with *No access / View / Full control*
+  (17 areas, `config/permission-areas.php`); no more duplicate "Full control" boxes; Settings and
+  Data management gained a View level (`view settings`, `view data`, migration `2026_10_14_000001`).
+- [x] **Signing key backed up** — `C:\Users\earlf\skillserve-upload.jks` copied to
+  `OneDrive\SkillServe Backups\` (checksum verified). **Owner:** keep the two passwords from
+  `android/key.properties` in a password manager — they are deliberately not in the backup.
 
 ### F1 · ID-first sign-up and the Philippine address picker **[BE][MB]** — in progress
 **Asked 2026-10-01:** sign-up starts by photographing the National ID front, then back; the app
@@ -48,9 +67,8 @@ Backend `8acc5a1` (migrations `2026_10_13_000004`/`000005`, additive) and the ID
   left to delete; long-press to select several. With the app open on two phones on one account, the
   other follows.
 - [ ] **Phone check, photos as proof:** file a report with 2 photos, raise a dispute with photos, open
-  a support ticket with a screenshot and reply with a photo alone. In the admin web, each shows the
-  thumbnails in the Reports dialog and the Support ticket (click for full size); dispute photos open from the Disputes dialog (Open evidence). Known gap:
-  these files, like chat photos and dispute evidence, are not deleted when an account is purged.
+  a support ticket with a screenshot and reply with a photo alone. In the admin web, each shows
+  thumbnails (Reports, Disputes and Support dialogs; click for full size). (The purge gap is fixed — F11.)
 - [ ] **Phone check, National ID:** scan a sharp card in good light (accepted), then try in a dark
   room, under a lamp's glare and while moving the phone — each should ask for a retake with a
   reason. If a good photo is ever refused, report it: the thresholds in
@@ -160,8 +178,8 @@ Also: the backend's `composer audit` is clean again (laravel/framework 13.34, co
 flysystem 3.36) and the admin web's axios is 1.20 (production dependencies clean; three build-tool
 advisories have no non-breaking fix yet).
 - [x] **Deploy** — verified 2026-10-13 (backend, admin web, APK; as F6).
-- [ ] **Render (optional tidy-up):** delete `SANCTUM_EXPIRATION`. Nothing reads it any more, so
-  leaving it is harmless.
+- [x] ~~**Render (optional tidy-up):** delete `SANCTUM_EXPIRATION`~~ — closed 2026-10-14: nothing
+  reads it (`config/sanctum.php`), so it needs no action.
 
 ### F2 · Password after the sign-up code; Google needs the password; readable light/dark app **[BE][MB]** — built, owner checks left
 **Asked 2026-10-03.** Built and tested the same day (vault [[Registration and OTP Flow]],
@@ -417,13 +435,15 @@ migrations and went live (the new `/api/commission-tiers/presets` answers 401 un
    **Render:** a paid backend instance with the persistent disk, and the environment from
    `DEPLOYMENT.md`, including `SEED_MODE=starter` on the first deploy, then `admin-only`.
    After that, follow `DEPLOYMENT.md` → "Go-live checklist".
-2. ~~**Android signing**~~ — keystore and `android/key.properties` created 2026-09-30 (Flutter repo
-   `PENDING_FIXES.md`). **Still to do: back both up.** Release SHA-1
+2. ~~**Android signing**~~ — keystore and `android/key.properties` created 2026-09-30; the keystore
+   is backed up to OneDrive (F11). **Still to do: put its two passwords in a password manager.** Release SHA-1
    `20:30:88:71:1E:64:1B:EE:90:9B:E5:0C:7E:FE:E1:9D:75:E3:36:1A`.
 3. **Google sign-in:** register an Android OAuth client for `com.skillserve.mobile` with the debug
    and release SHA-1 fingerprints (Flutter repo `SETUP_CREDENTIALS.md`, section 2).
-4. **Admin content:** in Settings, write the Terms of Service, Privacy Policy and Community
-   Guidelines, and review the booking rules. Then add categories, badges and a support-staff role.
+4. ~~**Admin content**~~ — starting policies ship as defaults, and the starter setup seeds
+   categories, commission tiers and badges (F11). **Owner:** read the three policies in System
+   Settings → Policies and adjust them to your business, and in Permissions give the `admin` role
+   the levels your staff need (e.g. *Full control* of Support tickets).
 5. **Evidence:** run the smoke test (D2) on the deployed stack and fill in the Result columns of
    both `TEST_PLAN.md` files.
 

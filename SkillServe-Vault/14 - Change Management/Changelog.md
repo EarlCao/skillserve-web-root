@@ -9,6 +9,22 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-14 — Clean-up round: photo purge, instant pushes, policies, permissions page
+
+- **Photos go with their records:** a permanently deleted message, booking, report, ticket or reply
+  takes its private photo files with it, and purging an account removes the proof photos and profile
+  photo it uploaded (`PrivateImages::deleteAfterCommit`, model hooks; `PurgeStoredFilesTest`).
+- **Instant pushes:** `client.message.created` and `client.notification.created` are broadcast
+  immediately (`ShouldBroadcastNow`, failures logged) instead of waiting for the queue worker. The app
+  re-reads an open support ticket, My Reports and bookings when support replies or decides.
+  Verified end to end on the local stack (API + Reverb): every flow arrives in 100–340 ms.
+- **Policies:** starting Terms of Service, Privacy Policy and Community Guidelines are the settings'
+  defaults (`backend/resources/policies/*.txt`), shown in both apps until an administrator edits them.
+- **Permissions page:** one row per admin area with *No access / View / Full control*
+  (`config/permission-areas.php`, 17 areas) — replaces the verb-guessed groups that showed lone
+  "view" or "manage" boxes and a duplicate "Full control". New `view settings` and `view data`
+  permissions (migration `2026_10_14_000001`) make Settings and Data management viewable read-only.
+
 ## 2026-10-13 — Photos as proof on reports, disputes and support tickets
 
 - **Reports:** the Report an Issue screen and the report sheet (message, review, service, provider)

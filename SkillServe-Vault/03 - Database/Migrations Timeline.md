@@ -204,6 +204,9 @@ images must be removed from the private disk separately.
   The planner uses them for the search's `LOWER(col) LIKE '%word%' ESCAPE '!'` (verified with
   `EXPLAIN`). Rollback drops the indexes and keeps the extension. A failed concurrent build would
   leave an INVALID index that `IF NOT EXISTS` skips: drop it by name and migrate again.
+- **`2026_10_14_000001_add_view_settings_and_view_data_permissions`** — data only: adds `view
+  settings` and `view data`, granted to `super-admin` and to every role already holding a
+  Settings/Data management permission. Rollback deletes the two permissions and their grants.
 - **`2026_10_13_000006_create_report_and_support_attachments_tables`** — new [[report_attachments]]
   and [[support_ticket_attachments]] (FKs cascade from their report/ticket/message, `uploaded_by`
   null on delete). Additive, no backfill. Rollback drops both tables; the photo files stay on disk,

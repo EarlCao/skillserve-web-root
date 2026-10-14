@@ -48,6 +48,10 @@ Soft-deleted tables: `users`, `service_categories`, `service_subcategories`, `se
   [[Identity Verification Lifecycle]].
 - **National ID images** are purged on their own timer by `identity:purge-documents` (daily), once
   System Settings → Identity → retention has passed. The decision and its history are kept.
+- **Photos go with their records (2026-10-14):** permanently deleting a message, booking, report,
+  support ticket or reply deletes its private photo files (chat photo, dispute evidence, proof
+  photos) after the transaction commits; purging an account also deletes the proof photos it
+  uploaded and its profile photo, while the reports and tickets themselves stay as records.
 - Account data export: `GET /api/client/v1/auth/me/data-export` (profile, preferences, provider
   profile, bookings, reviews, reports, support tickets, favorites).
 

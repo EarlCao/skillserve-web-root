@@ -54,6 +54,14 @@ Mobile accounts have **no Spatie roles or permissions**. Access is decided by:
 - `users.role_id` ↔ `model_has_roles` kept in sync (`User::booted`, `SyncUserRoleId` listener).
 - Only accounts with at least one staff role may join `admin.data` or sign into the admin web.
 
+## Permission areas (admin web)
+
+`config/permission-areas.php` is the single list of admin areas. Each area has a read-only level
+(`view`) and full control (`view` + `control`); the Permissions page offers exactly *No access /
+View / Full control* per area, and a test fails if a seeded permission is in no area. `view
+settings` and `view data` (2026-10-14) give Settings and Data management a read-only level — the
+API lets them read; every change still needs the matching manage/action permission.
+
 ## Frontend mirror
 
 `hasCapability(user, permission, managePermission)` and `RequirePermission` hide menus and block
