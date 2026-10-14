@@ -109,9 +109,13 @@ least 800 × 500 px in either orientation (422 otherwise); the app also refuses 
 unreadably blurry photos and takes them without filters ([[Mobile Identity Verification]]). An administrator opens one through an
 authorised, audited download that verifies the document belongs to the submission in the path.
 
-A decision starts the retention clock (`documents_purge_after`); `identity:purge-documents` (daily)
-then deletes the images while keeping the decision and its history. Retention is
-System Settings → Identity → *Keep National ID images for (days)*, default 90.
+A **verified** ID keeps its images while the account exists (owner decision, 2026-10-14), so an
+administrator can still look at it when a fraud or dispute question comes up later; they show on the
+provider's profile (*National ID* card) and in the review queue. A **rejection** starts the retention
+clock (`documents_purge_after`); `identity:purge-documents` (daily) then deletes those images while
+keeping the decision and its history, and skips verified records even if an older one still carries a
+date. Retention is System Settings → Identity → *Keep rejected National ID images for (days)*,
+default 90. Images purged before this change cannot be recovered.
 
 ## Endpoints
 

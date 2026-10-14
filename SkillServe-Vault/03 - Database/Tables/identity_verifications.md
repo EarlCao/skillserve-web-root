@@ -29,7 +29,7 @@ so every account that has looked at the feature has a record.
 | `reviewed_by` | FK users nullOnDelete | |
 | `rejection_reason` | text null | shown to the holder so they can resubmit |
 | `released_at` | timestamp null | set on **permanent** account deletion; frees the ID for reuse |
-| `documents_purge_after` | timestamp null, indexed | retention clock, started by a decision |
+| `documents_purge_after` | timestamp null, indexed | retention clock, started by a rejection; null for a verified ID (images kept) |
 | `created_at, updated_at` | | |
 
 `id_number_hash` and `id_number_encrypted` are `#[Hidden]` on the model, so even a stray `toArray()`

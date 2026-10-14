@@ -22,7 +22,7 @@ Admin requirement module **4** ([[Requirements Sources]]).
 | ID | Functionality | Implementation |
 |---|---|---|
 | A 4.1 | View Service Providers | `GET /api/providers` (business name, verification status, rating…) |
-| A 4.2 | View Provider Profile | `GET /api/providers/{id}` — skills, experience, portfolio, services, ratings, bookings |
+| A 4.2 | View Provider Profile | `GET /api/providers/{id}` — skills, experience, portfolio, services, ratings, bookings; a *National ID* card (status, name, last 4 digits, photos) for admins who may review IDs (`identity` block, `ProviderIdentitySectionTest`) |
 | A 4.3 | Review Verification Request | documents streamed via `…/verification-documents/{doc}/download` (blob → new tab); `verification-history` |
 | A 4.4 | Approve Verification | `PATCH …/verification/approve` → verified |
 | A 4.5 | Reject Verification | `PATCH …/verification/reject` with reason |

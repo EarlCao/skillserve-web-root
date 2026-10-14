@@ -41,7 +41,11 @@ Tags: **[BE]** Laravel backend · **[AW]** React admin web · **[MB]** Flutter a
   verification, deadline, provider block, admin resolution (ADR-023, migration `2026_10_14_000004`).
 - [x] **Self-service account deletion removed** (410 for older apps).
 - [ ] **Republish edited policies** — if Terms/Privacy were edited in System Settings on production,
-  the new defaults (refund duty, no self-deletion) do not apply until an admin updates them.
+  the new defaults (refund duty, no self-deletion, verified ID photos kept) do not apply until an admin updates them.
+- [x] **Commission rules** moved from System Settings to Commission page → *Rules*.
+- [x] **Edit forms empty** — Customer Management (and 7 other admin dialogs) open pre-filled again.
+- [x] **Verified National ID kept** — no purge after verifying; *National ID* card on the provider
+  profile; the queue defaults to *All statuses*. Photos already purged cannot be recovered.
 
 ### F11 · Clean-up round: photo purge, instant pushes, policies, permissions page **[BE][AW][MB]** — done 2026-10-14
 - [x] **Photos removed with their records** — a chat photo goes with its message, dispute evidence

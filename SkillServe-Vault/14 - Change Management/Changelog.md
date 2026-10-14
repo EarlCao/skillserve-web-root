@@ -9,6 +9,19 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-14 — Verified National IDs kept; edit forms pre-fill again
+
+- **National ID:** verifying an ID no longer starts the image purge — a verified ID keeps its photos
+  while the account exists; only rejected IDs are purged after System Settings → Identity → *Keep
+  rejected National ID images for (days)*. The provider profile shows a **National ID** card (status,
+  name on the card, last 4 digits, photos) to admins who may review IDs, and the Identity
+  Verifications queue defaults to *All statuses*. Privacy Policy updated. Photos purged before this
+  change cannot be recovered. Tests: `IdentityVerificationTest`, `IdentityVerificationReviewTest`,
+  `ProviderIdentitySectionTest`.
+- **Admin web edit forms** (customers, administrators, roles, password reset, services, categories,
+  subcategories, booking payment) open with the record's values again: each dialog mounts only while
+  open and seeds its form from `defaultValues`, instead of `reset()` in an effect.
+
 ## 2026-10-14 — Raise a dispute from My Disputes; solid heart and star; review Report button; nationwide wording
 
 - **My Disputes** has a **Raise a dispute** button: pick an in-progress or completed booking not

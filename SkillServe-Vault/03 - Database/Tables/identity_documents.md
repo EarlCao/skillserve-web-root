@@ -31,8 +31,8 @@ where a file lands.
 
 ## Lifecycle
 
-Rows are removed when the images are replaced by a resubmission, when retention expires
-(`identity:purge-documents`), or when the ID is released on permanent account deletion. The
+Rows are removed when the images are replaced by a resubmission, when a **rejected** ID's retention
+expires (`identity:purge-documents`; verified IDs keep their images), or when the ID is released on permanent account deletion. The
 verification record and its history are kept in every case.
 
 ## Foreign keys

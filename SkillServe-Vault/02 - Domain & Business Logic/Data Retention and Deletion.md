@@ -46,8 +46,9 @@ Soft-deleted tables: `users`, `service_categories`, `service_subcategories`, `se
   accounts on one ID. The verification record itself survives with `user_id` nulled, as the audit
   trail for the decision; the encrypted number and the ID images are dropped. See
   [[Identity Verification Lifecycle]].
-- **National ID images** are purged on their own timer by `identity:purge-documents` (daily), once
-  System Settings → Identity → retention has passed. The decision and its history are kept.
+- **National ID images** of a *rejected* ID are purged on their own timer by
+  `identity:purge-documents` (daily), once System Settings → Identity → retention has passed. A
+  *verified* ID keeps its images while the account exists. The decision and its history are kept.
 - **Photos go with their records (2026-10-14):** permanently deleting a message, booking, report,
   support ticket or reply deletes its private photo files (chat photo, dispute evidence, proof
   photos) after the transaction commits; purging an account also deletes the proof photos it

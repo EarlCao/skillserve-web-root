@@ -26,7 +26,7 @@ JSON payload); read everywhere through `SettingsService::value(group, name)`; ed
 | marketplace | `commission_block_after_days` | 0–365 days | 0 | Also blocks once the oldest unpaid commission is this old; 0 = off.* Edited on the Commission page → **Rules** (`GET/PUT /api/commission-settings`), not in System Settings* |
 | identity | `identity_verification_required` | bool | **false** | `IdentityGate` — master switch for National ID enforcement; see [[Identity Verification Lifecycle]] |
 | identity | `identity_verification_enforced_from` | date | `''` | `IdentityGate` — accounts created before this date are grandfathered; empty applies the rule to everyone |
-| identity | `identity_document_retention_days` | int 1–3650 | 90 | `identity:purge-documents` (daily) |
+| identity | `identity_document_retention_days` | int 1–3650 | 90 | `identity:purge-documents` (daily) — rejected IDs only; verified IDs keep their images |
 | booking | `booking_enabled` | bool | true | `BookingRules::assertBookingEnabled` (new bookings only) |
 | booking | `downpayment_refund_days` | int 1–30 | 3 | Days a provider has to return a cancelled booking's payment before they are blocked ([[booking_refunds]]) |
 | booking | `cancellation_window_hours` | int 0–720 | 24 | [[Cancellation and Fees]] |

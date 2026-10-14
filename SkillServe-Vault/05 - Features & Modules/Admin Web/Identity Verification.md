@@ -31,7 +31,8 @@ approved National ID." Already-verified providers are untouched; rejecting an ID
 there. `ProviderService::verifyFromIdentity`, run by the `VerifyProviderOnIdentityApproval`
 listener on `IdentityVerificationApproved`; the provider gets the usual "verified" notification.
 
-Filter by status (defaults to *Pending review*), account type and the account's name or email.
+Filter by status (defaults to *All statuses*, so a submission stays in view after it is verified),
+account type and the account's name or email.
 Opening a row loads the submission's documents and decision history; the list itself stays a summary.
 
 Approving takes an optional internal note, never shown to the holder. Rejecting requires a reason,
@@ -53,8 +54,9 @@ app refresh the account, its eligibility and the identity screen at once; a tap 
 - Approving and rejecting are **separate permissions**, so a reviewer can hold one without the other.
 - A decision is one-way: a second decision on the same submission returns 409.
 
-Once the retention period passes, the images are deleted and the modal says so; the decision and its
-history remain.
+A verified ID keeps its images while the account exists. For a **rejected** ID, once the retention
+period passes the images are deleted and the modal says so; the decision and its history remain.
+A provider's verified ID also shows on their profile — see [[Service Provider Management]].
 
 ## Automated tests
 
