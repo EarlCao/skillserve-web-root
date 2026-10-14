@@ -9,6 +9,14 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-14 — Permissions: choose specific permissions per area
+
+On the Permissions page each area keeps its *No access / View / Full control* presets and adds
+**Choose specific**: checkboxes for what the role may view and what it may control in that area.
+Picking something to control also grants the area's view permissions (a control is unusable without
+the page). A role that matches no preset shows *Custom · n of m*. Admin web only; the API already
+accepted any set of permissions.
+
 ## 2026-10-14 — Clean-up round: photo purge, instant pushes, policies, permissions page
 
 - **Photos go with their records:** a permanently deleted message, booking, report, ticket or reply

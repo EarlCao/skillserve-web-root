@@ -26,7 +26,7 @@ Admin requirement module **15** ([[Requirements Sources]]).
 | A 15.3 | Edit Administrator | `PUT /api/administrators/{id}`; `PATCH …/password` admin password reset |
 | A 15.4 | Activate or Deactivate Administrator | `PATCH …/status` active/inactive (inactive cannot sign in) |
 | A 15.5 | Manage Roles | CRUD `/api/roles` (roles 1–4 fixed; provider/customer not assignable) |
-| A 15.6 | Manage Permissions | one row per admin area with *No access / View / Full control* (`config/permission-areas.php`, `GET /api/permissions` returns `view_permissions` + `permissions` per area); *What's included* lists the exact permissions; a role that matches no level shows *Custom*; `PUT /api/roles/{id}/permissions` |
+| A 15.6 | Manage Permissions | one row per admin area with *No access / View / Full control* (`config/permission-areas.php`, `GET /api/permissions` returns `view_permissions` + `permissions` per area); *Choose specific* opens checkboxes for exactly what the role may view and control in that area (picking a control also grants the area's view); a role that matches no level shows *Custom · n of m*; `PUT /api/roles/{id}/permissions` |
 
 **Status:** code present for every functionality above. UAT result columns in `TEST_PLAN.md` are
 still empty (not yet executed on the deployed system) — see [[UAT and Traceability]].
