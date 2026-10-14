@@ -1,14 +1,14 @@
 ---
 type: api-endpoints
 generated: true
-generated_on: 2026-10-11
+generated_on: 2026-10-14
 source: php artisan route:list --json -v
 tags: [api, endpoints, generated]
 ---
 # API - Client Authentication
 
 > [!info] Generated file — do not edit by hand
-> Rebuilt by `99 - Meta/Scripts/generate_endpoint_notes.py` from the live route table on 2026-10-11.
+> Rebuilt by `99 - Meta/Scripts/generate_endpoint_notes.py` from the live route table on 2026-10-14.
 > Authorization is extracted from controller/policy source; request/response shapes live in the
 > generated OpenAPI reference (`api-docs/modules/*.md`, Swagger UI at `/api/documentation`).
 
@@ -20,7 +20,7 @@ Feature note: [[Client Authentication and Account]] · Conventions: [[API Conven
 |---|---|---|---|---|
 | POST | `/api/client/v1/auth/cancel-registration` | `ClientAuthentication::ClientAuthController@cancelRegistration` | `EnsurePlatformAvailable`, `throttle:client-auth` | Role gate in middleware; ownership/participant check in the client policy or service |
 | POST | `/api/client/v1/auth/change-password` | `ClientAuthentication::ClientAuthController@changePassword` | `EnsurePlatformAvailable`, `auth:sanctum`, `EnsureActiveClient` | Role gate in middleware; ownership/participant check in the client policy or service |
-| POST | `/api/client/v1/auth/complete-registration` | `ClientAuthentication::ClientAuthController@completeRegistration` | `EnsurePlatformAvailable`, `throttle:client-auth` | Public; needs the sign-up's `registration_token` and a confirmed code |
+| POST | `/api/client/v1/auth/complete-registration` | `ClientAuthentication::ClientAuthController@completeRegistration` | `EnsurePlatformAvailable`, `throttle:client-auth` | Role gate in middleware; ownership/participant check in the client policy or service |
 | POST | `/api/client/v1/auth/forgot-password` | `ClientAuthentication::ClientAuthController@forgotPassword` | `EnsurePlatformAvailable`, `throttle:client-auth` | Role gate in middleware; ownership/participant check in the client policy or service |
 | POST | `/api/client/v1/auth/google` | `ClientAuthentication::ClientAuthController@google` | `EnsurePlatformAvailable`, `throttle:login` | Role gate in middleware; ownership/participant check in the client policy or service |
 | POST | `/api/client/v1/auth/google/register` | `ClientAuthentication::ClientAuthController@googleRegister` | `EnsurePlatformAvailable`, `throttle:login` | Role gate in middleware; ownership/participant check in the client policy or service |
@@ -40,9 +40,6 @@ Feature note: [[Client Authentication and Account]] · Conventions: [[API Conven
 | POST | `/api/client/v1/auth/verification-notification` | `ClientAuthentication::ClientAuthController@sendVerificationNotification` | `EnsurePlatformAvailable`, `auth:sanctum`, `EnsureActiveClient` | Role gate in middleware; ownership/participant check in the client policy or service |
 | GET | `/api/client/v1/auth/verify-email/{user}/{hash}` | `ClientAuthentication::ClientAuthController@verifyEmail` | `EnsurePlatformAvailable`, `signed` | Role gate in middleware; ownership/participant check in the client policy or service |
 | POST | `/api/client/v1/auth/verify-otp` | `ClientAuthentication::ClientAuthController@verifyOtp` | `EnsurePlatformAvailable`, `throttle:client-auth` | Role gate in middleware; ownership/participant check in the client policy or service |
-| POST | `/api/client/v1/auth/verify-reset-code` | `ClientAuthentication::ClientAuthController@verifyResetCode` | `EnsurePlatformAvailable`, `throttle:client-auth` | Public; the emailed code proves the address |
-
-Sign-up and password flows (code before password, Google needing the password, the 3-step reset)
-are described in [[Registration and OTP Flow]].
+| POST | `/api/client/v1/auth/verify-reset-code` | `ClientAuthentication::ClientAuthController@verifyResetCode` | `EnsurePlatformAvailable`, `throttle:client-auth` | Role gate in middleware; ownership/participant check in the client policy or service |
 
 Every `api/*` route also runs the `api` group: `throttle:api` (60/min per user or IP), `SubstituteBindings`, `ForceJsonResponse`, `CacheApiResponse`, `AddRateLimitHeaders`.

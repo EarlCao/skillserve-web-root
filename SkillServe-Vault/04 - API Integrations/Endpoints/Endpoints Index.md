@@ -1,12 +1,12 @@
 ---
 type: index
 generated: true
-generated_on: 2026-10-11
+generated_on: 2026-10-14
 tags: [api, index, generated]
 ---
 # Endpoints Index
 
-> [!info] Generated on 2026-10-11 from `php artisan route:list` — 260 route entries in 34 groups.
+> [!info] Generated on 2026-10-14 from `php artisan route:list` — 279 route entries in 35 groups.
 
 | Group | Routes | Scope |
 |---|---|---|
@@ -20,28 +20,29 @@ tags: [api, index, generated]
 | [[API - Bookings]] | 7 | Admin booking management, payments and refunds. |
 | [[API - Disputes]] | 9 | Admin dispute queue (disputes live on the bookings table). |
 | [[API - Reviews]] | 4 | Admin review moderation. |
-| [[API - Reports and Moderation]] | 8 | Admin report queue and moderation actions. |
+| [[API - Reports and Moderation]] | 10 | Admin report queue and moderation actions. |
 | [[API - Notifications and Announcements]] | 4 | Admin announcements and notification history. |
+| [[API - Admin Inbox]] | 4 | Each administrator's own alerts: the Inbox page and the bell. |
 | [[API - Analytics]] | 3 | Admin reports, per-category CSV export, and the Excel general report. |
 | [[API - Provider Recognition]] | 9 | Badges, featured and top-rated providers. |
 | [[API - Audit Logs]] | 2 | Security and audit log viewer. |
 | [[API - System Settings]] | 2 | Admin system settings. |
 | [[API - Data Management]] | 7 | Exports, archives and deleted-record management. |
-| [[API - Support Tickets (Admin)]] | 6 | Admin support ticket desk. |
+| [[API - Support Tickets (Admin)]] | 7 | Admin support ticket desk. |
 | [[API - Client Authentication]] | 23 | Mobile registration, OTP, login, Google sign-in, refresh, profile and account deletion. |
-| [[API - Client Catalog]] | 6 | Public marketplace discovery (no token required). |
+| [[API - Client Catalog]] | 7 | Public marketplace discovery (no token required). |
 | [[API - Client Bookings]] | 5 | Customer booking lifecycle. |
 | [[API - Client Disputes]] | 3 | Either party raises a dispute and uploads evidence. |
-| [[API - Client Messaging]] | 5 | Booking-scoped chat and the conversation inbox. |
-| [[API - Client Notifications]] | 6 | Notification feed, read state and the background (closed-app) token. |
+| [[API - Client Messaging]] | 6 | Booking-scoped chat and the conversation inbox. |
+| [[API - Client Notifications]] | 10 | Notification feed, read state and the background (closed-app) token. |
 | [[API - Client Favorites]] | 3 | Customer's saved providers. |
 | [[API - Client Reviews]] | 4 | Customer reviews of completed bookings. |
-| [[API - Client Reports]] | 3 | Reports filed from the app against a user, review or message. |
-| [[API - Client Support]] | 4 | Support tickets from customers and providers. |
+| [[API - Client Reports]] | 4 | Reports filed from the app against a user, review or message. |
+| [[API - Client Support]] | 5 | Support tickets from customers and providers. |
 | [[API - Client Preferences and Platform]] | 3 | Per-user app preferences and public platform info/policies. |
 | [[API - Provider Bookings (Mobile)]] | 8 | The provider's jobs and their lifecycle. |
 | [[API - Provider Services (Mobile)]] | 6 | Provider-managed services (subject to admin approval). |
-| [[API - Provider Account (Mobile)]] | 16 | Provider profile, portfolio, availability, badges and verification upload. |
+| [[API - Provider Account (Mobile)]] | 20 | Provider profile, portfolio, availability, badges and verification upload. |
 | [[API - Locations]] | 3 | Public Philippine address-picker data (PSA PSGC) and the National-ID address matcher. |
 | [[API - Platform and Infrastructure]] | 38 | Health checks, broadcasting auth, Swagger docs, storage and framework routes. |
 

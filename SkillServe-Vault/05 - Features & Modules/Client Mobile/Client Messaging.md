@@ -22,7 +22,8 @@ Mobile requirement(s): **M7** ([[Requirements Sources]]).
 | M 7.2 | Send Message | optimistic send with retry, `Idempotency-Key`; photos from camera or gallery with an optional caption (multipart `image`) | implemented |
 | M 7.3 | Receive Messages | realtime `client.message.created`; presence ("in this chat") and typing on `presence-booking-chat.{id}` | implemented |
 | M 7.4 | Message History | `GET /bookings/{id}/messages`; `POST …/messages/read` | implemented |
-| M 7.5 | Report Message | long-press → Report (`message_id`) | implemented |
+| M 7.5 | Report Message | long-press → Report message (`message_id`) | implemented |
+| — | Copy and paste | long-press any message with text → **Copy text** (clipboard); paste into the message box from its own long-press menu | implemented |
 
 UAT result columns in the mobile `TEST_PLAN.md` are still empty — see [[UAT and Traceability]].
 

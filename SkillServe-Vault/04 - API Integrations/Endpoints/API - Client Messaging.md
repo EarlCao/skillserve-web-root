@@ -1,14 +1,14 @@
 ---
 type: api-endpoints
 generated: true
-generated_on: 2026-10-01
+generated_on: 2026-10-14
 source: php artisan route:list --json -v
 tags: [api, endpoints, generated]
 ---
 # API - Client Messaging
 
 > [!info] Generated file — do not edit by hand
-> Rebuilt by `99 - Meta/Scripts/generate_endpoint_notes.py` from the live route table on 2026-10-01.
+> Rebuilt by `99 - Meta/Scripts/generate_endpoint_notes.py` from the live route table on 2026-10-14.
 > Authorization is extracted from controller/policy source; request/response shapes live in the
 > generated OpenAPI reference (`api-docs/modules/*.md`, Swagger UI at `/api/documentation`).
 
@@ -20,8 +20,8 @@ Feature note: [[Client Messaging]] · Conventions: [[API Conventions]] · Index:
 |---|---|---|---|---|
 | GET | `/api/client/v1/bookings/{booking}/messages` | `ClientCommunication::BookingMessageController@index` | `EnsurePlatformAvailable`, `auth:sanctum` | Role gate in middleware; ownership/participant check in the client policy or service |
 | POST | `/api/client/v1/bookings/{booking}/messages` | `ClientCommunication::BookingMessageController@store` | `EnsurePlatformAvailable`, `auth:sanctum` | Role gate in middleware; ownership/participant check in the client policy or service |
-| GET | `/api/client/v1/bookings/{booking}/messages/{message}/image` | `ClientCommunication::BookingMessageController@image` | `EnsurePlatformAvailable`, `auth:sanctum` | Role gate in middleware; ownership/participant check in the client policy or service |
 | POST | `/api/client/v1/bookings/{booking}/messages/read` | `ClientCommunication::BookingMessageController@markRead` | `EnsurePlatformAvailable`, `auth:sanctum` | Role gate in middleware; ownership/participant check in the client policy or service |
+| GET | `/api/client/v1/bookings/{booking}/messages/{message}/image` | `ClientCommunication::BookingMessageController@image` | `EnsurePlatformAvailable`, `auth:sanctum` | Role gate in middleware; ownership/participant check in the client policy or service |
 | GET | `/api/client/v1/conversations` | `ClientCommunication::ConversationController@index` | `EnsurePlatformAvailable`, `auth:sanctum`, `EnsureMobileAccount` | Role gate in middleware; ownership/participant check in the client policy or service |
 | GET | `/api/client/v1/conversations/unread-count` | `ClientCommunication::ConversationController@unreadCount` | `EnsurePlatformAvailable`, `auth:sanctum`, `EnsureMobileAccount` | Role gate in middleware; ownership/participant check in the client policy or service |
 

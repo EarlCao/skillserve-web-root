@@ -1,14 +1,14 @@
 ---
 type: api-endpoints
 generated: true
-generated_on: 2026-10-01
+generated_on: 2026-10-14
 source: php artisan route:list --json -v
 tags: [api, endpoints, generated]
 ---
 # API - Administrators, Roles and Permissions
 
 > [!info] Generated file — do not edit by hand
-> Rebuilt by `99 - Meta/Scripts/generate_endpoint_notes.py` from the live route table on 2026-10-01.
+> Rebuilt by `99 - Meta/Scripts/generate_endpoint_notes.py` from the live route table on 2026-10-14.
 > Authorization is extracted from controller/policy source; request/response shapes live in the
 > generated OpenAPI reference (`api-docs/modules/*.md`, Swagger UI at `/api/documentation`).
 
@@ -19,10 +19,10 @@ Feature note: [[Admin Management]] · Conventions: [[API Conventions]] · Index:
 | Method | Path | Controller action | Middleware | Authorization |
 |---|---|---|---|---|
 | GET | `/api/administrators` | `Administrators::AdministratorController@index` | `auth:sanctum` | policy `viewAny` → `manage administrators` |
-| POST | `/api/administrators` | `Administrators::AdministratorController@store` | `auth:sanctum` | policy `create` → `manage administrators`; `assignSuperAdmin` |
+| POST | `/api/administrators` | `Administrators::AdministratorController@store` | `auth:sanctum` | policy `create` → `manage administrators` |
 | GET | `/api/administrators/{administrator}` | `Administrators::AdministratorController@show` | `auth:sanctum` | policy `view` → `manage administrators` |
-| PATCH | `/api/administrators/{administrator}` | `Administrators::AdministratorController@update` | `auth:sanctum` | policy `update` → `manage administrators`; `assignSuperAdmin` |
-| PUT | `/api/administrators/{administrator}` | `Administrators::AdministratorController@update` | `auth:sanctum` | policy `update` → `manage administrators`; `assignSuperAdmin` |
+| PATCH | `/api/administrators/{administrator}` | `Administrators::AdministratorController@update` | `auth:sanctum` | policy `update` → `manage administrators` |
+| PUT | `/api/administrators/{administrator}` | `Administrators::AdministratorController@update` | `auth:sanctum` | policy `update` → `manage administrators` |
 | PATCH | `/api/administrators/{administrator}/password` | `Administrators::AdministratorController@resetPassword` | `auth:sanctum` | policy `resetPassword` → `edit administrators` |
 | PATCH | `/api/administrators/{administrator}/status` | `Administrators::AdministratorController@updateStatus` | `auth:sanctum` | policy `updateStatus` → `edit administrators` |
 | GET | `/api/permissions` | `Administrators::PermissionController@index` | `auth:sanctum` | policy `viewAny` → `manage administrators` |

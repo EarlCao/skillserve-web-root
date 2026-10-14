@@ -20,6 +20,21 @@ Tags: **[BE]** Laravel backend · **[AW]** React admin web · **[MB]** Flutter a
 
 ## Features in progress
 
+### F12 · Owner feedback round **[BE][AW][MB]** — 2026-10-14
+- [x] **My Disputes** — disputes moved off My Reports onto their own screen; Settings → *Reports & disputes*.
+- [x] **Chat photos** — the API trusts Render's `X-Forwarded-Proto`, so photo links are `https://`.
+- [x] **Copy chat messages** — long-press → *Copy text*.
+- [x] **Admin Inbox** — bell + `/admin/inbox`, alerts scoped by permission (`AdminInboxTest`).
+- [x] **Customer Support chat** — admin chat with photos; renamed from "support tickets".
+- [x] **Business name** on the provider's Edit Profile; **10-character message** on reports/disputes.
+- [ ] **Pictures missing in production** — `GET /api/health` shows `storage.persistent: false`
+  and stored portfolio files return 404: uploads are wiped on every Render restart/redeploy.
+  **Do:** go-live item 1 below (paid instance + disk at `/var/www/html/storage/app`), then ask
+  users to re-upload photos lost before the disk existed. No code change can recover them.
+- [ ] **Chat with a provider before booking** (owner request) — messages are booking-scoped today
+  (`messages.booking_id`, `/bookings/{id}/messages`). **Do:** agree the design (an inquiry thread
+  per customer–provider pair, needs a migration), then build backend, app and admin moderation.
+
 ### F11 · Clean-up round: photo purge, instant pushes, policies, permissions page **[BE][AW][MB]** — done 2026-10-14
 - [x] **Photos removed with their records** — a chat photo goes with its message, dispute evidence
   with its booking, report/ticket/reply photos with their rows; a purged account takes its own proof
@@ -28,7 +43,7 @@ Tags: **[BE]** Laravel backend · **[AW]** React admin web · **[MB]** Flutter a
   photo, report with photos, report decision, ticket with photo, admin reply, photo-only reply,
   dispute with photo, dispute update, notification archive/delete — every push arrived in
   100–340 ms. Chat messages and notifications are now broadcast immediately (they waited for the
-  queue worker, 1–5 s). The app refreshes an open ticket, My Reports and bookings when support acts.
+  queue worker, 1–5 s). The app refreshes an open ticket, My Reports, My Disputes and bookings when support acts.
 - [x] **Policies** — starting Terms of Service, Privacy Policy (Data Privacy Act) and Community
   Guidelines ship as the defaults (`backend/resources/policies`); System Settings shows them for
   review and edit.

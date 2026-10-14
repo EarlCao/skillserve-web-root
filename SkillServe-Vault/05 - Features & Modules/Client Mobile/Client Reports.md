@@ -20,8 +20,12 @@ Mobile requirement(s): **M5.7, M6.4, M7.5** ([[Requirements Sources]]).
 |---|---|---|---|
 | — | File and follow reports | against the other party of a booking, a review or a received message; status + outcome visible, notes hidden | implemented |
 | — | Report a service | flag icon and **Report this service** button on Service Details (`service_id`); reasons: misleading, spam, inappropriate, safety, other | implemented |
-| — | Photos as proof | up to 5 (camera or gallery) on the Report an Issue screen and the report sheet; shown in My Reports | implemented |
+| — | Photos as proof | up to 5 (camera or gallery) on the Report an Issue screen and the report sheet; shown in My Reports (`/my-reports`, reports only — disputes are on [[Client Disputes]]'s *My Disputes*) | implemented |
 | — | Report a provider | flag icon and **Report this provider** button on the provider profile (`provider_id`), no booking needed; the report is about the provider's account (`reportable_type` User), so moderators can warn, suspend or ban; reasons exclude booking-only ones (no-show, service quality, payment) | implemented |
+
+The description needs at least 10 characters (the API's `min:10`). Once something shorter is typed,
+the field shows *Please write at least 10 characters (n/10).* — on Report an Issue, the report sheet
+and the Raise a dispute sheet (`AppTextField.errorText`).
 
 Customers only: guests have no account, and a provider cannot report themself (422) or a provider the
 public cannot see (404). One open report per subject (409).

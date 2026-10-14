@@ -24,6 +24,10 @@ Mobile requirement(s): **M12** ([[Requirements Sources]]).
 | M 12.4 | Reply to Support Ticket | text and/or up to 5 photos; refused once resolved | implemented |
 | M 12.5 | View Ticket Status | open / in_progress / resolved (no separate *assigned* status) | implemented |
 
+Shown to users as **Customer Support** (Settings tile, screen titles, *Contact support*), a chat with
+the team: staff replies can carry photos too, and the thread updates live. Notifications read
+*Customer Support replied* / *Customer Support resolved your request*.
+
 UAT result columns in the mobile `TEST_PLAN.md` are still empty — see [[UAT and Traceability]].
 
 ## Tests

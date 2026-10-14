@@ -38,7 +38,7 @@ flowchart LR
 |---|---|---|
 | `_customerOnly` | `client`, `booking-form`, `booking-history`, `favorites`, `payments`, `write-review`, `my-reviews` | customers |
 | `_providerOnly` | `provider`, `provider-onboarding`, `booking-requests`, `active-jobs`, `completed-jobs`, `calendar`, `earnings`, `my-services`, `add-service`, `availability`, `portfolio`, `provider-badges`, `verification-status`, `statistics` | providers |
-| `_sharedSignedIn` | `notifications`, `chat-conversation`, `booking-details`, `file-report`, `my-reports`, `support`, `edit-profile`, `change-password`, account/settings screens | both roles |
+| `_sharedSignedIn` | `notifications`, `chat-conversation`, `booking-details`, `file-report`, `my-reports`, `my-disputes`, `support`, `edit-profile`, `change-password`, account/settings screens | both roles |
 | `_marketplace` | `browse`, `categories`, `search`, `service-details`, `provider-profile`, `portfolio-gallery` | guests + customers (providers redirected) |
 | `_signedOutOnly` | `''`, `login`, `register`, `welcome`, `onboarding` | signed out |
 

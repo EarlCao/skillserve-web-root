@@ -10,8 +10,8 @@ Mobile requirement(s): **M11** ([[Requirements Sources]]).
 
 | | |
 |---|---|
-| Screens / routes | `booking details → Raise a dispute`, `/my-reports (disputes list)`, `dispute card → Add photo` |
-| Code (Flutter `lib/`) | `features/reports/ (services/report_service.dart, views/my_reports_screen.dart, file_report_screen.dart)` |
+| Screens / routes | `booking details → Raise a dispute` / `Track dispute`, `/my-disputes` (Settings → Reports & disputes → My disputes), `dispute card → Add photo` |
+| Code (Flutter `lib/`) | `features/reports/ (services/report_service.dart, views/my_disputes_screen.dart, raise_dispute_sheet.dart, case_card.dart)` |
 | Endpoints | [[API - Client Disputes]] |
 
 ## Requirement coverage
@@ -23,6 +23,11 @@ Mobile requirement(s): **M11** ([[Requirements Sources]]).
 | M 11.3 | View Dispute Details | status, reason, resolution, evidence | implemented |
 | M 11.4 | Submit Evidence | up to 5 photos while open | implemented |
 | M 11.5 | View Dispute Updates | notifications on each admin action | implemented |
+
+Disputes have their own screen, separate from *My Reports*: a dispute is a case about a booking, a
+report is a complaint about a person or content, and they have different lifecycles. A disputed
+booking shows **Track dispute** (either party), which opens *My Disputes*. Providers do not see the
+"With <provider>" line on a card, since that is their own name.
 
 UAT result columns in the mobile `TEST_PLAN.md` are still empty — see [[UAT and Traceability]].
 

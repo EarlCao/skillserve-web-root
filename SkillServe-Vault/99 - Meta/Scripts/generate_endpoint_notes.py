@@ -45,6 +45,7 @@ GROUPS = [
     ("API - Reviews", lambda u: u.startswith("api/reviews"), "Admin review moderation.", "Reviews and Ratings Management"),
     ("API - Reports and Moderation", lambda u: u.startswith("api/reports"), "Admin report queue and moderation actions.", "Reports and Moderation"),
     ("API - Notifications and Announcements", lambda u: u.startswith("api/notifications"), "Admin announcements and notification history.", "Notifications and Announcements"),
+    ("API - Admin Inbox", lambda u: u.startswith("api/inbox"), "Each administrator's own alerts: the Inbox page and the bell.", "Admin Inbox"),
     ("API - Analytics", lambda u: u.startswith("api/analytics"), "Admin reports, per-category CSV export, and the Excel general report.", "Reports and Analytics"),
     ("API - Provider Recognition", lambda u: u.startswith("api/provider-recognition"), "Badges, featured and top-rated providers.", "Provider Recognition"),
     ("API - Audit Logs", lambda u: u.startswith("api/audit-logs"), "Security and audit log viewer.", "Security and Audit Logs"),

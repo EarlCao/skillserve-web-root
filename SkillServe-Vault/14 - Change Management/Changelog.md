@@ -9,6 +9,42 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-14 — Customer Support chat; business name on Edit Profile; 10-character message
+
+- **Customer Support:** the admin request dialog is now a chat (`SupportChat`: bubbles, Enter to
+  send, up to 5 photos). `POST /api/support/tickets/{ticket}/responses` accepts multipart
+  `images[]` (body optional with photos). "Support tickets" is called **Customer Support** in the
+  admin web, the app and the notifications; permission strings are unchanged.
+- **Business name (app):** providers edit it on Edit Profile (`PATCH /provider/profile`);
+  `UserModel.providerBusinessName` from `/auth/me`.
+- **Reports and disputes (app):** a description under 10 characters now says so under the field.
+
+## 2026-10-14 — Admin Inbox: alerts for what is waiting on administrators
+
+New [[Admin Inbox]]: a bell in the admin top bar and an **Inbox** page (`/admin/inbox`). Alerts for
+provider verification requests, National IDs, services awaiting approval, reports, disputes (and new
+dispute evidence), support requests and replies, and flagged QR commission payments — each sent only
+to administrators allowed to open the page that handles it, live over Reverb
+(`.admin.notification.created`). Endpoints `GET /api/inbox`, `GET /api/inbox/unread-count`,
+`PATCH /api/inbox/{alert}/read`, `POST /api/inbox/read-all`. New domain events: `ReportSubmitted`,
+`BookingDisputeEvidenceAdded`, `SupportTicketCreated`, `CommissionRemittanceFlagged`. Uses the existing
+`notifications` table (no migration). Test: `AdminInboxTest`.
+
+## 2026-10-14 — Separate My Disputes screen; chat photos load; copy chat messages
+
+- **My Disputes (app):** disputes moved off *My Reports* onto their own screen `/my-disputes`
+  (both roles). Settings has a **Reports & disputes** group (*My reports*, *My disputes*; providers
+  also *File a report*). A disputed booking shows **Track dispute**, and the "photos could not be
+  attached" message points to My Disputes. `ReportController` loads each list on its own
+  (`loadReports`, `loadDisputes`).
+- **Chat photos:** the API now trusts `X-Forwarded-Proto` from Render's proxy
+  (`trustProxies(at: '*', headers: HEADER_X_FORWARDED_PROTO)` in `bootstrap/app.php`). Before,
+  `url()` built `http://` links for chat photos and report/support attachments, which Android
+  refuses to load (cleartext). Only the scheme is trusted — client IPs still come from the
+  connection. Test: `ClientCommunicationTest::test_photo_links_keep_https_behind_the_hosting_proxy`.
+- **Copy messages (app):** long-press a message → *Copy text*; received messages also offer
+  *Report message*.
+
 ## 2026-10-14 — Permissions: choose specific permissions per area
 
 On the Permissions page each area keeps its *No access / View / Full control* presets and adds
