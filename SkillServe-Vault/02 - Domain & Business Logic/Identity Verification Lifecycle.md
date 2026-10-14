@@ -83,7 +83,7 @@ What an unverified (but covered) account can and cannot do:
 | Manage own profile / provider profile | **Yes** |
 | Create a booking (customer) | No |
 | Accept a booking, publish or edit a service (provider) | No |
-| Transaction chat | Implicitly gated — messages are booking-scoped, and the booking cannot be created |
+| Transaction chat | Booking chats are implicitly gated (the booking cannot be created); chat before booking is open, since asking questions is not a transaction |
 
 `TransactionEligibility` is the single place these rules live, so the Flutter app and the React admin
 inherit identical behaviour from the API rather than each implementing it. `GET /api/client/v1/transaction-eligibility`

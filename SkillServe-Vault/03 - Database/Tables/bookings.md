@@ -10,7 +10,7 @@ Customer bookings. Also the chat thread and the dispute record.
 
 - **Model:** `backend/app/Modules/Bookings/Models/Booking.php`
 - **Soft deletes:** yes
-- **Migrations:** `2026_08_22_000001_create_bookings_table`, `2026_09_05_000001_add_dispute_management_fields_to_bookings_table`, `2026_09_05_000002_add_disputed_at_index_to_bookings_table`, `2026_09_08_000006_add_client_idempotency_to_bookings`, `2026_09_08_000007_add_client_marketplace_indexes`, `2026_09_17_000001_use_philippine_peso_as_default_currency`, `2026_09_20_000007_add_service_location_to_bookings`, `2026_09_21_000002_add_rescheduled_at_to_bookings`, `2026_09_21_000003_add_payment_settlement_to_bookings`, `2026_09_22_000001_add_cancellation_fee_to_bookings`
+- **Migrations:** `2026_08_22_000001_create_bookings_table`, `2026_09_05_000001_add_dispute_management_fields_to_bookings_table`, `2026_09_05_000002_add_disputed_at_index_to_bookings_table`, `2026_09_08_000006_add_client_idempotency_to_bookings`, `2026_09_08_000007_add_client_marketplace_indexes`, `2026_09_17_000001_use_philippine_peso_as_default_currency`, `2026_09_20_000007_add_service_location_to_bookings`, `2026_09_21_000002_add_rescheduled_at_to_bookings`, `2026_09_21_000003_add_payment_settlement_to_bookings`, `2026_09_22_000001_add_cancellation_fee_to_bookings`, `2026_10_14_000003_create_booking_payment_proofs`
 
 ## Columns
 
@@ -22,7 +22,8 @@ Customer bookings. Also the chat thread and the dispute record.
 | `provider_id` | FK provider_profiles |  |
 | `booking_number` | string unique | `BK-` + 12 chars |
 | `status` | string default 'pending' | pending / confirmed / active / completed / cancelled / disputed |
-| `payment_status` | string default 'unpaid' | unpaid / paid / partially_refunded / refunded |
+| `payment_status` | string default 'unpaid' | unpaid / partially_paid / paid / partially_refunded / refunded |
+| `amount_paid` | decimal(10,2) default 0 | confirmed so far (downpayments add up); `total_price` once paid |
 | `total_price, service_price` | decimal(10,2) |  |
 | `platform_fee` | decimal(10,2) default 0 | SkillServe's commission, **included in** `total_price` rather than added to it |
 | `commission_rate` | decimal(5,2) null | the percentage applied, snapshotted at booking time so later tier changes never move this booking |

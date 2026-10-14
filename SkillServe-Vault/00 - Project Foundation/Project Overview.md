@@ -37,7 +37,7 @@ See [[Architecture Overview]] for how they connect.
 - **Trust & safety:** provider verification with document upload, reviews, reports, moderation
   actions, disputes with photo evidence ([[Provider Verification Lifecycle]], [[Disputes Lifecycle]],
   [[Reports and Moderation Lifecycle]]).
-- **Communication:** booking-scoped chat with presence and typing, notifications (in-app, realtime,
+- **Communication:** booking chats and chat before booking, with presence and typing, notifications (in-app, realtime,
   closed-app polling), admin announcements, support tickets.
 - **Administration:** dashboard, analytics and CSV exports, audit logs, system settings that the API
   enforces, data management (archives, deleted records, 30-day purge).

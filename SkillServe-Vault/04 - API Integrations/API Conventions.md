@@ -38,7 +38,7 @@ by Form Requests with whitelisted sort columns.
 | 401 | missing/expired/revoked token, wrong credentials |
 | 403 | policy denial ("This action is unauthorized."), wrong token surface ("This token is not valid for client access."), restricted account (`meta.account`), unverified email |
 | 404 | "Resource not found." (incl. route-model binding misses) |
-| 409 | conflicts: already disputed, already paid, duplicate review, booking overlap, sign-up already completed |
+| 409 | conflicts: already disputed, already paid, duplicate review, sign-up already completed |
 | 422 | validation or business-rule refusal (wrong status transition etc.) |
 | 429 | rate limit, OTP attempts/cooldown |
 | 500 | "Server Error." / "A database error occurred." (no internals leaked) |

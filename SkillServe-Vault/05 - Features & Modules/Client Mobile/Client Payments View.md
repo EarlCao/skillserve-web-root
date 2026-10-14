@@ -21,6 +21,7 @@ Mobile requirement(s): **(extra)** ([[Requirements Sources]]).
 | — | Payment history | read from the customer's bookings (`payment_method`, `payment_status`, amounts, refunds) — no payments endpoint | implemented |
 | — | Choose how to pay | the booking form offers `on_hand` and `gcash`, the only two the API accepts. Bookings made by older builds still display their old method | implemented |
 | — | Where to send a GCash payment | the booking's `payment_instructions` (the provider's own number and account name, the amount and the booking reference) on an unpaid GCash booking, with a copy button | implemented |
+| — | Send GCash payment proof | **I've paid — send proof** on the booking: amount (full balance, half, or any downpayment), optional reference, required screenshot; one proof waits at a time; status *Waiting / Confirmed / Not accepted* (with the provider's reason); *Paid ₱x of ₱y · ₱z still to pay*; updates live ([[booking_payment_proofs]]) | implemented |
 | — | Pay by QR with the exact amount | when the provider has saved their GCash QR, *How to pay* shows it with the booking's amount written in (`qr_payload`), drawn on the phone, with **Save QR to gallery** for GCash's *Upload QR*. The money goes straight to the provider ([[ADR-022 Payment QR Codes Without Holding Customer Money]]) | implemented |
 
 UAT result columns in the mobile `TEST_PLAN.md` are still empty — see [[UAT and Traceability]].

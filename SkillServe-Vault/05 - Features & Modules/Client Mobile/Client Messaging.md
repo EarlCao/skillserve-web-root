@@ -10,7 +10,7 @@ Mobile requirement(s): **M7** ([[Requirements Sources]]).
 
 | | |
 |---|---|
-| Screens / routes | `Messages tab (chat list)`, `/chat-conversation/:bookingId` |
+| Screens / routes | `Messages tab (chat list)`, `/chat-conversation/:threadKey` (a booking id, or `inquiry-<id>` before booking), **Message** on the provider profile and service details |
 | Code (Flutter `lib/`) | `features/messaging/ (controllers/chat_controller.dart, services/message_service.dart, views/*)`<br>`core/services/realtime_client.dart` |
 | Endpoints | [[API - Client Messaging]], [[API - Client Reports]] |
 
@@ -20,9 +20,10 @@ Mobile requirement(s): **M7** ([[Requirements Sources]]).
 |---|---|---|---|
 | M 7.1 | View Conversations | one thread per booking (`GET /conversations`), unread counts | implemented |
 | M 7.2 | Send Message | optimistic send with retry, `Idempotency-Key`; photos from camera or gallery with an optional caption (multipart `image`) | implemented |
-| M 7.3 | Receive Messages | realtime `client.message.created`; presence ("in this chat") and typing on `presence-booking-chat.{id}` | implemented |
+| M 7.3 | Receive Messages | realtime `client.message.created`; presence ("in this chat") and typing on `presence-booking-chat.{id}` / `presence-inquiry-chat.{id}` | implemented |
 | M 7.4 | Message History | `GET /bookings/{id}/messages`; `POST …/messages/read` | implemented |
 | M 7.5 | Report Message | long-press → Report message (`message_id`) | implemented |
+| — | Chat before booking | a customer taps **Message** on a provider's profile or a service and asks before booking (`POST /inquiries`, one conversation per provider, [[inquiries]]); listed in Messages as *Before booking*; providers reply but cannot start one; photos, read state, typing, notifications and reporting work as in a booking chat | implemented |
 | — | Copy and paste | long-press any message with text → **Copy text** (clipboard); paste into the message box from its own long-press menu | implemented |
 
 UAT result columns in the mobile `TEST_PLAN.md` are still empty — see [[UAT and Traceability]].

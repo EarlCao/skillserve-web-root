@@ -188,6 +188,23 @@ images must be removed from the private disk separately.
   (unique), `external_payment_id`, `qr_image`, `expires_at`, `last_event_id`, `failure_reason` on
   [[commission_remittances]]. Additive; roll back only before any QR payment is made.
 
+## 2026-10-14 — Chat before booking; GCash payment proofs
+
+- **`2026_10_14_000003_create_booking_payment_proofs`** — new [[booking_payment_proofs]] (cascade
+  with the booking) and `bookings.amount_paid` decimal default 0; `payment_status` gains the value
+  `partially_paid` (string column, no change). **Backfill:** bookings already `paid`,
+  `partially_refunded` or `refunded` get `amount_paid = total_price`, so their balance reads 0.
+  Deploy the backend first. Rollback drops the table and column (screenshots stay on disk,
+  unreferenced). Verified up → down → up on local Postgres.
+
+- **`2026_10_14_000002_create_inquiries_and_link_messages`** — new [[inquiries]] (one per
+  customer–provider pair; FKs restrict) and nullable `messages.inquiry_id` (null on delete) with its
+  own idempotency unique key; on PostgreSQL a check that a message has at most one of `booking_id` /
+  `inquiry_id`. Additive, no backfill; existing messages are untouched. Deploy the backend first (the
+  inbox only lists inquiries for app builds sending `include_inquiries=1`). Rollback drops the check,
+  column and table; inquiry messages stay in [[messages]] with no thread (hidden, not deleted).
+  Verified up → down → up on local Postgres.
+
 ## 2026-10-13 — Marketplace search
 
 - **`2026_10_13_000001_unescape_provider_profile_json_text`** — data only: rewrites

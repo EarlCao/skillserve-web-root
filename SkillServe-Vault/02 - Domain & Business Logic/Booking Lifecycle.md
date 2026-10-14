@@ -49,10 +49,12 @@ A wrong-status transition returns **422** with `errors.status`. All transitions 
    [[Marketplace Visibility Rules]]).
 3. `Idempotency-Key` header: a repeat with the same key returns the existing booking (if the
    payload differs → error); a unique index backs it.
-4. The provider row is locked; provider must have `is_accepting_bookings = true`.
+4. The provider must have `is_accepting_bookings = true`.
 5. If the provider publishes weekly hours, the whole booking must fit that weekday's window, compared
    in **business time** (Asia/Manila). No published hours = unrestricted.
-6. No overlap with the provider's `pending/confirmed/active` bookings (else **409**).
+6. **Other bookings at the same time are allowed** (since 2026-10-14): a provider may hold several
+   jobs at once and accepts or declines each request. Customers with a job in progress can book
+   again too. (Previously an overlapping window was refused with 409.)
 7. End time = `scheduled_end_date` if given, else parsed from `services.duration` text
    ("2 hours", "30 minutes", "1 day"; default +1 hour).
 8. Written by `CreateClientBookingAction`: `booking_number = "BK-" + 12 random uppercase chars`,
@@ -62,8 +64,8 @@ A wrong-status transition returns **422** with `errors.status`. All transitions 
    `payment_method` (cash, credit_card, debit_card, bank_transfer, gcash, paypal), `client_notes`,
    `service_address`, `contact_phone`.
 
-Reschedule re-runs the hours and overlap checks (ignoring itself); **pausing bookings does not block
-a reschedule**.
+Reschedule re-runs the hours check; other jobs at the new time are allowed; **pausing bookings does
+not block a reschedule**.
 
 ## Side effects
 

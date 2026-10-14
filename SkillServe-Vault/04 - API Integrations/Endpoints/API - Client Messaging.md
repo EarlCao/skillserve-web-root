@@ -12,7 +12,7 @@ tags: [api, endpoints, generated]
 > Authorization is extracted from controller/policy source; request/response shapes live in the
 > generated OpenAPI reference (`api-docs/modules/*.md`, Swagger UI at `/api/documentation`).
 
-Booking-scoped chat and the conversation inbox.
+Booking chats, conversations before booking (inquiries) and the conversation inbox.
 
 Feature note: [[Client Messaging]] · Conventions: [[API Conventions]] · Index: [[API Index]]
 
@@ -24,5 +24,10 @@ Feature note: [[Client Messaging]] · Conventions: [[API Conventions]] · Index:
 | GET | `/api/client/v1/bookings/{booking}/messages/{message}/image` | `ClientCommunication::BookingMessageController@image` | `EnsurePlatformAvailable`, `auth:sanctum` | Role gate in middleware; ownership/participant check in the client policy or service |
 | GET | `/api/client/v1/conversations` | `ClientCommunication::ConversationController@index` | `EnsurePlatformAvailable`, `auth:sanctum`, `EnsureMobileAccount` | Role gate in middleware; ownership/participant check in the client policy or service |
 | GET | `/api/client/v1/conversations/unread-count` | `ClientCommunication::ConversationController@unreadCount` | `EnsurePlatformAvailable`, `auth:sanctum`, `EnsureMobileAccount` | Role gate in middleware; ownership/participant check in the client policy or service |
+| POST | `/api/client/v1/inquiries` | `ClientCommunication::InquiryController@store` | `EnsurePlatformAvailable`, `auth:sanctum`, `EnsureClient`, `throttle:30,60` | Role gate in middleware; ownership/participant check in the client policy or service |
+| GET | `/api/client/v1/inquiries/{inquiry}/messages` | `ClientCommunication::InquiryController@index` | `EnsurePlatformAvailable`, `auth:sanctum` | Role gate in middleware; ownership/participant check in the client policy or service |
+| POST | `/api/client/v1/inquiries/{inquiry}/messages` | `ClientCommunication::InquiryController@storeMessage` | `EnsurePlatformAvailable`, `auth:sanctum` | Role gate in middleware; ownership/participant check in the client policy or service |
+| POST | `/api/client/v1/inquiries/{inquiry}/messages/read` | `ClientCommunication::InquiryController@markRead` | `EnsurePlatformAvailable`, `auth:sanctum` | Role gate in middleware; ownership/participant check in the client policy or service |
+| GET | `/api/client/v1/inquiries/{inquiry}/messages/{message}/image` | `ClientCommunication::InquiryController@image` | `EnsurePlatformAvailable`, `auth:sanctum` | Role gate in middleware; ownership/participant check in the client policy or service |
 
 Every `api/*` route also runs the `api` group: `throttle:api` (60/min per user or IP), `SubstituteBindings`, `ForceJsonResponse`, `CacheApiResponse`, `AddRateLimitHeaders`.

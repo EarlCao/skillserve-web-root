@@ -9,6 +9,34 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-14 — GCash payment proofs: downpayment, the rest, live
+
+Customers send proof of a GCash payment — a downpayment or the rest — with a screenshot and optional
+reference; the provider views it and confirms or rejects it (with a reason), before or after the
+work. Confirmed amounts add up in `bookings.amount_paid`; the booking is `partially_paid` until the
+balance is covered, then `paid` (commission due as before). New [[booking_payment_proofs]] (migration
+`2026_10_14_000003`, backfills `amount_paid` for paid bookings), `BookingPaymentProofService`,
+`BookingPaymentService::receive()`, endpoints under `/client/v1/bookings/{id}/payment-proofs` and
+`/client/v1/provider/bookings/{id}/payment-proofs/{proof}/confirm|reject|image`, admin screenshot
+route. **Realtime:** `client.booking.changed` reaches both parties on every status, payment and proof
+change regardless of notification settings; the app reloads open booking screens. Admin web shows
+*Partially Paid*, *Paid so far* and the proofs. Tests: `PaymentProofTest`, app `payment_proof_test`.
+
+## 2026-10-14 — Chat before booking; several jobs at once; "On a job now"; Bookings tab icon
+
+- **Chat before booking:** customers tap **Message** on a provider's profile or a service and ask
+  before booking. New [[inquiries]] table and `messages.inquiry_id` (migration
+  `2026_10_14_000002`); endpoints `POST /client/v1/inquiries`, `GET|POST /inquiries/{id}/messages`,
+  `…/read`, `…/{message}/image`; presence `inquiry-chat.{id}`; the inbox lists them with
+  `include_inquiries=1` (*Before booking*). Booking and inquiry chats share `ChatMessageService`.
+  Tests: `InquiryTest`, app `chat_before_booking_test`.
+- **Several jobs at once:** the API no longer refuses a booking or reschedule that overlaps the
+  provider's other jobs; providers accept or decline each request, and customers with a job in
+  progress can book again. Weekly hours and the "accepting bookings" switch still apply.
+- **"On a job now":** `on_job_now` on public providers (a booking in progress); shown on provider
+  cards and the profile, refreshed live when a job starts or finishes.
+- **Bookings tab** icon is now a job list (HugeIcons `Task01`) in both apps' bottom bar.
+
 ## 2026-10-14 — Customer Support chat; business name on Edit Profile; 10-character message
 
 - **Customer Support:** the admin request dialog is now a chat (`SupportChat`: bubbles, Enter to

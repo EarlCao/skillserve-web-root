@@ -31,9 +31,15 @@ Tags: **[BE]** Laravel backend · **[AW]** React admin web · **[MB]** Flutter a
   and stored portfolio files return 404: uploads are wiped on every Render restart/redeploy.
   **Do:** go-live item 1 below (paid instance + disk at `/var/www/html/storage/app`), then ask
   users to re-upload photos lost before the disk existed. No code change can recover them.
-- [ ] **Chat with a provider before booking** (owner request) — messages are booking-scoped today
-  (`messages.booking_id`, `/bookings/{id}/messages`). **Do:** agree the design (an inquiry thread
-  per customer–provider pair, needs a migration), then build backend, app and admin moderation.
+- [x] **Chat with a provider before booking** — inquiries (one per customer–provider pair),
+  migration `2026_10_14_000002`; Message on the provider profile and service details.
+- [x] **Several jobs at once** — overlapping bookings allowed; "On a job now" badge.
+- [x] **Bookings tab icon** changed in both apps.
+- [x] **GCash payment proofs** — downpayment / rest with screenshot, provider confirms or rejects,
+  live via `client.booking.changed` (migration `2026_10_14_000003`).
+- [ ] **Cancelling after a downpayment** — a cancelled booking keeps `amount_paid`, and nothing tells
+  either side a downpayment should be returned. **Do:** decide the rule (refund owed by the provider,
+  or kept as a fee) and show it on cancellation; until then it is settled through a dispute.
 
 ### F11 · Clean-up round: photo purge, instant pushes, policies, permissions page **[BE][AW][MB]** — done 2026-10-14
 - [x] **Photos removed with their records** — a chat photo goes with its message, dispute evidence

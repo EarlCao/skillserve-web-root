@@ -16,6 +16,7 @@ every realtime event is a hint to refetch; clients also poll as a fallback.
 | `admin.data` | private | any account with at least one Spatie role (staff) | Admin Web live refresh |
 | `marketplace` | **public** | anyone connected — no auth, guests included (the catalog is public) | Mobile Home, Explore, provider profile and service details live refresh |
 | `App.Models.User.{id}` | private | the user with that id; **refused** for background-only tokens (`client:notifications` without `client:auth`) | Admin Web (notifications), Mobile (notifications + chat) |
+| `inquiry-chat.{inquiry}` | presence | the conversation's customer and provider (`InquiryPolicy::viewAny`); member info `{id, name}` | Mobile chat before booking |
 | `booking-chat.{booking}` | presence | the booking's two participants (reuses `BookingMessagePolicy::viewAny`); member info `{id, name}` | Mobile chat presence + typing |
 
 Channel auth endpoint: `POST|GET /api/broadcasting/auth` with `api` + `auth:sanctum` middleware

@@ -18,10 +18,10 @@ Mobile requirement(s): **M5** ([[Requirements Sources]]).
 
 | ID | Functionality | Implementation | Status |
 |---|---|---|---|
-| M 5.1 | Create Booking | service, schedule (UTC ISO-8601), service address with the Region → Barangay picker (`service_address_details`, starts from the customer's saved address, **Next** disabled until a barangay is chosen — [[Philippine Addresses]]), contact phone, notes, payment method; `Idempotency-Key`; refused outside provider hours / overlapping / paused | implemented |
+| M 5.1 | Create Booking | service, schedule (UTC ISO-8601), service address with the Region → Barangay picker (`service_address_details`, starts from the customer's saved address, **Next** disabled until a barangay is chosen — [[Philippine Addresses]]), contact phone, notes, payment method; `Idempotency-Key`; refused outside provider hours / paused (another booking at the same time is allowed) | implemented |
 | M 5.2 | View Booking Details | service, provider, schedule, status, payment, cancellation policy | implemented |
 | M 5.3 | View My Bookings | `GET /bookings` with status filter | implemented |
-| M 5.4 | Monitor Booking Status | pending → confirmed → active → completed / cancelled / disputed, updated by notifications | implemented |
+| M 5.4 | Monitor Booking Status | pending → confirmed → active → completed / cancelled / disputed; open screens reload on `client.booking.changed` (never muted), lists also on notifications | implemented |
 | M 5.5 | Booking History | timeline on the details screen | implemented |
 | M 5.6 | Cancel Booking | reason + late-fee warning from `cancellation_policy`; reschedule also available | implemented |
 | M 5.7 | Report or Dispute Booking | report the other party / raise a dispute | implemented |

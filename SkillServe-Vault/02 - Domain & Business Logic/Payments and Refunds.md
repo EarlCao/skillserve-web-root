@@ -1,14 +1,15 @@
 ---
 type: domain
 tags: [domain, payments]
-sources: [backend/app/Modules/Bookings/Services/BookingPaymentService.php, backend/app/Modules/ClientMarketplace/Services/ProviderBookingService.php, backend/database/migrations/2026_09_21_000003_add_payment_settlement_to_bookings.php]
+sources: [backend/app/Modules/Bookings/Services/BookingPaymentService.php, backend/app/Modules/Bookings/Services/BookingPaymentProofService.php, backend/app/Modules/ClientMarketplace/Services/ProviderBookingService.php, backend/database/migrations/2026_09_21_000003_add_payment_settlement_to_bookings.php]
 ---
 # Payments and Refunds
 
 SkillServe **records** payments; it never processes cards or moves money. Customers pay providers
 off-platform (cash, GCash, …). See [[ADR-007 Payments Recorded Not Processed]].
 
-`bookings.payment_status` ∈ `unpaid, paid, partially_refunded, refunded`.
+`bookings.payment_status` ∈ `unpaid, partially_paid, paid, partially_refunded, refunded`;
+`bookings.amount_paid` adds up what has been confirmed (downpayments included).
 
 ## Payment methods
 
@@ -56,6 +57,34 @@ dynamic, CRC recomputed); the app draws it and lets the customer save it for GCa
 The account fields are untouched, so the money still goes straight to the provider — see
 [[ADR-022 Payment QR Codes Without Holding Customer Money]].
 
+## GCash payment proofs (downpayment and the rest)
+
+The customer can tell the provider what they sent and prove it: **I've paid — send proof** on their
+own GCash booking (`POST /api/client/v1/bookings/{id}/payment-proofs`, multipart: `amount`,
+optional `reference`, `image` screenshot). Then:
+
+- **When:** once the booking is accepted (`confirmed, active, completed, disputed`), while something
+  is owed (`unpaid` / `partially_paid`), GCash bookings only. **One proof waits at a time** (409).
+- **Amount:** 1 … `balance_due`. Less than the balance is a **downpayment**; the app offers *Full*
+  and *Half* and says what will remain.
+- **Provider:** sees the screenshot (private disk `payment_proofs`, streamed after authorisation)
+  and **confirms** (`PATCH …/provider/bookings/{id}/payment-proofs/{proof}/confirm`) or **rejects**
+  with a reason (`…/reject`) — before or after the work. Confirming more than is still owed is
+  refused (409); reject it instead.
+- **Effect of confirming:** `BookingPaymentService::receive()` adds the amount: below the total →
+  `partially_paid`; reaching it → `paid` (`paid_at`, `payment_recorded_by`, the proof's reference)
+  and the commission becomes **outstanding**, exactly as for any paid booking.
+- **Who hears:** the provider on a new proof (`payment_proof` / `submitted`); the customer on a
+  rejection (`payment_proof` / `rejected`, with the reason) and on a confirmation (`booking_status`
+  `partially_paid` "Downpayment confirmed" or `paid` "Payment complete").
+- **Live:** every payment, proof and status change also pushes `client.booking.changed` to both
+  parties, so open booking screens reload at once — independent of notification settings.
+- **Admins** see *Paid so far* and every proof with its screenshot in the booking dialog
+  (`GET /api/bookings/{id}/payment-proofs/{proof}/image`).
+
+`payment_instructions.amount` and its QR carry the **balance**, not the total, after a downpayment.
+Table: [[booking_payment_proofs]].
+
 > [!warning] No escrow, no payment guarantee
 > Because the platform never holds the money, it cannot reverse a payment. A customer who pays and
 > receives nothing, or a provider who works unpaid, is a dispute — not something SkillServe can
@@ -91,7 +120,10 @@ fixed to manual. See [[ADR-020 PayMongo Collects Into the Platform Account]] and
 ```mermaid
 stateDiagram-v2
   [*] --> unpaid
-  unpaid --> paid : provider payment received (completed only)\nor admin mark-paid
+  unpaid --> partially_paid : provider confirms a downpayment proof
+  partially_paid --> partially_paid : another downpayment confirmed
+  partially_paid --> paid : the rest confirmed, or recorded as received
+  unpaid --> paid : provider confirms a full proof, payment received (completed),\nor admin mark-paid
   paid --> partially_refunded : admin refund < total
   paid --> refunded : admin refund reaches total
   partially_refunded --> partially_refunded : further partial refund
@@ -100,13 +132,16 @@ stateDiagram-v2
 
 | Action | Who | Endpoint | Allowed booking status | Permission |
 |---|---|---|---|---|
-| Payment received | provider | `PATCH /api/client/v1/provider/bookings/{id}/payment-received` (optional reference) | `completed` | provider owns booking |
+| Payment received | provider | `PATCH /api/client/v1/provider/bookings/{id}/payment-received` (optional reference) — records whatever is still owed | `completed` | provider owns booking |
+| Send payment proof | customer | `POST /api/client/v1/bookings/{id}/payment-proofs` | `confirmed, active, completed, disputed`; GCash; owing | customer owns booking |
+| Confirm / reject proof | provider | `PATCH /api/client/v1/provider/bookings/{id}/payment-proofs/{proof}/confirm` · `/reject` (reason) | any; proof pending | provider owns booking |
 | Mark paid | admin | `PATCH /api/bookings/{id}/mark-paid` | `confirmed, active, completed, disputed` (`PAYABLE_STATUSES`) | `manage booking payments` (or `manage bookings`) |
 | Refund | admin | `PATCH /api/bookings/{id}/refund` (amount, reason) | booking must be `paid`/`partially_refunded` | `manage booking payments` |
 
 Rules (`BookingPaymentService`):
-- Mark paid requires `payment_status = unpaid` (else **409** "already marked as paid"); sets
-  `paid_at`, `payment_recorded_by`, `payment_reference`.
+- Mark paid requires something owed (`unpaid` / `partially_paid`, else **409** "already marked as
+  paid") and records the **balance**; sets `amount_paid = total_price`, `paid_at`,
+  `payment_recorded_by`, `payment_reference`.
 - Refunds accumulate in `refunded_amount`; over-refunding is refused; status becomes `refunded` when
   the total reaches `total_price`, else `partially_refunded`; sets `refunded_at`, `refund_reason`.
 - Every change fires `BookingPaymentRecorded` → audit log + `NotifyPaymentParticipants` (the other
@@ -119,5 +154,5 @@ bookings — there is no payments table or endpoint.
 > Recording a booking as paid also makes the provider's commission **outstanding**, because the
 > commission is included in the price they were paid. See [[Commission Tiers and Settlement]].
 
-Related: [[Commission Tiers and Settlement]] · [[Booking Lifecycle]] · [[Booking Management]] · [[Client Payments View]] ·
+Related: [[booking_payment_proofs]] · [[Commission Tiers and Settlement]] · [[Booking Lifecycle]] · [[Booking Management]] · [[Client Payments View]] ·
 [[Provider Earnings and Statistics]]
