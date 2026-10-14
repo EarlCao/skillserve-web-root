@@ -9,6 +9,17 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-14 — Raise a dispute from My Disputes; solid heart and star; review Report button; nationwide wording
+
+- **My Disputes** has a **Raise a dispute** button: pick an in-progress or completed booking not
+  disputed yet, then the usual sheet (shared with the booking screen, `raise_dispute_flow.dart`).
+- **Icons:** a favourite is a full red heart and a rating a full star — HugeIcons' free set is
+  outline-only, so `AppIcon` draws these two with Material's solid glyphs (`AppIcons.solidFor`);
+  empty stars and hearts stay outlined.
+- **Reviews:** the report action is a labelled **Report** button (and long-press) instead of a small
+  flag icon.
+- **Coverage wording:** the home card and About page say the Philippines, not the Visayas.
+
 ## 2026-10-14 — Commission rules moved to the Commission page
 
 System Settings → Marketplace no longer shows the commission settings (fallback rate, block threshold,

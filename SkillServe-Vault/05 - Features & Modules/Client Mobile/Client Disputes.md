@@ -18,7 +18,7 @@ Mobile requirement(s): **M11** ([[Requirements Sources]]).
 
 | ID | Functionality | Implementation | Status |
 |---|---|---|---|
-| M 11.1 | Submit Dispute | either party, active/completed booking, once; photos can be attached in the same sheet | implemented |
+| M 11.1 | Submit Dispute | either party, active/completed booking, once; photos can be attached in the same sheet. From the booking (**Raise a dispute**) or from *My Disputes* (**Raise a dispute** button → pick an in-progress or completed booking not disputed yet → the same sheet; `raise_dispute_flow.dart`) | implemented |
 | M 11.2 | View My Disputes | `GET /disputes` | implemented |
 | M 11.3 | View Dispute Details | status, reason, resolution, evidence | implemented |
 | M 11.4 | Submit Evidence | up to 5 photos while open | implemented |
