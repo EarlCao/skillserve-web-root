@@ -29,6 +29,8 @@ Conventions: [[API Conventions]] · Index: [[API Index]]
 | PATCH | `/api/commission-remittances/{commissionRemittance}/confirm` | `Commissions::CommissionRemittanceController@confirm` | `auth:sanctum` | `settle commissions` |
 | GET | `/api/commission-remittances/{commissionRemittance}/proof` | `Commissions::CommissionRemittanceController@proof` | `auth:sanctum` | `view commissions` |
 | PATCH | `/api/commission-remittances/{commissionRemittance}/reject` | `Commissions::CommissionRemittanceController@reject` | `auth:sanctum` | `settle commissions` |
+| GET | `/api/commission-settings` | `Commissions::CommissionSettingsController@show` | `auth:sanctum` | policy `viewAny` → `view commissions` |
+| PUT | `/api/commission-settings` | `Commissions::CommissionSettingsController@update` | `auth:sanctum` | policy `create` → `manage commissions` |
 | GET | `/api/commission-tiers` | `Commissions::CommissionTierController@index` | `auth:sanctum` | policy `viewAny` → `view commissions` |
 | POST | `/api/commission-tiers` | `Commissions::CommissionTierController@store` | `auth:sanctum` | policy `create` → `manage commissions` |
 | GET | `/api/commission-tiers/presets` | `Commissions::CommissionTierController@presets` | `auth:sanctum` | policy `viewAny` → `view commissions` |

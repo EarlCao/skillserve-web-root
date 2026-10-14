@@ -9,6 +9,14 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-14 — Commission rules moved to the Commission page
+
+System Settings → Marketplace no longer shows the commission settings (fallback rate, block threshold,
+block after days); they are edited on Commission Management → **Rules**
+(`GET/PUT /api/commission-settings`, `view` / `manage commissions`). Same stored values, so nothing
+changes in behaviour; `PUT /api/settings` refuses them ("Change this on the Commission page.").
+Tests: `CommissionSettingsTest`, `SettingsTest`.
+
 ## 2026-10-14 — Refunds after cancellation; no self-deletion; anti-scam safeguards
 
 - **Refunds:** a cancelled booking with money paid opens a refund the provider must return by a

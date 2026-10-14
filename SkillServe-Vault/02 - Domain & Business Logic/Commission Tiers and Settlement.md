@@ -185,7 +185,8 @@ identical behaviour from the API.
 | Decline / cancel | No |
 | Anything the **customer** does | No — never |
 
-**When the block starts** is set in System Settings → Marketplace. It applies once *either*
+**When the block starts** is set on the Commission page → **Rules** (moved there from System Settings →
+Marketplace on 2026-10-14; stored as the same `marketplace.*` settings). It applies once *either*
 
 - the unpaid total reaches `commission_block_min_amount` (₱; **0 = any debt**), or
 - the oldest unpaid commission — dated by the booking's `paid_at` — is older than

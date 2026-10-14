@@ -16,7 +16,7 @@ tags: [feature, admin-web, commissions]
 |---|---|
 | Backend module | `backend/app/Modules/Commissions` |
 | Frontend module | `frontend/src/modules/commissions` |
-| Admin route(s) | `/admin/commissions` (tabs: `?tab=ledger`, `?tab=payments` — *Provider payments*) |
+| Admin route(s) | `/admin/commissions` (tabs: `?tab=ledger`, `?tab=payments` — *Provider payments*, `?tab=rules` — *Rules*) |
 | Permissions | `view commissions` to read · `manage commissions` to configure tiers · `settle commissions` to record or waive |
 
 ## What it does
@@ -73,6 +73,14 @@ The sidebar's **Commissions** item carries a live count of waiting payments and 
 this tab while any are waiting. Providers now pay by QR Ph only, so GCash-reference payments come
 only from older app versions.
 
+### Rules tab
+
+The fallback commission rate (used when no tier matches) and when unpaid commission blocks a
+provider (₱ threshold, 0 = any debt; days, 0 = off). Moved here from System Settings → Marketplace
+on 2026-10-14: `GET /api/commission-settings` (`view commissions`), `PUT` (`manage commissions`).
+The values are still the `marketplace.commission_*` settings (flagged `managed_by: commissions`);
+System Settings no longer shows them and refuses them with "Change this on the Commission page."
+
 > [!info] Why there is no separate Payments page
 > `/api/commissions` already returns the payment status, method, reference and date alongside the
 > commission, so this tab is the payment view. Marking a booking paid and refunding it stay on
@@ -80,7 +88,7 @@ only from older app versions.
 
 ## Automated tests
 
-`CommissionTierTest`, `CommissionCalculationTest`, `CommissionLedgerTest`, `CommissionRemittanceTest`,
+`CommissionTierTest`, `CommissionSettingsTest`, `CommissionCalculationTest`, `CommissionLedgerTest`, `CommissionRemittanceTest`,
 `PaymentGatewayTest` —
 see [[Backend Test Suite]]. There is no frontend test framework; the UI is verified by
 `npm run lint` and `npm run build`.
