@@ -247,3 +247,13 @@ images must be removed from the private disk separately.
 ## Related
 
 [[Database Overview]] · [[Changelog]] · [[Database Index]]
+
+## 2026-10-15 — Provider suspension locks the account
+
+- **`2026_10_15_000001_suspend_accounts_of_suspended_providers`** — data only. Providers whose
+  profile was suspended before suspension also locked the account get `users.status = suspended`
+  (date, admin and reason copied from the profile); their access tokens are deleted and refresh
+  tokens revoked. Deploy with the code (order does not matter). Rollback returns those accounts to
+  active (matched on the copied date and admin — which a provider suspended after deploy also
+  matches, so roll back only right after deploying); revoked sessions stay revoked. Verified on
+  local Postgres (no such providers there) and by `ProviderStandingTest` (up and down).

@@ -13,6 +13,7 @@ without a value are always delivered.
 | Class | Module | Category (mutable?) | Channel | Sent when |
 |---|---|---|---|---|
 | `BookingStatusNotification` | Bookings | `booking` | database | any booking status change (to the other party) |
+| `ProviderStandingNotification` | Bookings | always | database | the provider of a customer's open booking was suspended, banned, deleted or reinstated (type `booking_provider_status`, opens the booking) |
 | `DisputeUpdateNotification` | Bookings | `booking` | database | dispute investigate/resolve/reject/close (both parties) |
 | `CommissionSettlementNotification` | Commissions | `booking` | database | admin settles or waives a provider's commission (to the provider, with what is still owed); type `booking_commission`, carries `booking_id` so a tap opens the booking |
 | `CommissionRemittanceNotification` | Commissions | always | database | admin confirms or rejects a provider's GCash commission payment (with the reason, or what is still owed); type `commission_remittance`, carries `remittance_id`; a tap opens `/commissions` |

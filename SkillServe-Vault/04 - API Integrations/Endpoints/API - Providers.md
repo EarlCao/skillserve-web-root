@@ -20,7 +20,9 @@ Feature note: [[Service Provider Management]] · Conventions: [[API Conventions]
 |---|---|---|---|---|
 | GET | `/api/providers` | `Providers::ProviderController@index` | `auth:sanctum` | policy `viewAny` → `view providers` |
 | GET | `/api/providers/{provider}` | `Providers::ProviderController@show` | `auth:sanctum` | policy `view` → `view providers` |
+| DELETE | `/api/providers/{provider}` | `Providers::ProviderController@destroy` | `auth:sanctum` | policy `delete` → `delete providers` |
 | PATCH | `/api/providers/{provider}/activate` | `Providers::ProviderController@activate` | `auth:sanctum` | policy `activate` → `activate providers` |
+| PATCH | `/api/providers/{provider}/unban` | `Providers::ProviderController@unban` | `auth:sanctum` | policy `activate` → `activate providers` |
 | PATCH | `/api/providers/{provider}/suspend` | `Providers::ProviderController@suspend` | `auth:sanctum` | policy `suspend` → `suspend providers` |
 | GET | `/api/providers/{provider}/verification-documents/{document}/download` | `Providers::ProviderController@downloadVerificationDocument` | `auth:sanctum` | policy `view` → `view providers` |
 | GET | `/api/providers/{provider}/verification-history` | `Providers::ProviderController@verificationHistory` | `auth:sanctum` | policy `view` → `view providers` |

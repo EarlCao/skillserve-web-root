@@ -1,7 +1,7 @@
 ---
 type: domain
 tags: [domain, bookings, settings]
-sources: [backend/app/Modules/Bookings/Services/BookingRules.php, backend/config/system-settings.php, backend/database/migrations/2026_09_22_000001_add_cancellation_fee_to_bookings.php]
+sources: [backend/app/Modules/Bookings/Services/BookingRules.php, backend/app/Modules/ClientMarketplace/Resources/ProviderStandingPresenter.php, backend/config/system-settings.php, backend/database/migrations/2026_09_22_000001_add_cancellation_fee_to_bookings.php]
 ---
 # Cancellation and Fees
 
@@ -16,6 +16,9 @@ Implemented in `App\Modules\Bookings\Services\BookingRules` (settings-driven).
 
 `fee = round(total_price × percent / 100, 2)`; stored in `bookings.cancellation_fee` (nullable,
 `null` when zero). Only `confirmed` bookings can be late — cancelling a `pending` one is always free.
+A booking whose provider was **suspended, banned or deleted** is never late either
+(`ProviderProfile::unavailability()`): the customer is not to blame for calling off a job the
+provider can no longer do ([[Account Status Lifecycle]]).
 
 | Who cancels | Fee side | Code |
 |---|---|---|

@@ -54,7 +54,7 @@ yet verified and closes any open request as approved (2026-10-06). New providers
 | Reject | `…/verification/reject` (reason) | request pending | request + profile `rejected`, reason stored | `reject providers` |
 | Request info | `…/verification/request-info` (message) | request pending | request + profile `additional_info_required` | `verify providers` |
 | Remove verification | `…/verification/remove` | profile verified | profile `unverified` | `verify providers` |
-| Suspend / Activate | `PATCH /api/providers/{p}/suspend` · `/activate` | not suspended / suspended | `provider_profiles.suspended_at/by/suspension_reason` | `suspend providers` / `activate providers` |
+| Suspend / Activate | `PATCH /api/providers/{p}/suspend` · `/activate` | not suspended / suspended | `provider_profiles.suspended_at/by/suspension_reason`, plus the account's `users.status` (suspended ↔ active; a ban is left alone) | `suspend providers` / `activate providers` |
 | Download document | `GET …/verification-documents/{doc}/download` | — | streams file | `view providers` |
 | History | `GET …/verification-history` | — | past requests | `view providers` |
 

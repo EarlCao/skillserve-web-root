@@ -9,6 +9,34 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-15 — Suspended users signed out instantly; delete a provider; customers told
+
+- **Instant sign-out:** suspending, banning or deleting a mobile account (User Management, Provider
+  Management or report moderation) pushes `.client.account.restricted` to the user's open app, which
+  signs out at once and shows *Your account is suspended* (or banned / deleted) with the reason on
+  the login screen — no longer waiting for the next request ([[Account Status Lifecycle]],
+  [[Realtime Channels and Events]]).
+- **Provider suspension now suspends the account** too (owner decision): a suspended provider cannot
+  sign in until activated; activating restores both. Providers suspended *before* this change keep
+  an active account until they are activated and suspended again.
+- **Delete provider:** `DELETE /api/providers/{id}` and a Delete button on the Providers list and
+  profile (`delete providers`). Refused (409) while the provider has open bookings, an unreturned
+  downpayment or unpaid commission. Soft delete — restorable from Data Management; deleted
+  providers leave the Providers list.
+- **Customers told about their provider:** a suspended, banned or deleted provider's customers with
+  open bookings get a notification and a live refresh; booking details, booking cards and the chat
+  show a red notice, and cancelling such a booking never carries a late fee. Reinstating the
+  provider tells them too ([[Account Status Lifecycle]]).
+- **Fixes:** a provider suspended from a report now shows as suspended in Provider Management and
+  can be activated there; banned providers show a *Banned* badge and an **Unban** button
+  (`PATCH /api/providers/{id}/unban`); deleting a provider and booking
+  them at the same moment can no longer both succeed (row lock); providers suspended before today
+  were given the account suspension by migration `2026_10_15_000001`.
+- Verified end to end on the local stack (API + Reverb): the provider's app got the sign-out push
+  ~0.7 s after the admin clicked Suspend; the customer got the notice and booking refresh.
+- Tests: `ProviderAccountLifecycleTest`, `ProviderStandingTest`, `AccountStatusTest`; mobile
+  `account_status_test.dart`, `provider_standing_test.dart`.
+
 ## 2026-10-14 — Verified National IDs kept; edit forms pre-fill again
 
 - **National ID:** verifying an ID no longer starts the image purge — a verified ID keeps its photos

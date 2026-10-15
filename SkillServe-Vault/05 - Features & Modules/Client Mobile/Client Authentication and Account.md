@@ -23,7 +23,7 @@ Mobile requirement(s): **M1** ([[Requirements Sources]]).
 | M 1.3 | User Logout | see [[Logout (Mobile)]] | implemented |
 | M 1.4 | Password Management | change password; forgot password in the app: email → 6-digit code → new password + confirmation (KI-02 fixed 2026-10-03) | implemented |
 | M 1.5 | Session Management | 60-min access token auto-refreshed from a rotating refresh token; signed in until sign-out | implemented |
-| M 1.6 | Account Status Display | suspended/banned → session ended, login screen shows reason and end date (`AccountRestrictionCard`) | implemented |
+| M 1.6 | Account Status Display | suspended/banned/deleted → session ended (instantly while the app is open, via `.client.account.restricted`; otherwise on the next request), login screen shows reason and end date (`AccountRestrictionCard`) | implemented |
 
 UAT result columns in the mobile `TEST_PLAN.md` are still empty — see [[UAT and Traceability]].
 

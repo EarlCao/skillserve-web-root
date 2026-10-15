@@ -23,7 +23,8 @@ Client-facing contract for Reverb. Architecture and internals: [[Realtime Archit
 | `private-admin.data` | `.admin.data.changed` | `{ resources: ["bookings", …] }` | Admin Web (`liveUpdates.js`) |
 | `private-App.Models.User.{id}` | `.client.notification.created` | stored notification | Admin Web (re-dispatched as `skillserve:realtime-notification`), Mobile |
 | `private-App.Models.User.{id}` | `.admin.notification.created` | `{ notification: { kind, title, message, link, … } }` — a new [[Admin Inbox]] alert | Admin Web (`AuthProvider` → refetch Inbox + toast) |
-| `private-App.Models.User.{id}` | `.client.booking.changed` | `{ booking_id }` — a status, payment or payment-proof change on one of the user's bookings; never muted | Mobile (open booking screens reload; lists catch up) |
+| `private-App.Models.User.{id}` | `.client.booking.changed` | `{ booking_id }` — a status, payment or payment-proof change on one of the user's bookings, or its provider was suspended / banned / deleted / reinstated; never muted | Mobile (open booking screens reload; lists catch up) |
+| `private-App.Models.User.{id}` | `.client.account.restricted` | `{ account: {status, reason, since, until}, message }` — an administrator suspended, banned or deleted the account (`status` `deleted`); sent after commit by `PushAccountRestriction` | Mobile (`NotificationPoller` → `ApiClient.endSession` → login screen shows why) |
 | `private-App.Models.User.{id}` | `.client.message.created` | `{ booking_id, inquiry_id, message }` (one of the two ids is null) (message includes `image_url`) | Mobile chat |
 | `private-App.Models.User.{id}` | `.client.notifications.changed` | `{}` — notifications were archived, restored or deleted | Mobile (other sessions re-read the feed) |
 | `presence-booking-chat.{bookingId}` | members + `client-typing` whisper `{user_id, typing}` | — | Mobile chat |

@@ -15,7 +15,7 @@ Admin requirement module **4** ([[Requirements Sources]]).
 | Frontend module | `frontend/src/modules/providers` |
 | Admin route(s) | `/admin/providers`, `/admin/providers/:providerId` |
 | Endpoints | [[API - Providers]] |
-| Permissions | `view providers`, `verify providers`, `reject providers`, `suspend providers`, `activate providers` (or `manage providers`) |
+| Permissions | `view providers`, `verify providers`, `reject providers`, `suspend providers`, `activate providers`, `delete providers` (or `manage providers`) |
 
 ## Requirement coverage
 
@@ -27,7 +27,9 @@ Admin requirement module **4** ([[Requirements Sources]]).
 | A 4.4 | Approve Verification | `PATCH …/verification/approve` → verified |
 | A 4.5 | Reject Verification | `PATCH …/verification/reject` with reason |
 | A 4.6 | Request Additional Information | `PATCH …/verification/request-info`; provider re-uploads, same request back to pending |
-| A 4.7 | Suspend Service Provider | `PATCH …/suspend` / `…/activate` (hidden from marketplace) |
+| A 4.7 | Suspend Service Provider | `PATCH …/suspend` / `…/activate` — hidden from the marketplace **and** the account suspended: the open app is signed out at once ([[Account Status Lifecycle]]) |
+| — | Unban Service Provider | `PATCH /api/providers/{id}/unban` (optional note) — a ban made from a report shows as a *Banned* badge with an **Unban** button in place of Suspend/Activate; logged and emailed like a customer unban; customers with open bookings are told |
+| — | Delete Service Provider | `DELETE /api/providers/{id}` — Delete button on the list row and the profile; refused (409) while the provider has open bookings, an unreturned downpayment or unpaid commission; soft-deletes the account (signed out at once, restorable from [[Data Management]]); deleted providers leave the list |
 | A 4.8 | Remove Provider Verification | `PATCH …/verification/remove` → unverified |
 
 **Status:** code present for every functionality above. UAT result columns in `TEST_PLAN.md` are
@@ -35,7 +37,7 @@ still empty (not yet executed on the deployed system) — see [[UAT and Traceabi
 
 ## Automated tests
 
-`ProviderSecurityTest`, `ProviderVerificationTest`, `AdminDecisionNotificationTest` — see [[Backend Test Suite]].
+`ProviderSecurityTest`, `ProviderVerificationTest`, `AdminDecisionNotificationTest`, `ProviderAccountLifecycleTest` — see [[Backend Test Suite]].
 
 ## Notes
 

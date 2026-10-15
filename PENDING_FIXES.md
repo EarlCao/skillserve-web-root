@@ -1,6 +1,6 @@
 # Pending Fixes — SkillServe (Backend, Admin Web, Mobile, Deployment)
 
-Last updated: **2026-10-14** (F11 — every code item cleared and realtime re-verified end to end;
+Last updated: **2026-10-15** (F13 — instant sign-out, delete provider, customers told; F11 — every code item cleared and realtime re-verified end to end;
 what is left below needs the owner's accounts, money, devices or a launch decision).
 Previous full audit: 2026-09-21.
 
@@ -19,6 +19,25 @@ Tags: **[BE]** Laravel backend · **[AW]** React admin web · **[MB]** Flutter a
 ---
 
 ## Features in progress
+
+### F13 · Instant sign-out on suspension; delete a provider; customers told **[BE][AW][MB]** — done 2026-10-15
+- [x] **Suspended / banned / deleted users signed out at once** — `.client.account.restricted` push;
+  the app ends the session and the login screen says *Your account is suspended* with the reason.
+- [x] **Provider suspension suspends the account** (owner decision) — signed out, cannot sign in
+  until activated.
+- [x] **Delete provider** — `DELETE /api/providers/{id}` + Delete button on the list and profile;
+  refused while bookings are open or a downpayment / commission is owed; row lock against a
+  booking made at the same moment.
+- [x] **Providers suspended before 2026-10-15** — migration `2026_10_15_000001` gives them the
+  account suspension on deploy (they are signed out).
+- [x] **Customers told** — notification + live refresh for open bookings; red notice on booking
+  details, booking cards and the chat; no late-cancellation fee on such a booking.
+- [x] **Report-moderation suspension of a provider** shows in Provider Management and can be
+  activated there; banned providers show a *Banned* badge.
+- [x] **Verified end to end** on the local stack (API + Reverb, temporary accounts removed after).
+- [x] **Unbanning a provider** — *Banned* badge and **Unban** in Provider Management
+  (`PATCH /api/providers/{id}/unban`); before this, a provider banned permanently from a report
+  could not be unbanned anywhere.
 
 ### F12 · Owner feedback round **[BE][AW][MB]** — 2026-10-14
 - [x] **My Disputes** — disputes moved off My Reports onto their own screen; Settings → *Reports & disputes*.
