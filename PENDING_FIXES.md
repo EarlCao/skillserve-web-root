@@ -39,6 +39,18 @@ Tags: **[BE]** Laravel backend · **[AW]** React admin web · **[MB]** Flutter a
   (`PATCH /api/providers/{id}/unban`); before this, a provider banned permanently from a report
   could not be unbanned anywhere.
 
+### F15 · Admin actions confirm and say why; dashboard counts **[BE][AW]** — done 2026-10-15
+- [x] **Dashboard said 0 suspended users** — counted account status only; a provider suspended by the
+  old code (profile only) was missed. Counts both now; migration `000003` re-runs the backfill.
+- [x] **Deleted users** card on the dashboard.
+- [x] **Reason / note on every admin action** affecting someone, sent to them (notification; email
+  and sign-out screen for deletions); confirmations added where actions ran on one click.
+
+### F14 · One National ID = one provider + one customer account **[BE][AW][MB]** — done 2026-10-15
+- [x] A second provider (or customer) account on the same National ID is refused at sign-up and on
+  ID submission, with *"A provider account already uses this National ID…"*. Migration
+  `2026_10_15_000002`; rejected attempts no longer hold an ID; policies and admin hint updated.
+
 ### F12 · Owner feedback round **[BE][AW][MB]** — 2026-10-14
 - [x] **My Disputes** — disputes moved off My Reports onto their own screen; Settings → *Reports & disputes*.
 - [x] **Chat photos** — the API trusts Render's `X-Forwarded-Proto`, so photo links are `https://`.
@@ -60,7 +72,8 @@ Tags: **[BE]** Laravel backend · **[AW]** React admin web · **[MB]** Flutter a
   verification, deadline, provider block, admin resolution (ADR-023, migration `2026_10_14_000004`).
 - [x] **Self-service account deletion removed** (410 for older apps).
 - [ ] **Republish edited policies** — if Terms/Privacy were edited in System Settings on production,
-  the new defaults (refund duty, no self-deletion, verified ID photos kept) do not apply until an admin updates them.
+  the new defaults (refund duty, no self-deletion, verified ID photos kept, one National ID = one
+  provider + one customer account) do not apply until an admin updates them.
 - [x] **Commission rules** moved from System Settings to Commission page → *Rules*.
 - [x] **Edit forms empty** — Customer Management (and 7 other admin dialogs) open pre-filled again.
 - [x] **Verified National ID kept** — no purge after verifying; *National ID* card on the provider

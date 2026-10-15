@@ -9,6 +9,37 @@ Newest first. Entries before 2026-09-22 are reconstructed from `PENDING_FIXES.md
 2026-09-21"), the 2026-09-08 readiness audit, and commit messages. Add new entries at the top with
 [[Template - Change Entry]].
 
+## 2026-10-15 — Every admin action confirms and says why; dashboard suspended / deleted counts
+
+- **Reasons reach the person.** Deleting a customer or provider, removing a verification, hiding or
+  deleting a service or review, removing a badge, un-featuring a provider or service, cancelling a
+  booking and report actions (hide / remove too) now **require** a reason; reactivating, unbanning,
+  approving a service, giving a badge and featuring take an optional **note**. The text is added to
+  the person's notification; a deleted account gets it by email and on the app's sign-out screen
+  (`users.deletion_reason`). Badge and featured changes now notify the provider at all, and removing
+  a reported chat message tells its sender.
+- **Confirmation everywhere.** `ConfirmDialog` takes a `reason` box; badge give/remove, featuring,
+  Data Management archive / restore and the refund decision — which used to act on one click — now
+  confirm first.
+- **Dashboard:** *Suspended users* counted only account status, so a provider suspended in
+  Provider Management by the old code showed 0; it now counts the profile suspension too, and a
+  migration (`2026_10_15_000003`) re-runs the backfill for providers suspended during the deploy. New
+  *Deleted users* card.
+- Tests: `AdminActionReasonsTest`, `DashboardTest`.
+
+## 2026-10-15 — One National ID: one provider account and one customer account
+
+- A National ID can now verify **one provider account and one customer account** (was one account
+  of any kind). A second provider (or customer) account on the same ID is refused **at sign-up**,
+  before the account exists — the app sends the scanned number as `id_number` — and again on ID
+  submission: *"A provider account already uses this National ID. One National ID can verify only
+  one provider account and one customer account."*
+- Only pending and verified submissions hold an ID; a rejected attempt no longer locks the real
+  owner out.
+- Migration `2026_10_15_000002` (`account_type` + new unique index). Terms, Privacy Policy, Community
+  Guidelines and the admin Identity Verification page updated to match.
+- Tests: `IdentityVerificationTest`, `NationalIdSignUpTest`; mobile `national_id_sign_up_test.dart`.
+
 ## 2026-10-15 — Suspended users signed out instantly; delete a provider; customers told
 
 - **Instant sign-out:** suspending, banning or deleting a mobile account (User Management, Provider

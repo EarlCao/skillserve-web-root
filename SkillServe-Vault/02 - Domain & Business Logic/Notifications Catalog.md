@@ -13,6 +13,7 @@ without a value are always delivered.
 | Class | Module | Category (mutable?) | Channel | Sent when |
 |---|---|---|---|---|
 | `BookingStatusNotification` | Bookings | `booking` | database | any booking status change (to the other party) |
+| `MessageRemovedNotification` | ReportsAndModeration | always | database | a reported chat message was removed (type `message_moderation`, with the reason; opens the chat) |
 | `ProviderStandingNotification` | Bookings | always | database | the provider of a customer's open booking was suspended, banned, deleted or reinstated (type `booking_provider_status`, opens the booking) |
 | `DisputeUpdateNotification` | Bookings | `booking` | database | dispute investigate/resolve/reject/close (both parties) |
 | `CommissionSettlementNotification` | Commissions | `booking` | database | admin settles or waives a provider's commission (to the provider, with what is still owed); type `booking_commission`, carries `booking_id` so a tap opens the booking |
@@ -22,7 +23,7 @@ without a value are always delivered.
 | `SupportTicketResolvedNotification` | ClientCommunication | `message` | database | ticket resolved |
 | `ServiceModerationNotification` | Services | `service` | database | admin edits/approves/rejects/hides/features/deletes a service |
 | `AnnouncementNotification` | Notifications | `announcement` | database | announcement delivered |
-| `ProviderAccountNotification` | Providers | always | database | verification approved/rejected/info requested/removed, provider suspended/activated |
+| `ProviderAccountNotification` | Providers | always | database | verification approved/rejected/info requested/removed, provider suspended/activated, badge given/removed and featured/unfeatured (type `provider_recognition`) — with the administrator's reason or note |
 | `AccountStatusNotification` | Users | always | database | user warned/suspended/activated |
 | `ReportOutcomeNotification` | ReportsAndModeration | always | database | report resolved/rejected (to reporter) |
 | `ReviewModerationNotification` | Reviews | always | database | review hidden/removed/restored |
@@ -60,3 +61,8 @@ delivered by `SendAnnouncementJob` (delayed to `scheduled_at`). A scheduled/pend
 deleted. See [[Notifications and Announcements]].
 
 Related: [[Client Notifications]] · [[notifications]] · [[announcements]]
+
+> [!info] Reasons reach the person (2026-10-15)
+> Every administrator action against someone carries a required reason, and actions in their
+> favour an optional note; the text is appended to the notification (*Reason: …* / *Note from
+> SkillServe: …*). A deleted account gets it in the sign-out push and in `UserDeletedMail`.

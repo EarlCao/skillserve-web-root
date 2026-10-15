@@ -14,7 +14,9 @@ tags: [adr, architecture, identity, security]
 ## Context
 
 SkillServe must enforce "one Philippine National ID = one active account", server-side and at the
-database level. That requires comparing card numbers across accounts.
+database level. (Amended 2026-10-15: one provider account **and** one customer account per ID — the
+blind index is unchanged, the unique index now pairs it with `account_type`; see
+[[Identity Verification Lifecycle]].) That requires comparing card numbers across accounts.
 
 Three properties are in tension:
 

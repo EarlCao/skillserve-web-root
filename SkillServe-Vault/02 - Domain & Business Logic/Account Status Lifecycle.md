@@ -24,10 +24,10 @@ stateDiagram-v2
 | Transition | Endpoint | Guards (from actions) |
 |---|---|---|
 | suspend | `PATCH /api/users/{u}/suspend` | not already suspended; a banned account cannot be suspended |
-| activate | `PATCH /api/users/{u}/activate` | a banned account cannot be activated (use unban) |
+| activate | `PATCH /api/users/{u}/activate` `{reason?}` (note passed on) | a banned account cannot be activated (use unban) |
 | ban | `PATCH /api/users/{u}/ban` `{duration: days|forever, days, reason}` | not already banned; clears suspension fields; `banned_until` null = permanent |
 | unban | `PATCH /api/users/{u}/unban` `{reason}` | — |
-| delete | `DELETE /api/users/{u}` | not yourself; not already deleted; revokes all tokens |
+| delete | `DELETE /api/users/{u}` `{reason}` | reason required; not yourself; not already deleted; revokes all tokens; the reason is stored (`users.deletion_reason`), emailed (`UserDeletedMail`) and shown on the app's sign-out screen |
 | provider suspend / activate | `PATCH /api/providers/{p}/suspend` · `/activate` | also suspends / reactivates the provider's account (a banned account stays banned). A report decision that suspends a provider also marks the profile suspended, so Provider Management shows it and its Activate restores both |
 | provider unban | `PATCH /api/providers/{p}/unban` `{reason?}` | account banned (bans come from report moderation); a suspended profile stays suspended — activate separately |
 | provider delete | `DELETE /api/providers/{p}` | **409** while the provider has open bookings (pending, confirmed, active, disputed), an open refund (due, sent, not received) or outstanding commission; soft-deletes the account, revokes access and refresh tokens; the profile and history stay |

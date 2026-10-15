@@ -11,7 +11,7 @@ so every account that has looked at the feature has a record.
 
 - **Model:** `backend/app/Modules/IdentityVerification/Models/IdentityVerification.php`
 - **Soft deletes:** no — a record is *released*, never deleted (see below)
-- **Migrations:** `2026_09_24_000005_create_identity_verification_tables`
+- **Migrations:** `2026_09_24_000005_create_identity_verification_tables`, `2026_10_15_000002_one_national_id_per_account_type`
 
 ## Columns
 
@@ -19,6 +19,7 @@ so every account that has looked at the feature has a record.
 |---|---|---|
 | `id` | bigint PK | |
 | `user_id` | FK null, **unique** | **nullOnDelete by design** — the record outlives the account as its audit trail |
+| `account_type` | string(16) null | `provider` / `customer`, from the account's role (fixed at sign-up); written on every submission; null once released |
 | `status` | string, indexed | unverified / pending / verified / rejected |
 | `id_number_hash` | string(64) null | HMAC-SHA256 of the 16 normalised digits under a server pepper; the only column compared |
 | `id_number_encrypted` | text null | Laravel `encrypted` cast; cleared on release |
@@ -39,9 +40,11 @@ cannot leak them.
 
 - unique(user_id)
 - index(status), index(documents_purge_after)
-- **`identity_verifications_active_id_number`** — partial unique on `(id_number_hash)`
-  `WHERE id_number_hash IS NOT NULL AND released_at IS NULL`. This is the database-level enforcement
-  of *one National ID = one active account*; see [[ADR-018 Blind Index for National ID Uniqueness]].
+- **`identity_verifications_active_id_number_per_type`** — partial unique on
+  `(id_number_hash, account_type)` `WHERE id_number_hash IS NOT NULL AND released_at IS NULL AND
+  status IN ('pending', 'verified')`. Database-level enforcement of *one National ID = one provider
+  account + one customer account* (replaced the one-account-per-ID index on 2026-10-15); see
+  [[ADR-018 Blind Index for National ID Uniqueness]].
 
 ## Foreign keys
 

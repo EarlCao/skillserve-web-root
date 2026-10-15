@@ -16,7 +16,7 @@ states and never shows raw backend errors.
 | Offline | `OfflineBanner` (`useNetworkStatus`) | `ConnectivityGate` |
 | Rate limited (429) | "Too many attempts. Please wait a minute and try again." | same message (`api_error_test`) |
 | Maintenance | admin keeps working | full-screen `MaintenanceGate`, rechecks `/platform` |
-| Confirmation | `ConfirmDialog` (incl. unsaved-changes guard) | `AppDialog`, bottom sheets |
+| Confirmation | `ConfirmDialog` (incl. unsaved-changes guard). Every admin action on someone else's account or content confirms first; with `reason={{ required }}` it asks why — **required** for actions against someone (delete, hide, remove, un-verify, un-feature, cancel), an optional **note** for actions in their favour (activate, unban, approve, feature). The text is sent to the person affected | `AppDialog`, bottom sheets |
 | Action with reason | modals (suspend, ban, reject, cancel, refund…) | cancel/decline dialogs show late-fee policy |
 | Feedback | `sonner` toasts | `AppSnackbar` |
 | Live data | realtime refresh + 15 s polling fallback | realtime + 30 s polling; optimistic chat send with retry |

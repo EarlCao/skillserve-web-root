@@ -257,3 +257,15 @@ images must be removed from the private disk separately.
   active (matched on the copied date and admin — which a provider suspended after deploy also
   matches, so roll back only right after deploying); revoked sessions stay revoked. Verified on
   local Postgres (no such providers there) and by `ProviderStandingTest` (up and down).
+- **`2026_10_15_000002_one_national_id_per_account_type`** — adds nullable `account_type` to
+  [[identity_verifications]], backfilled from each account's role, and replaces the
+  one-account-per-ID unique index with one per `(id_number_hash, account_type)` over pending and
+  verified rows. Existing rows satisfied the stricter old rule, so the index always builds. Deploy
+  with the code. Rollback restores the old index and fails if an ID is by then shared by a customer
+  and a provider (or a rejected and a live row) — resolve those first. Verified up → down → up on
+  local Postgres; backfill checked in a rolled-back transaction.
+- **`2026_10_15_000003_resuspend_providers_suspended_during_deploy`** — data only, idempotent: re-runs
+  the 000001 backfill for providers suspended by the old code while the deploy was switching over
+  (profile suspended, account still active). Rollback is a no-op.
+- **`2026_10_15_000004_add_deletion_reason_to_users`** — nullable `deletion_reason` text on
+  [[users]]. Additive, no backfill; rollback drops it and the reasons recorded since.

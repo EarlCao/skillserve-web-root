@@ -43,15 +43,32 @@ Input is normalised to digits before hashing, so `1234-5678-9012-3456`, `1234 56
 the bare digits are one identity. Without that, the same person could hold several accounts simply
 by typing their number differently.
 
-## One National ID = one active account
+## One National ID = one provider account + one customer account
+
+Owner decision 2026-10-15 (was: one account of any kind). A person may both hire and offer
+services, but never hold two provider — or two customer — accounts on one ID. Each record carries
+`account_type` (`provider` / `customer`, fixed at sign-up), and only a **pending or verified**
+submission holds the ID: a rejected one is not a claim, so a stranger who tried someone's card
+cannot lock the real owner out (its hash stays on file for review).
 
 Enforced in the database, not only the application, by a partial unique index:
 
 ```sql
-CREATE UNIQUE INDEX identity_verifications_active_id_number
-ON identity_verifications (id_number_hash)
-WHERE id_number_hash IS NOT NULL AND released_at IS NULL
+CREATE UNIQUE INDEX identity_verifications_active_id_number_per_type
+ON identity_verifications (id_number_hash, account_type)
+WHERE id_number_hash IS NOT NULL AND released_at IS NULL AND status IN ('pending', 'verified')
 ```
+
+Checked at two moments, with the same message (`IdentityVerification::idInUseMessage`) — *"A
+provider account already uses this National ID. One National ID can verify only one provider account
+and one customer account."* (or *customer*). It names the kind of account, never which one:
+
+1. **Sign-up** — the app sends the scanned card number as `id_number` with `register`,
+   `register-provider` and `google/register`; `NationalIdAvailable` refuses the sign-up (422 on
+   `id_number`) before any account exists. The number is only checked there, never stored. Older
+   apps that send no number skip this step.
+2. **Submission** — `POST /identity-verification` re-checks under a row lock; the index above closes
+   the remaining race.
 
 Both PostgreSQL and SQLite support partial indexes, so the rule is exercised by the test suite as
 well as in production.

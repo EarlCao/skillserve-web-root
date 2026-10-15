@@ -44,6 +44,7 @@ Every account: staff, customers and providers. `role_id` decides the kind.
 | `google_sub` | string null, indexed | Google account link |
 | `created_at, updated_at` | timestamps |  |
 | `deleted_at, deleted_by` | soft delete |  |
+| `deletion_reason` | text null | why an administrator deleted the account — sent in the sign-out push and the deletion email (2026_10_15_000004) |
 
 ## Indexes & constraints
 

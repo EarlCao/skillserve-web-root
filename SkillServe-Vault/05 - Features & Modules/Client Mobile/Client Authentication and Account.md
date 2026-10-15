@@ -18,7 +18,7 @@ Mobile requirement(s): **M1** ([[Requirements Sources]]).
 
 | ID | Functionality | Implementation | Status |
 |---|---|---|---|
-| M 1.1 | User Registration | starts by scanning the National ID front and back, which fills names, birthday, card number and the Region → Barangay address ([[Mobile Sign-up with National ID Scan]]); customer or provider sign-up (email, or Google) → 6-digit email OTP → password + confirmation → account created, ID submitted for review; the Google path takes the same code and password steps; cancel pending sign-up ([[Registration and OTP Flow]]) | implemented |
+| M 1.1 | User Registration | starts by scanning the National ID front and back, which fills names, birthday, card number and the Region → Barangay address ([[Mobile Sign-up with National ID Scan]]); customer or provider sign-up (email, or Google; refused when an account of the same type already uses the scanned National ID — [[Identity Verification Lifecycle]]) → 6-digit email OTP → password + confirmation → account created, ID submitted for review; the Google path takes the same code and password steps; cancel pending sign-up ([[Registration and OTP Flow]]) | implemented |
 | M 1.2 | User Login | email + password, or Google **+ the account password** (a prompt after the Google picker); lands on `/client` or `/provider` by role | implemented |
 | M 1.3 | User Logout | see [[Logout (Mobile)]] | implemented |
 | M 1.4 | Password Management | change password; forgot password in the app: email → 6-digit code → new password + confirmation (KI-02 fixed 2026-10-03) | implemented |

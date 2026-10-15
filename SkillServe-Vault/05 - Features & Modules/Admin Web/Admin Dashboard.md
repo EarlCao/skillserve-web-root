@@ -21,7 +21,7 @@ Admin requirement module **2** ([[Requirements Sources]]).
 
 | ID | Functionality | Implementation |
 |---|---|---|
-| A 2.1 | User Summary | `user_summary`: total_clients, total_providers, active_users, suspended_users |
+| A 2.1 | User Summary | `user_summary`: total_clients, total_providers, active_users, suspended_users, deleted_users. *Suspended* counts a provider whose profile is suspended even if the account is still active (`User::suspendedAccounts()`), and *Active* excludes them, so the card matches Provider Management; *Deleted users* counts soft-deleted mobile accounts still restorable in [[Data Management]] (2026-10-15) |
 | A 2.2 | Service Summary | `service_summary`: total_services, approved, pending, reported_services |
 | A 2.3 | Booking Summary | `booking_summary` per status (pending, confirmed, active, completed, cancelled, disputed) |
 | A 2.4 | Verification Summary | `verification_summary`: pending, approved, rejected (+ additional_info_required) |
